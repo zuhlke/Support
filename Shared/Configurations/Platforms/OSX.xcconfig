@@ -1,0 +1,4 @@
+
+SDKROOT = macosx
+
+COMBINE_HIDPI_IMAGES=YES

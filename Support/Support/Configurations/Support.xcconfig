@@ -1,0 +1,9 @@
+
+#include "../../../Shared/Configurations/Platforms/iOS.xcconfig"
+#include "../../../Shared/Configurations/Targets/Framework.xcconfig"
+
+PRODUCT_BUNDLE_IDENTIFIER = com.zuhlke.Support
+VERSION = 1.0
+BUILD_NUMBER = 1
+
+INFOPLIST_FILE = Support/Configurations/Info.plist
