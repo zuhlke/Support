@@ -9,3 +9,5 @@ BUILD_NUMBER = 1
 INFOPLIST_FILE = TestingSupport/Configurations/Info.plist
 
 FRAMEWORK_SEARCH_PATHS = $(PLATFORM_DIR)/Developer/Library/Frameworks $(inherited)
+
+APPLICATION_EXTENSION_API_ONLY = NO
