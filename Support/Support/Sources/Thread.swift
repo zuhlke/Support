@@ -2,25 +2,43 @@ import Foundation
 
 public extension Thread {
     
+    /// How a thread exitted.
     enum ExitManner {
         case normal
         case fatalError
     }
     
+    /// A thread specific variant of `precondition()`.
+    ///
+    /// - SeeAlso: `Thread.fatalError`.
     static func precondition(_ condition: @autoclosure () -> Bool, _ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) {
         if !condition() {
             trap(message, file: file, line: line)
         }
     }
     
+    /// A thread specific variant of `preconditionFailure()`.
+    ///
+    /// - SeeAlso: `Thread.fatalError`.
     static func preconditionFailure(_ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) -> Never {
         trap(message, file: file, line: line)
     }
     
+    /// A thread specific variant of `fatalError`.
+    ///
+    /// If this method was called as part of the `work` passed to `detachSyncSupervised()`, this exits the thread.
+    /// Otherwise, the behaviour is the same as calling `Swift.fatalError()`.
     static func fatalError(_ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) -> Never {
         trap(message, file: file, line: line)
     }
     
+    /// Performs `work` one a new thread and waits for it to complete.
+    ///
+    /// Calls to `Thread.fatalError()` inside `work` will not terminate the app and instead only exit the thread.
+    /// This can be useful, for example, when testing that a method traps on invalid input.
+    ///
+    /// - Parameter work: The work to perform
+    /// - Returns: `fatalError` if `work` terminated due to a trap (e.g. `Thread.fatalError` was called); `normal` otherwise.
     static func detachSyncSupervised(_ work: @escaping () -> Void) -> ExitManner {
         var reason = ExitManner.normal
         let sema = DispatchSemaphore(value: 0)
