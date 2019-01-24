@@ -340,14 +340,15 @@
 				TargetAttributes = {
 					895BBD732084FACF005609D4 = {
 						CreatedOnToolsVersion = 9.3;
-						LastSwiftMigration = 0930;
+						LastSwiftMigration = 1010;
 					};
 					895BBD7C2084FACF005609D4 = {
 						CreatedOnToolsVersion = 9.3;
+						LastSwiftMigration = 1010;
 					};
 					899602372085028800306396 = {
 						CreatedOnToolsVersion = 9.3;
-						LastSwiftMigration = 0930;
+						LastSwiftMigration = 1010;
 					};
 				};
 			};
