@@ -13,7 +13,7 @@ public extension Thread {
     /// - SeeAlso: `Thread.fatalError`.
     static func precondition(_ condition: @autoclosure () -> Bool, _ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) {
         if !condition() {
-            trap(message, file: file, line: line)
+            trap(message(), file: file, line: line)
         }
     }
     
@@ -21,7 +21,7 @@ public extension Thread {
     ///
     /// - SeeAlso: `Thread.fatalError`.
     static func preconditionFailure(_ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) -> Never {
-        trap(message, file: file, line: line)
+        trap(message(), file: file, line: line)
     }
     
     /// A thread specific variant of `fatalError`.
@@ -29,7 +29,7 @@ public extension Thread {
     /// If this method was called as part of the `work` passed to `detachSyncSupervised()`, this exits the thread.
     /// Otherwise, the behaviour is the same as calling `Swift.fatalError()`.
     static func fatalError(_ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) -> Never {
-        trap(message, file: file, line: line)
+        trap(message(), file: file, line: line)
     }
     
     /// Performs `work` one a new thread and waits for it to complete.
@@ -83,7 +83,7 @@ private extension Thread {
         if let trapHandler = Thread.current.trapHandler {
             trapHandler()
         } else {
-            Swift.fatalError(message, file: file, line: line)
+            Swift.fatalError(message(), file: file, line: line)
         }
     }
     

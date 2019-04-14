@@ -1,5 +1,5 @@
 
-#include "../../../Shared/Configurations/Platforms/iOS.xcconfig"
+#include "../../../Shared/Configurations/Platforms/All.xcconfig"
 #include "../../../Shared/Configurations/Targets/Framework.xcconfig"
 
 PRODUCT_BUNDLE_IDENTIFIER = com.zuhlke.TestingSupport
@@ -11,3 +11,6 @@ INFOPLIST_FILE = TestingSupport/Configurations/Info.plist
 FRAMEWORK_SEARCH_PATHS = $(PLATFORM_DIR)/Developer/Library/Frameworks $(inherited)
 
 APPLICATION_EXTENSION_API_ONLY = NO
+
+// XCTest does not support bitcode
+ENABLE_BITCODE = NO

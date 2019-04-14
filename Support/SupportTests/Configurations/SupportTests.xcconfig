@@ -1,5 +1,5 @@
 
-#include "../../../Shared/Configurations/Platforms/iOS.xcconfig"
+#include "../../../Shared/Configurations/Platforms/All.xcconfig"
 #include "../../../Shared/Configurations/Targets/Test.xcconfig"
 
 PRODUCT_BUNDLE_IDENTIFIER = com.zuhlke.SupportTests
