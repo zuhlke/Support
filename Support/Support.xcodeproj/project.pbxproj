@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8942DC3622634BF500CA6584 /* ProjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8942DC3522634BF500CA6584 /* ProjectTests.swift */; };
 		894460272085E6260049667E /* XCTAssertFatalErrorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 894460262085E6260049667E /* XCTAssertFatalErrorTests.swift */; };
 		8945B2702085E05D006ED83E /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8945B26F2085E05D006ED83E /* XCTest.framework */; };
 		895BBD7E2084FACF005609D4 /* Support.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 895BBD742084FACF005609D4 /* Support.framework */; };
@@ -47,6 +48,7 @@
 
 /* Begin PBXFileReference section */
 		8942DC342263494900CA6584 /* All.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = All.xcconfig; sourceTree = "<group>"; };
+		8942DC3522634BF500CA6584 /* ProjectTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectTests.swift; sourceTree = "<group>"; };
 		894460262085E6260049667E /* XCTAssertFatalErrorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTAssertFatalErrorTests.swift; sourceTree = "<group>"; };
 		8945B26F2085E05D006ED83E /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		895BBD742084FACF005609D4 /* Support.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Support.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -198,6 +200,7 @@
 		895BBD9C2084FB6C005609D4 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				8942DC3522634BF500CA6584 /* ProjectTests.swift */,
 				8971A52F21F9E26B005279F2 /* Functions */,
 				895BBD822084FACF005609D4 /* SupportTests.swift */,
 				894460262085E6260049667E /* XCTAssertFatalErrorTests.swift */,
@@ -456,6 +459,7 @@
 				894460272085E6260049667E /* XCTAssertFatalErrorTests.swift in Sources */,
 				8971A53121F9E280005279F2 /* MutatingTests.swift in Sources */,
 				8971A53521F9E594005279F2 /* ConfiguringTests.swift in Sources */,
+				8942DC3622634BF500CA6584 /* ProjectTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -520,7 +524,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 899602312084FE9000306396 /* SupportTests.xcconfig */;
 			buildSettings = {
-				DEVELOPMENT_TEAM = W46A5HMB5C;
 			};
 			name = Debug;
 		};
@@ -528,7 +531,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 899602312084FE9000306396 /* SupportTests.xcconfig */;
 			buildSettings = {
-				DEVELOPMENT_TEAM = W46A5HMB5C;
 			};
 			name = Release;
 		};
