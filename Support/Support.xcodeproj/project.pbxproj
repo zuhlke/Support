@@ -20,6 +20,10 @@
 		8971A53721F9E69F005279F2 /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8971A53621F9E69F005279F2 /* Action.swift */; };
 		899602452085031E00306396 /* XCTAssertFatalError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 899602442085031E00306396 /* XCTAssertFatalError.swift */; };
 		89960247208503C200306396 /* TestingSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 899602382085028800306396 /* TestingSupport.framework */; };
+		89DA7B0C229C1BE600FE53BB /* FileAccessCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89DA7B0B229C1BE600FE53BB /* FileAccessCoordinator.swift */; };
+		89DA7B10229E9E8300FE53BB /* FileAccessCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89DA7B0F229E9E8300FE53BB /* FileAccessCoordinatorTests.swift */; };
+		89DA7B12229E9EE700FE53BB /* small.md in Resources */ = {isa = PBXBuildFile; fileRef = 89DA7B11229E9E9D00FE53BB /* small.md */; };
+		89DA7B17229EC82D00FE53BB /* NSFileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89DA7B16229EC82D00FE53BB /* NSFileCoordinator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +81,10 @@
 		8996023B2085028800306396 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		89960243208502CC00306396 /* TestingSupport.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestingSupport.xcconfig; sourceTree = "<group>"; };
 		899602442085031E00306396 /* XCTAssertFatalError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTAssertFatalError.swift; sourceTree = "<group>"; };
+		89DA7B0B229C1BE600FE53BB /* FileAccessCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileAccessCoordinator.swift; sourceTree = "<group>"; };
+		89DA7B0F229E9E8300FE53BB /* FileAccessCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileAccessCoordinatorTests.swift; sourceTree = "<group>"; };
+		89DA7B11229E9E9D00FE53BB /* small.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = small.md; sourceTree = "<group>"; };
+		89DA7B16229EC82D00FE53BB /* NSFileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSFileCoordinator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -202,6 +210,7 @@
 			children = (
 				8942DC3522634BF500CA6584 /* ProjectTests.swift */,
 				8971A52F21F9E26B005279F2 /* Functions */,
+				89DA7B0E229E9D3B00FE53BB /* IO */,
 				895BBD822084FACF005609D4 /* SupportTests.swift */,
 				894460262085E6260049667E /* XCTAssertFatalErrorTests.swift */,
 			);
@@ -229,6 +238,8 @@
 		895BBD9F2084FB85005609D4 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				89DA7B13229EC80A00FE53BB /* Extensions */,
+				89DA7B0A229C1BB900FE53BB /* LocalIO */,
 				8971A52721F9E198005279F2 /* Aliases */,
 				8971A52A21F9E1FD005279F2 /* Functions */,
 				895BBDA02084FB90005609D4 /* Thread.swift */,
@@ -294,6 +305,31 @@
 				8945B26F2085E05D006ED83E /* XCTest.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		89DA7B0A229C1BB900FE53BB /* LocalIO */ = {
+			isa = PBXGroup;
+			children = (
+				89DA7B0B229C1BE600FE53BB /* FileAccessCoordinator.swift */,
+			);
+			path = LocalIO;
+			sourceTree = "<group>";
+		};
+		89DA7B0E229E9D3B00FE53BB /* IO */ = {
+			isa = PBXGroup;
+			children = (
+				89DA7B0F229E9E8300FE53BB /* FileAccessCoordinatorTests.swift */,
+				89DA7B11229E9E9D00FE53BB /* small.md */,
+			);
+			path = IO;
+			sourceTree = "<group>";
+		};
+		89DA7B13229EC80A00FE53BB /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				89DA7B16229EC82D00FE53BB /* NSFileCoordinator.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -427,6 +463,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				89DA7B12229E9EE700FE53BB /* small.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -448,6 +485,8 @@
 				8971A53721F9E69F005279F2 /* Action.swift in Sources */,
 				8971A53321F9E500005279F2 /* Configuring.swift in Sources */,
 				8971A52C21F9E21C005279F2 /* Mutating.swift in Sources */,
+				89DA7B0C229C1BE600FE53BB /* FileAccessCoordinator.swift in Sources */,
+				89DA7B17229EC82D00FE53BB /* NSFileCoordinator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -455,6 +494,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				89DA7B10229E9E8300FE53BB /* FileAccessCoordinatorTests.swift in Sources */,
 				895BBD832084FACF005609D4 /* SupportTests.swift in Sources */,
 				894460272085E6260049667E /* XCTAssertFatalErrorTests.swift in Sources */,
 				8971A53121F9E280005279F2 /* MutatingTests.swift in Sources */,

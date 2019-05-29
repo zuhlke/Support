@@ -7,3 +7,5 @@ VERSION = 1.0
 BUILD_NUMBER = 1
 
 INFOPLIST_FILE = SupportTests/Configurations/Info.plist
+
+DEVELOPMENT_TEAM = W46A5HMB5C
