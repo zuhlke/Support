@@ -25,6 +25,7 @@
 		89DA7B12229E9EE700FE53BB /* small.md in Resources */ = {isa = PBXBuildFile; fileRef = 89DA7B11229E9E9D00FE53BB /* small.md */; };
 		89DA7B17229EC82D00FE53BB /* NSFileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89DA7B16229EC82D00FE53BB /* NSFileCoordinator.swift */; };
 		89DA7B1A229ED3ED00FE53BB /* XCTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89DA7B19229ED3ED00FE53BB /* XCTest.swift */; };
+		89DA7B1C229ED4D200FE53BB /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89DA7B1B229ED4D200FE53BB /* FileManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +88,7 @@
 		89DA7B11229E9E9D00FE53BB /* small.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = small.md; sourceTree = "<group>"; };
 		89DA7B16229EC82D00FE53BB /* NSFileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSFileCoordinator.swift; sourceTree = "<group>"; };
 		89DA7B19229ED3ED00FE53BB /* XCTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTest.swift; sourceTree = "<group>"; };
+		89DA7B1B229ED4D200FE53BB /* FileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -331,6 +333,7 @@
 			isa = PBXGroup;
 			children = (
 				89DA7B16229EC82D00FE53BB /* NSFileCoordinator.swift */,
+				89DA7B1B229ED4D200FE53BB /* FileManager.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -495,6 +498,7 @@
 				895BBDA12084FB90005609D4 /* Thread.swift in Sources */,
 				8971A53721F9E69F005279F2 /* Action.swift in Sources */,
 				8971A53321F9E500005279F2 /* Configuring.swift in Sources */,
+				89DA7B1C229ED4D200FE53BB /* FileManager.swift in Sources */,
 				8971A52C21F9E21C005279F2 /* Mutating.swift in Sources */,
 				89DA7B0C229C1BE600FE53BB /* FileAccessCoordinator.swift in Sources */,
 				89DA7B17229EC82D00FE53BB /* NSFileCoordinator.swift in Sources */,

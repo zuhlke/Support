@@ -1,9 +1,9 @@
 import XCTest
 
-public extension XCTest {
+extension XCTest {
     
     /// Returns the bundle the test class belongs to.
-    var bundle: Bundle {
+    public var bundle: Bundle {
         return Bundle(for: type(of: self))
     }
     

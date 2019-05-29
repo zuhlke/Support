@@ -28,57 +28,53 @@ class FileAccessCoordinatorTests: XCTestCase {
     }
     
     func testWriting() throws {
-        let folder = try fileManager.url(for: .itemReplacementDirectory, in: .userDomainMask, appropriateFor: bundle.bundleURL, create: true)
-        let url = folder.appendingPathComponent(UUID().uuidString)
-        defer {
-            try? fileManager.removeItem(at: url)
-        }
-        
-        let data = UUID().uuidString.data(using: .utf8)!
-        
-        let expectation = self.expectation(description: "Complete writing")
-        
-        coordinator.write(data, to: url) { result in
-            switch result {
-            case .success(_):
-                do {
-                    let dataWritten = try Data(contentsOf: url)
-                    XCTAssertEqual(data, dataWritten)
-                } catch {
+        try fileManager.makeTemporaryDirectory { folder in
+            let url = folder.appendingPathComponent(UUID().uuidString)
+            
+            let data = UUID().uuidString.data(using: .utf8)!
+            
+            let expectation = self.expectation(description: "Complete writing")
+            
+            coordinator.write(data, to: url) { result in
+                switch result {
+                case .success(_):
+                    do {
+                        let dataWritten = try Data(contentsOf: url)
+                        XCTAssertEqual(data, dataWritten)
+                    } catch {
+                        XCTFail("Unexpected error: \(error)")
+                    }
+                case .failure(let error):
                     XCTFail("Unexpected error: \(error)")
                 }
-            case .failure(let error):
-                XCTFail("Unexpected error: \(error)")
+                expectation.fulfill()
             }
-            expectation.fulfill()
+            
+            wait(for: [expectation], timeout: 10)
         }
-        
-        wait(for: [expectation], timeout: 10)
     }
     
     func testWritingRespectsOptions() throws {
-        let folder = try fileManager.url(for: .itemReplacementDirectory, in: .userDomainMask, appropriateFor: bundle.bundleURL, create: true)
-        let url = folder.appendingPathComponent(UUID().uuidString)
-        defer {
-            try? fileManager.removeItem(at: url)
-        }
-        
-        let data = UUID().uuidString.data(using: .utf8)!
-        try data.write(to: url)
-        
-        let expectation = self.expectation(description: "Complete writing")
-        
-        coordinator.write(data, to: url, options: .withoutOverwriting) { result in
-            switch result {
-            case .success(_):
-                XCTFail("Write should have failed as file already exists")
-            case .failure(_):
-                break
+        try fileManager.makeTemporaryDirectory { folder in
+            let url = folder.appendingPathComponent(UUID().uuidString)
+            
+            let data = UUID().uuidString.data(using: .utf8)!
+            try data.write(to: url)
+            
+            let expectation = self.expectation(description: "Complete writing")
+            
+            coordinator.write(data, to: url, options: .withoutOverwriting) { result in
+                switch result {
+                case .success(_):
+                    XCTFail("Write should have failed as file already exists")
+                case .failure(_):
+                    break
+                }
+                expectation.fulfill()
             }
-            expectation.fulfill()
+            
+            wait(for: [expectation], timeout: 10)
         }
-        
-        wait(for: [expectation], timeout: 10)
     }
     
 }
