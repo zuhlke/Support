@@ -30,6 +30,9 @@ class FileAccessCoordinatorTests: XCTestCase {
         let bundle = Bundle(for: type(of: self))
         let folder = try fileManager.url(for: .itemReplacementDirectory, in: .userDomainMask, appropriateFor: bundle.bundleURL, create: true)
         let url = folder.appendingPathComponent(UUID().uuidString)
+        defer {
+            try? fileManager.removeItem(at: url)
+        }
         
         let data = UUID().uuidString.data(using: .utf8)!
         
@@ -46,6 +49,32 @@ class FileAccessCoordinatorTests: XCTestCase {
                 }
             case .failure(let error):
                 XCTFail("Unexpected error: \(error)")
+            }
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 10)
+    }
+    
+    func testWritingRespectsOptions() throws {
+        let bundle = Bundle(for: type(of: self))
+        let folder = try fileManager.url(for: .itemReplacementDirectory, in: .userDomainMask, appropriateFor: bundle.bundleURL, create: true)
+        let url = folder.appendingPathComponent(UUID().uuidString)
+        defer {
+            try? fileManager.removeItem(at: url)
+        }
+        
+        let data = UUID().uuidString.data(using: .utf8)!
+        try data.write(to: url)
+        
+        let expectation = self.expectation(description: "Complete writing")
+        
+        coordinator.write(data, to: url, options: .withoutOverwriting) { result in
+            switch result {
+            case .success(_):
+                XCTFail("Write should have failed as file already exists")
+            case .failure(_):
+                break
             }
             expectation.fulfill()
         }
