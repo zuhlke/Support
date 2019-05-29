@@ -1,5 +1,6 @@
 import XCTest
 import Support
+import TestingSupport
 
 class FileAccessCoordinatorTests: XCTestCase {
     
@@ -27,7 +28,6 @@ class FileAccessCoordinatorTests: XCTestCase {
     }
     
     func testWriting() throws {
-        let bundle = Bundle(for: type(of: self))
         let folder = try fileManager.url(for: .itemReplacementDirectory, in: .userDomainMask, appropriateFor: bundle.bundleURL, create: true)
         let url = folder.appendingPathComponent(UUID().uuidString)
         defer {
@@ -57,7 +57,6 @@ class FileAccessCoordinatorTests: XCTestCase {
     }
     
     func testWritingRespectsOptions() throws {
-        let bundle = Bundle(for: type(of: self))
         let folder = try fileManager.url(for: .itemReplacementDirectory, in: .userDomainMask, appropriateFor: bundle.bundleURL, create: true)
         let url = folder.appendingPathComponent(UUID().uuidString)
         defer {

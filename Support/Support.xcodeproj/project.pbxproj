@@ -24,6 +24,7 @@
 		89DA7B10229E9E8300FE53BB /* FileAccessCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89DA7B0F229E9E8300FE53BB /* FileAccessCoordinatorTests.swift */; };
 		89DA7B12229E9EE700FE53BB /* small.md in Resources */ = {isa = PBXBuildFile; fileRef = 89DA7B11229E9E9D00FE53BB /* small.md */; };
 		89DA7B17229EC82D00FE53BB /* NSFileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89DA7B16229EC82D00FE53BB /* NSFileCoordinator.swift */; };
+		89DA7B1A229ED3ED00FE53BB /* XCTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89DA7B19229ED3ED00FE53BB /* XCTest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -85,6 +86,7 @@
 		89DA7B0F229E9E8300FE53BB /* FileAccessCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileAccessCoordinatorTests.swift; sourceTree = "<group>"; };
 		89DA7B11229E9E9D00FE53BB /* small.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = small.md; sourceTree = "<group>"; };
 		89DA7B16229EC82D00FE53BB /* NSFileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSFileCoordinator.swift; sourceTree = "<group>"; };
+		89DA7B19229ED3ED00FE53BB /* XCTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -285,6 +287,7 @@
 		89960240208502AC00306396 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				89DA7B18229ED3CA00FE53BB /* Extensions */,
 				899602442085031E00306396 /* XCTAssertFatalError.swift */,
 			);
 			path = Sources;
@@ -328,6 +331,14 @@
 			isa = PBXGroup;
 			children = (
 				89DA7B16229EC82D00FE53BB /* NSFileCoordinator.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		89DA7B18229ED3CA00FE53BB /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				89DA7B19229ED3ED00FE53BB /* XCTest.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -507,6 +518,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				89DA7B1A229ED3ED00FE53BB /* XCTest.swift in Sources */,
 				899602452085031E00306396 /* XCTAssertFatalError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
