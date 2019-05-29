@@ -26,4 +26,21 @@ extension NSFileCoordinator {
         return out
     }
     
+    func coordinate(writingItemAt url: URL, options: NSFileCoordinator.WritingOptions = [], byAccessor writer: (URL) throws -> Void) throws {
+        var nsError: NSError?
+        var err: Error?
+        
+        coordinate(writingItemAt: url, options: options, error: &nsError) { url in
+            do {
+                try writer(url)
+            } catch {
+                err = error
+            }
+        }
+        
+        if let error = err ?? nsError {
+            throw error
+        }
+    }
+    
 }

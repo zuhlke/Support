@@ -20,9 +20,29 @@ public class FileAccessCoordinator {
     ///   - url: URL to read from. This must be a file URL.
     ///   - completionHandler: The callback to call when the read completes.
     public func read(contentsOf url: URL, completionHandler: @escaping (Result<Data, Error>) -> Void) {
+        asynchronously(
+            perform: { try self.synchronouslyRead(contentsOf: url) },
+            completionHandler: completionHandler
+        )
+    }
+    
+    /// Writes `data` to `url`.
+    ///
+    /// - Parameters:
+    ///   - data: The data to write.
+    ///   - url: The URL to write to. This must be a file URL.
+    ///   - completionHandler: The callback to call when the read completes.
+    public func write(_ data: Data, to url: URL, completionHandler: @escaping (Result<Void, Error>) -> Void) {
+        asynchronously(
+            perform: { try self.synchronouslyWrite(data, to: url) },
+            completionHandler: completionHandler
+        )
+    }
+    
+    private func asynchronously<Success>(perform operation: @escaping () throws -> Success, completionHandler: @escaping (Result<Success, Error>) -> Void) {
         ioQueue.async {
             let result = Result {
-                try self.synchronouslyRead(contentsOf: url)
+                try operation()
             }
             self.callbackQueue.async {
                 completionHandler(result)
@@ -33,6 +53,12 @@ public class FileAccessCoordinator {
     private func synchronouslyRead(contentsOf url: URL) throws -> Data {
         return try coordinator.coordinate(readingItemAt: url) { url in
             return try Data(contentsOf: url)
+        }
+    }
+    
+    private func synchronouslyWrite(_ data: Data, to url: URL) throws {
+        try coordinator.coordinate(writingItemAt: url) { url in
+            try data.write(to: url)
         }
     }
     
