@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1020"
+   LastUpgradeVersion = "1100"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "895BBD732084FACF005609D4"
-               BuildableName = "Support.framework"
+               BlueprintIdentifier = "Support"
+               BuildableName = "Support"
                BlueprintName = "Support"
-               ReferencedContainer = "container:Support/Support.xcodeproj">
+               ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -28,10 +28,38 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "899602372085028800306396"
-               BuildableName = "TestingSupport.framework"
+               BlueprintIdentifier = "TestingSupport"
+               BuildableName = "TestingSupport"
                BlueprintName = "TestingSupport"
-               ReferencedContainer = "container:Support/Support.xcodeproj">
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "SupportTests"
+               BuildableName = "SupportTests"
+               BlueprintName = "SupportTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "TestingSupportTests"
+               BuildableName = "TestingSupportTests"
+               BlueprintName = "TestingSupportTests"
+               ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -43,27 +71,30 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
          <TestableReference
-            skipped = "NO">
+            skipped = "NO"
+            parallelizable = "YES"
+            testExecutionOrdering = "random">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "895BBD7C2084FACF005609D4"
-               BuildableName = "SupportTests.xctest"
+               BlueprintIdentifier = "SupportTests"
+               BuildableName = "SupportTests"
                BlueprintName = "SupportTests"
-               ReferencedContainer = "container:Support/Support.xcodeproj">
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES"
+            testExecutionOrdering = "random">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "TestingSupportTests"
+               BuildableName = "TestingSupportTests"
+               BlueprintName = "TestingSupportTests"
+               ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "895BBD732084FACF005609D4"
-            BuildableName = "Support.framework"
-            BlueprintName = "Support"
-            ReferencedContainer = "container:Support/Support.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -75,17 +106,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "895BBD732084FACF005609D4"
-            BuildableName = "Support.framework"
-            BlueprintName = "Support"
-            ReferencedContainer = "container:Support/Support.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -96,10 +116,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "895BBD732084FACF005609D4"
-            BuildableName = "Support.framework"
+            BlueprintIdentifier = "Support"
+            BuildableName = "Support"
             BlueprintName = "Support"
-            ReferencedContainer = "container:Support/Support.xcodeproj">
+            ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

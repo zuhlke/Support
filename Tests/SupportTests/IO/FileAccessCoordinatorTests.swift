@@ -8,23 +8,25 @@ class FileAccessCoordinatorTests: XCTestCase {
     private let coordinator = FileAccessCoordinator()
     
     func testReading() throws {
-        let bundle = Bundle(for: type(of: self))
-        let url = bundle.url(forResource: "small", withExtension: "md")!
-        
-        let expected = try Data(contentsOf: url)
-        
-        let expectation = self.expectation(description: "Complete reading")
-        coordinator.read(contentsOf: url) { result in
-            switch result {
-            case .success(let data):
-                XCTAssertEqual(data, expected)
-            case .failure(let error):
-                XCTFail("Unexpected error: \(error)")
+        try fileManager.makeTemporaryDirectory { folder in
+            let url = folder.appendingPathComponent("small.md")
+            
+            let expected = "Some simple text".data(using: .utf8)!
+            try expected.write(to: url)
+            
+            let expectation = self.expectation(description: "Complete reading")
+            coordinator.read(contentsOf: url) { result in
+                switch result {
+                case .success(let data):
+                    XCTAssertEqual(data, expected)
+                case .failure(let error):
+                    XCTFail("Unexpected error: \(error)")
+                }
+                expectation.fulfill()
             }
-            expectation.fulfill()
+            
+            wait(for: [expectation], timeout: 10)
         }
-        
-        wait(for: [expectation], timeout: 10)
     }
     
     func testWriting() throws {
