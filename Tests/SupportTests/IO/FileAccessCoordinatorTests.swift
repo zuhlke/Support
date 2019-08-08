@@ -152,16 +152,6 @@ extension FileAccessCoordinatorTests {
             
             let expectation = self.expectation(description: "Complete writing")
             
-            coordinator.write(data, to: url, options: .withoutOverwriting) { result in
-                switch result {
-                case .success(_):
-                    XCTFail("Write should have failed as file already exists")
-                case .failure(_):
-                    break
-                }
-                expectation.fulfill()
-            }
-            
             let subscription = coordinator.write(data, to: url, options: .withoutOverwriting)
                 .sink(receiveCompletion: { completion in
                     switch completion {
