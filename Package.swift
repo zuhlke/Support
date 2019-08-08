@@ -28,7 +28,7 @@ let package = Package(
         ),
         .target(
             name: "TestingSupport",
-            dependencies: []
+            dependencies: ["Support"]
         ),
         .testTarget(
             name: "SupportTests",
