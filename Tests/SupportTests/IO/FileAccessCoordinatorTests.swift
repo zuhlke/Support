@@ -1,6 +1,7 @@
 import XCTest
 import Support
 import TestingSupport
+import Combine
 
 class FileAccessCoordinatorTests: XCTestCase {
     
@@ -150,23 +151,44 @@ extension FileAccessCoordinatorTests {
             let data = UUID().uuidString.data(using: .utf8)!
             try data.write(to: url)
             
-            let expectation = self.expectation(description: "Complete writing")
-            
-            let subscription = coordinator.write(data, to: url, options: .withoutOverwriting)
-                .sink(receiveCompletion: { completion in
-                    switch completion {
-                    case .finished:
-                        XCTFail("Write should have failed as file already exists")
-                    case .failure(let error):
-                        expectation.fulfill()
-                    }
-                }, receiveValue: {})
-            defer {
-                subscription.cancel()
-            }
+            let expectation = PublisherFailureExpectation(
+                failsWithoutEmmiting: coordinator.write(data, to: url, options: .withoutOverwriting),
+                description: "File already exists"
+            )
             
             wait(for: [expectation], timeout: 10)
         }
+    }
+    
+}
+
+@available(macOS 10.15, *)
+private class PublisherFailureExpectation: XCTestExpectation {
+    
+    private var cancellation: AnyCancellable!
+    
+    init<PublisherType: Publisher>(
+        failsWithoutEmmiting publisher: PublisherType,
+        failOnReceivingValue: Bool = true,
+        description: String = "",
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        super.init(description: description)
+        cancellation = publisher.sink(receiveCompletion: { [weak self] completion in
+            switch completion {
+            case .finished:
+                XCTFail("Expected failure in publisher", file: file, line: line)
+            case .failure(_):
+                break
+            }
+            self?.fulfill()
+        }, receiveValue: { [weak self] _ in
+            if failOnReceivingValue {
+                XCTFail("Did not expect publisher to send value", file: file, line: line)
+                self?.fulfill()
+            }
+        })
     }
     
 }
