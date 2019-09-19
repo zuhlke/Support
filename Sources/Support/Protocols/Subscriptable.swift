@@ -8,6 +8,10 @@ public protocol Subscriptable {
 }
 
 extension Subscriptable {
+    /// Get the stored value for a given key or create it if needed.
+    /// If a new value is created, it will also be stored.
+    /// - Parameter key: The key to retrieve the value for.
+    /// - Parameter createValue: A closure to create a new value if one doesn’t already exist.
     @inlinable
     mutating public func get(_ key: Key, createWith createValue: () -> Value) -> Value {
         if let value = self[key] {
