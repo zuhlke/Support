@@ -2,7 +2,7 @@ import XCTest
 import Support
 import TestingSupport
 
-class XCTAssertFatalErrorTests: XCTestCase {
+class TSAssertFatalErrorTests: XCTestCase {
     
     func testThatFatalErrorsAreCaptured() {
         TS.assertFatalError {
