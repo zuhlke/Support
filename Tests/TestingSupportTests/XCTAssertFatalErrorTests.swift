@@ -5,19 +5,19 @@ import TestingSupport
 class XCTAssertFatalErrorTests: XCTestCase {
     
     func testThatFatalErrorsAreCaptured() {
-        XCTAssertFatalError {
+        TS.assertFatalError {
             Thread.fatalError()
         }
     }
     
     func testThatPreconditionsAreCaptured() {
-        XCTAssertFatalError {
+        TS.assertFatalError {
             Thread.precondition(false)
         }
     }
     
     func testThatPreconditionFailuresAreCaptured() {
-        XCTAssertFatalError {
+        TS.assertFatalError {
             Thread.preconditionFailure()
         }
     }
