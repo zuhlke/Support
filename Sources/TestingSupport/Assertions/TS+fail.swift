@@ -42,11 +42,26 @@ extension TS {
         return failures
     }
     
-    static func assertFailsOnces(file: StaticString = #file, line: UInt = #line, work: () -> Void) {
+    static func assertFailsOnces(expectedMessage: String? = nil, file: StaticString = #file, line: UInt = #line, work: () -> Void) {
         let failures = captureFailures(in: work)
         guard failures.count == 1 else {
             XCTFail("Expected a failure", file: file, line: line)
             return
+        }
+        if let expectedMessage = expectedMessage {
+            let actualMessage = failures[0].message
+            guard expectedMessage == actualMessage else {
+                let description =
+                    """
+                    Incorrect failure message.
+                    Expected:
+                    \(expectedMessage)
+                    Actual:
+                    \(actualMessage)
+                    """
+                XCTFail(description, file: file, line: line)
+                return
+            }
         }
     }
     
