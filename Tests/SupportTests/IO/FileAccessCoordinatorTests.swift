@@ -15,7 +15,7 @@ class FileAccessCoordinatorTests: XCTestCase {
             let expected = "Some simple text".data(using: .utf8)!
             try expected.write(to: url)
             
-            let expectation = self.expectation(description: "Complete reading")
+            let expectation = XCTestExpectation(description: "Complete reading")
             coordinator.read(contentsOf: url) { result in
                 switch result {
                 case .success(let data):
@@ -36,7 +36,7 @@ class FileAccessCoordinatorTests: XCTestCase {
             
             let data = UUID().uuidString.data(using: .utf8)!
             
-            let expectation = self.expectation(description: "Complete writing")
+            let expectation = XCTestExpectation(description: "Complete writing")
             
             coordinator.write(data, to: url) { result in
                 switch result {
@@ -64,7 +64,7 @@ class FileAccessCoordinatorTests: XCTestCase {
             let data = UUID().uuidString.data(using: .utf8)!
             try data.write(to: url)
             
-            let expectation = self.expectation(description: "Complete writing")
+            let expectation = XCTestExpectation(description: "Complete writing")
             
             coordinator.write(data, to: url, options: .withoutOverwriting) { result in
                 switch result {
@@ -92,7 +92,7 @@ extension FileAccessCoordinatorTests {
             let expected = "Some simple text".data(using: .utf8)!
             try expected.write(to: url)
             
-            let expectation = self.expectation(description: "Complete reading")
+            let expectation = XCTestExpectation(description: "Complete reading")
             let subscription = coordinator.read(contentsOf: url)
                 .sink(receiveCompletion: { completion in
                     switch completion {
@@ -118,7 +118,7 @@ extension FileAccessCoordinatorTests {
             
             let data = UUID().uuidString.data(using: .utf8)!
             
-            let expectation = self.expectation(description: "Complete writing")
+            let expectation = XCTestExpectation(description: "Complete writing")
             
             let subscription = coordinator.write(data, to: url)
                 .sink(receiveCompletion: { completion in
