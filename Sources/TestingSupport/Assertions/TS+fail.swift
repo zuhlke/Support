@@ -42,4 +42,12 @@ extension TS {
         return failures
     }
     
+    static func assertFailsOnces(file: StaticString = #file, line: UInt = #line, work: () -> Void) {
+        let failures = captureFailures(in: work)
+        guard failures.count == 1 else {
+            XCTFail("Expected a failure", file: file, line: line)
+            return
+        }
+    }
+    
 }

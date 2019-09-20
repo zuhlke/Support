@@ -1,6 +1,6 @@
 import XCTest
 import Support
-import TestingSupport
+@testable import TestingSupport
 
 class TSAssertFatalErrorTests: XCTestCase {
     
@@ -19,6 +19,12 @@ class TSAssertFatalErrorTests: XCTestCase {
     func testThatPreconditionFailuresAreCaptured() {
         TS.assertFatalError {
             Thread.preconditionFailure()
+        }
+    }
+    
+    func testThatFailureIsReportedIfNoThrow() {
+        TS.assertFailsOnces {
+            TS.assertFatalError {}
         }
     }
     

@@ -15,7 +15,7 @@ extension TS {
         let manner = Thread.detachSyncSupervised(work)
         
         if manner != .fatalError {
-            XCTFail(message, file: file, line: line)
+            fail(message, file: file, line: line)
         }
         
     }
