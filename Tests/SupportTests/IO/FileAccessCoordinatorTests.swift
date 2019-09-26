@@ -92,23 +92,8 @@ extension FileAccessCoordinatorTests {
             let expected = "Some simple text".data(using: .utf8)!
             try expected.write(to: url)
             
-            let expectation = XCTestExpectation(description: "Complete reading")
-            let subscription = coordinator.read(contentsOf: url)
-                .sink(receiveCompletion: { completion in
-                    switch completion {
-                    case .finished:
-                        expectation.fulfill()
-                    case .failure(let error):
-                        XCTFail("Unexpected error: \(error)")
-                    }
-                }, receiveValue: { data in
-                    XCTAssertEqual(data, expected)
-                })
-            defer {
-                subscription.cancel()
-            }
-            
-            wait(for: [expectation], timeout: 10)
+            let result = try coordinator.read(contentsOf: url).await(timeout: 10)
+            XCTAssertEqual(try result.get(), expected)
         }
     }
     
@@ -118,29 +103,8 @@ extension FileAccessCoordinatorTests {
             
             let data = UUID().uuidString.data(using: .utf8)!
             
-            let expectation = XCTestExpectation(description: "Complete writing")
-            
-            let subscription = coordinator.write(data, to: url)
-                .sink(receiveCompletion: { completion in
-                    switch completion {
-                    case .finished:
-                        expectation.fulfill()
-                    case .failure(let error):
-                        XCTFail("Unexpected error: \(error)")
-                    }
-                }, receiveValue: {
-                    do {
-                        let dataWritten = try Data(contentsOf: url)
-                        XCTAssertEqual(data, dataWritten)
-                    } catch {
-                        XCTFail("Unexpected error: \(error)")
-                    }
-                })
-            defer {
-                subscription.cancel()
-            }
-            
-            wait(for: [expectation], timeout: 10)
+            let result = try coordinator.write(data, to: url).await(timeout: 10)
+            XCTAssertTrue(result.isSuccess)
         }
     }
     
@@ -151,44 +115,10 @@ extension FileAccessCoordinatorTests {
             let data = UUID().uuidString.data(using: .utf8)!
             try data.write(to: url)
             
-            let expectation = PublisherFailureExpectation(
-                failsWithoutEmmiting: coordinator.write(data, to: url, options: .withoutOverwriting),
-                description: "File already exists"
-            )
-            
-            wait(for: [expectation], timeout: 10)
+            let result = try coordinator.write(data, to: url, options: .withoutOverwriting).await(timeout: 10)
+            XCTAssertFalse(result.isSuccess)
         }
     }
     
 }
 
-@available(macOS 10.15, *)
-private class PublisherFailureExpectation: XCTestExpectation {
-    
-    private var cancellation: AnyCancellable!
-    
-    init<PublisherType: Publisher>(
-        failsWithoutEmmiting publisher: PublisherType,
-        failOnReceivingValue: Bool = true,
-        description: String = "",
-        file: StaticString = #file,
-        line: UInt = #line
-    ) {
-        super.init(description: description)
-        cancellation = publisher.sink(receiveCompletion: { [weak self] completion in
-            switch completion {
-            case .finished:
-                XCTFail("Expected failure in publisher", file: file, line: line)
-            case .failure(_):
-                break
-            }
-            self?.fulfill()
-        }, receiveValue: { [weak self] _ in
-            if failOnReceivingValue {
-                XCTFail("Did not expect publisher to send value", file: file, line: line)
-                self?.fulfill()
-            }
-        })
-    }
-    
-}
