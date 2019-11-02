@@ -19,5 +19,7 @@ jobs:
         swift --version
     - name: Boot simulator
       run: xcrun simctl boot "iPhone 11 Pro"
+    - name: Build for testing
+      run: xcodebuild build-for-testing -workspace .swiftpm/xcode/package.xcworkspace -scheme Support-Package -destination "name=iPhone 11 Pro"
     - name: Run tests
-      run: xcodebuild test -workspace .swiftpm/xcode/package.xcworkspace -scheme Support-Package -destination "name=iPhone 11 Pro"
+      run: xcodebuild test-without-building -workspace .swiftpm/xcode/package.xcworkspace -scheme Support-Package -destination "name=iPhone 11 Pro"
