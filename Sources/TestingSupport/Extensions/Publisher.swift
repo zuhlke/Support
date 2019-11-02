@@ -1,6 +1,6 @@
+import Combine
 import Foundation
 import XCTest
-import Combine
 
 private enum AwaitError: Error {
     case timedOut
@@ -29,7 +29,8 @@ extension Publisher {
                 },
                 receiveValue: {
                     complete(.success($0))
-            })
+                }
+            )
         defer {
             cancellable.cancel()
         }
@@ -39,9 +40,9 @@ extension Publisher {
             deadline > Date(),
             capturedResult == nil,
             RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: 0.1)) {
-                if let capturedResult = capturedResult {
-                    return capturedResult
-                }
+            if let capturedResult = capturedResult {
+                return capturedResult
+            }
         }
         if let capturedResult = capturedResult {
             return capturedResult
@@ -49,5 +50,5 @@ extension Publisher {
             throw AwaitError.timedOut
         }
     }
-
+    
 }

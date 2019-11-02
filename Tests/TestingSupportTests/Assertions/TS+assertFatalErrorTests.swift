@@ -1,5 +1,5 @@
-import XCTest
 import Support
+import XCTest
 @testable import TestingSupport
 
 class TSAssertFatalErrorTests: XCTestCase {

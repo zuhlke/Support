@@ -1,7 +1,7 @@
-import XCTest
+import Combine
 import Support
 import TestingSupport
-import Combine
+import XCTest
 
 class PublisherTests: XCTestCase {
     

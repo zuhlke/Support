@@ -13,8 +13,7 @@ extension NSFileCoordinator {
         coordinate(readingItemAt: url, options: options, error: &nsError) { url in
             do {
                 output = try reader(url)
-            }
-            catch {
+            } catch {
                 err = error
             }
         }

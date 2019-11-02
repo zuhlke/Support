@@ -1,7 +1,7 @@
-import XCTest
+import Combine
 import Support
 import TestingSupport
-import Combine
+import XCTest
 
 class FileAccessCoordinatorTests: XCTestCase {
     
@@ -40,7 +40,7 @@ class FileAccessCoordinatorTests: XCTestCase {
             
             coordinator.write(data, to: url) { result in
                 switch result {
-                case .success(_):
+                case .success:
                     do {
                         let dataWritten = try Data(contentsOf: url)
                         XCTAssertEqual(data, dataWritten)
@@ -68,9 +68,9 @@ class FileAccessCoordinatorTests: XCTestCase {
             
             coordinator.write(data, to: url, options: .withoutOverwriting) { result in
                 switch result {
-                case .success(_):
+                case .success:
                     XCTFail("Write should have failed as file already exists")
-                case .failure(_):
+                case .failure:
                     break
                 }
                 expectation.fulfill()
@@ -120,4 +120,3 @@ extension FileAccessCoordinatorTests {
     }
     
 }
-

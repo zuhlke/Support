@@ -59,7 +59,6 @@ public extension Thread {
     
 }
 
-
 private extension Thread {
     
     typealias TrapHandler = () -> Never

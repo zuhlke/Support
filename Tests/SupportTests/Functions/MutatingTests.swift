@@ -1,6 +1,6 @@
 import Foundation
-import XCTest
 import Support
+import XCTest
 
 class MutatingTests: XCTestCase {
     

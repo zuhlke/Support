@@ -1,5 +1,5 @@
-import XCTest
 import Support
+import XCTest
 @testable import TestingSupport
 
 class CombinedDifferenceTests: XCTestCase {
@@ -45,7 +45,7 @@ class CombinedDifferenceTests: XCTestCase {
 private extension Array where Element == UUID {
     
     static func random(length: Int) -> [UUID] {
-        return (0..<length).map { _ in UUID() }
+        return (0 ..< length).map { _ in UUID() }
     }
     
 }

@@ -11,7 +11,6 @@ struct CombinedDifference<Element: Equatable>: Equatable {
     var change: Change
 }
 
-
 extension BidirectionalCollection where Element: Equatable {
     /// Returns an array of all elements from receiver and another collection, along with how they have changed from one to another.
     func combinedDifference<C>(from other: C) -> [CombinedDifference<Element>] where C: BidirectionalCollection, C.Element == Self.Element {

@@ -1,5 +1,5 @@
-import XCTest
 import Support
+import XCTest
 
 /// Asserts that the provided closure calls `Thread.fatalError`.
 ///

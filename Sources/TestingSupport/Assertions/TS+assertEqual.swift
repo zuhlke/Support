@@ -6,7 +6,7 @@ extension TS {
     ///
     /// Functionally, this is equivalent to `XCTAssertEqual`. However, if the values are not equal, this method provides better diagnostics by generating a diff
     /// between the `actual` and `expected` values.
-    public static func assert<T>(_ actual: @autoclosure () throws -> T, equals expected: @autoclosure () throws -> T, _ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) where T : Equatable {
+    public static func assert<T>(_ actual: @autoclosure () throws -> T, equals expected: @autoclosure () throws -> T, _ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) where T: Equatable {
         do {
             let actualValue = try actual()
             let expectedValue = try expected()
@@ -91,7 +91,7 @@ private func descriptionObject(for subject: Any) -> Description {
         var dictionary = [String: Description]()
         var instanceMirror: Mirror? = mirror
         while instanceMirror != nil {
-            instanceMirror?.children.forEach { (key, value) in
+            instanceMirror?.children.forEach { key, value in
                 if let key = key {
                     dictionary[key] = descriptionObject(for: value)
                 }
@@ -122,13 +122,13 @@ private func descriptionObject(for subject: Any) -> Description {
         let array = mirror.children
             .sorted { "\($0.1)" < "\($1.1)" } // doesn’t matter as long as it’s predictable
             .map { _, child in
-            descriptionObject(for: child)
-        }
+                descriptionObject(for: child)
+            }
         return .array(array)
         
     case .dictionary:
         var dictionary = [String: Description]()
-        mirror.children.forEach { (_, child) in
+        mirror.children.forEach { _, child in
             var key: String?
             var value: Any?
             Mirror(reflecting: child).children.forEach { label, subchild in
@@ -146,11 +146,11 @@ private func descriptionObject(for subject: Any) -> Description {
             }
         }
         return .dictionary(dictionary)
-
+        
     case .enum, .tuple:
         // Not worth the effort at the moment. Refine if the need comes up.
         return .string("\(subject)")
-
+        
     @unknown default:
         return .string("\(subject)")
     }

@@ -1,6 +1,6 @@
-import XCTest
 import Support
 import TestingSupport
+import XCTest
 
 class ResultTests: XCTestCase {
     

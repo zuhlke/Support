@@ -1,5 +1,5 @@
-import XCTest
 import Support
+import XCTest
 @testable import TestingSupport
 
 class TSFailTests: XCTestCase {
@@ -12,7 +12,7 @@ class TSFailTests: XCTestCase {
             TS.fail(message, file: file, line: line)
         }
         let expected = [
-            TS.Failure(message: message, file: file.description, line: line)
+            TS.Failure(message: message, file: file.description, line: line),
         ]
         XCTAssertEqual(captured, expected)
     }

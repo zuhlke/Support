@@ -1,5 +1,5 @@
-import XCTest
 import Support
+import XCTest
 @testable import TestingSupport
 
 class TSAssertEqualTests: XCTestCase {
@@ -14,9 +14,7 @@ class TSAssertEqualTests: XCTestCase {
             do { // boilderplate as compiler _thinks_ we’re a throwing closure
                 TS.assert(try fail(), equals: 2)
                 _ = try fail()
-            } catch {
-                
-            }
+            } catch {}
         }
     }
     
@@ -25,57 +23,55 @@ class TSAssertEqualTests: XCTestCase {
             do { // boilderplate as compiler _thinks_ we’re a throwing closure
                 TS.assert(2, equals: try fail())
                 _ = try fail()
-            } catch {
-                
-            }
+            } catch {}
         }
     }
-
+    
     func testIntegerInequalityResult() {
         let message =
-        """
-        Difference from expectation:
-        --- 6
-        +++ 5
-        """
+            """
+            Difference from expectation:
+            --- 6
+            +++ 5
+            """
         TS.assertFailsOnces(expectedMessage: message) {
             TS.assert(5, equals: 6)
         }
     }
-
+    
     func testOneLineInequalityResult() {
         let message =
-        """
-        Difference from expectation:
-        --- 6
-        +++ 5
-        """
+            """
+            Difference from expectation:
+            --- 6
+            +++ 5
+            """
         TS.assertFailsOnces(expectedMessage: message) {
             TS.assert("5", equals: "6")
         }
     }
-
+    
     func testMultiLineInequalityResult() {
         let actual =
-        """
-        line 1
-        actual line 2
-        line 3
-        """
-        let expected =
-        """
-        line 1
-        expected line 2
-        line 3
-        """
-        let message =
-        """
-        Difference from expectation:
+            """
             line 1
-        --- expected line 2
-        +++ actual line 2
+            actual line 2
             line 3
-        """
+            """
+        let expected =
+            """
+            line 1
+            expected line 2
+            line 3
+            """
+        let message =
+            """
+            Difference from expectation:
+                line 1
+            --- expected line 2
+            +++ actual line 2
+                line 3
+            """
         TS.assertFailsOnces(expectedMessage: message) {
             TS.assert(actual, equals: expected)
         }
@@ -83,16 +79,16 @@ class TSAssertEqualTests: XCTestCase {
     
     func testOptionalInequalityResult() {
         let message =
-        """
-        Difference from expectation:
-        --- <Null>
-        +++ 5
-        """
+            """
+            Difference from expectation:
+            --- <Null>
+            +++ 5
+            """
         TS.assertFailsOnces(expectedMessage: message) {
             TS.assert(5, equals: nil)
         }
     }
-
+    
     func testDictionaryInequalityResult() {
         let actual = [
             "day": "Sunday",
@@ -103,14 +99,14 @@ class TSAssertEqualTests: XCTestCase {
             "day": "Monday",
         ]
         let message =
-        """
-        Difference from expectation:
-            {
-        ---   "day" : "Monday",
-        +++   "day" : "Sunday",
-              "drink" : "Beer"
-            }
-        """
+            """
+            Difference from expectation:
+                {
+            ---   "day" : "Monday",
+            +++   "day" : "Sunday",
+                  "drink" : "Beer"
+                }
+            """
         TS.assertFailsOnces(expectedMessage: message) {
             TS.assert(actual, equals: expected)
         }
@@ -126,15 +122,15 @@ class TSAssertEqualTests: XCTestCase {
             "day": "Monday",
         ]
         let message =
-        """
-        Difference from expectation:
-            {
-        ---   "day" : "Monday",
-        ---   "drink" : null
-        +++   "day" : "Sunday",
-        +++   "drink" : "Beer"
-            }
-        """
+            """
+            Difference from expectation:
+                {
+            ---   "day" : "Monday",
+            ---   "drink" : null
+            +++   "day" : "Sunday",
+            +++   "drink" : "Beer"
+                }
+            """
         TS.assertFailsOnces(expectedMessage: message) {
             TS.assert(actual, equals: expected)
         }
@@ -150,19 +146,19 @@ class TSAssertEqualTests: XCTestCase {
             "Jane",
         ]
         let message =
-        """
-        Difference from expectation:
-            [
-              "Adam",
-        ---   "Jane"
-        +++   "John"
-            ]
-        """
+            """
+            Difference from expectation:
+                [
+                  "Adam",
+            ---   "Jane"
+            +++   "John"
+                ]
+            """
         TS.assertFailsOnces(expectedMessage: message) {
             TS.assert(actual, equals: expected)
         }
     }
-
+    
     func testSetInequalityResult() {
         let actual = Set([
             "Adam",
@@ -173,14 +169,14 @@ class TSAssertEqualTests: XCTestCase {
             "Jane",
         ])
         let message =
-        """
-        Difference from expectation:
-            [
-              "Adam",
-        ---   "Jane"
-        +++   "John"
-            ]
-        """
+            """
+            Difference from expectation:
+                [
+                  "Adam",
+            ---   "Jane"
+            +++   "John"
+                ]
+            """
         TS.assertFailsOnces(expectedMessage: message) {
             TS.assert(actual, equals: expected)
         }
@@ -190,55 +186,55 @@ class TSAssertEqualTests: XCTestCase {
         let actual = MyStruct(firstName: "John", lastName: "Doe")
         let expected = MyStruct(firstName: "Jane", lastName: "Doe")
         let message =
-        """
-        Difference from expectation:
-            {
-        ---   "firstName" : "Jane",
-        +++   "firstName" : "John",
-              "lastName" : "Doe"
-            }
-        """
+            """
+            Difference from expectation:
+                {
+            ---   "firstName" : "Jane",
+            +++   "firstName" : "John",
+                  "lastName" : "Doe"
+                }
+            """
         TS.assertFailsOnces(expectedMessage: message) {
             TS.assert(actual, equals: expected)
         }
-
+        
     }
     
     func testCustomClassInequalityResult() {
         let actual = MyClass(firstName: "John", lastName: "Doe")
         let expected = MyClass(firstName: "Jane", lastName: "Doe")
         let message =
-        """
-        Difference from expectation:
-            {
-        ---   "firstName" : "Jane",
-        +++   "firstName" : "John",
-              "lastName" : "Doe"
-            }
-        """
+            """
+            Difference from expectation:
+                {
+            ---   "firstName" : "Jane",
+            +++   "firstName" : "John",
+                  "lastName" : "Doe"
+                }
+            """
         TS.assertFailsOnces(expectedMessage: message) {
             TS.assert(actual, equals: expected)
         }
-
+        
     }
     
     func testCustomSubclassInequalityResult() {
         let actual = MySubclass(firstName: "John", lastName: "Doe", department: "Mobile")
         let expected = MySubclass(firstName: "Jane", lastName: "Doe", department: "Mobile")
         let message =
-        """
-        Difference from expectation:
-            {
-              "department" : "Mobile",
-        ---   "firstName" : "Jane",
-        +++   "firstName" : "John",
-              "lastName" : "Doe"
-            }
-        """
+            """
+            Difference from expectation:
+                {
+                  "department" : "Mobile",
+            ---   "firstName" : "Jane",
+            +++   "firstName" : "John",
+                  "lastName" : "Doe"
+                }
+            """
         TS.assertFailsOnces(expectedMessage: message) {
             TS.assert(actual, equals: expected)
         }
-
+        
     }
     
 }
@@ -262,7 +258,7 @@ private class MyClass: Equatable {
         self.lastName = lastName
     }
     
-    static func == (lhs: MyClass, rhs: MyClass) -> Bool {
+    static func == (_: MyClass, _: MyClass) -> Bool {
         return false // don’t care. Just trigger diffing
     }
 }
@@ -275,7 +271,7 @@ private class MySubclass: MyClass {
         super.init(firstName: firstName, lastName: lastName)
     }
     
-    static func == (lhs: MySubclass, rhs: MySubclass) -> Bool {
+    static func == (_: MySubclass, _: MySubclass) -> Bool {
         return false // don’t care. Just trigger diffing
     }
 }

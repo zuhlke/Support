@@ -4,7 +4,7 @@ import Foundation
 public protocol Subscriptable {
     associatedtype Key
     associatedtype Value
-    subscript(key: Key) -> Value? { get set }
+    subscript(_: Key) -> Value? { get set }
 }
 
 extension Subscriptable {
@@ -13,7 +13,7 @@ extension Subscriptable {
     /// - Parameter key: The key to retrieve the value for.
     /// - Parameter createValue: A closure to create a new value if one doesn’t already exist.
     @inlinable
-    mutating public func get(_ key: Key, createWith createValue: () -> Value) -> Value {
+    public mutating func get(_ key: Key, createWith createValue: () -> Value) -> Value {
         if let value = self[key] {
             return value
         } else {
