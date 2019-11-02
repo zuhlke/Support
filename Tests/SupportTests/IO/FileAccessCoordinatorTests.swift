@@ -82,7 +82,6 @@ class FileAccessCoordinatorTests: XCTestCase {
     
 }
 
-@available(macOS 10.15, *)
 extension FileAccessCoordinatorTests {
     
     func testReadingWithCombine() throws {
