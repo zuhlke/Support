@@ -38,8 +38,10 @@ extension Publisher {
         while
             deadline > Date(),
             capturedResult == nil,
-            RunLoop.current.run(mode: .default, before: deadline) {
-                // do nothing
+            RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: 0.1)) {
+                if let capturedResult = capturedResult {
+                    return capturedResult
+                }
         }
         if let capturedResult = capturedResult {
             return capturedResult
