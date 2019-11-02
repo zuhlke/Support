@@ -12,11 +12,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Build
+    - name: Prepare Xcode
       run: |
         sudo xcode-select --switch /Applications/Xcode_11.1.app
         xcodebuild -version
         swift --version
-        swift build -v
     - name: Run tests
-      run: swift test -v
+      run: xcodebuild test -workspace .swiftpm/xcode/package.xcworkspace -scheme Support-Package -destination "name=iPhone 11 Pro"
