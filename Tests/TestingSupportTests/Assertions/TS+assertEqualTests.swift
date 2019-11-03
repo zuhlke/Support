@@ -4,6 +4,8 @@ import XCTest
 
 class TSAssertEqualTests: XCTestCase {
     
+    // MARK: Equality Check
+    
     func testEqualityCheckPasses() {
         let uuid = UUID()
         TS.assert(uuid, equals: uuid)
@@ -26,6 +28,8 @@ class TSAssertEqualTests: XCTestCase {
             } catch {}
         }
     }
+    
+    // MARK: Diffing
     
     func testIntegerInequalityResult() {
         let message =
@@ -235,6 +239,34 @@ class TSAssertEqualTests: XCTestCase {
             TS.assert(actual, equals: expected)
         }
         
+    }
+    
+    // MARK: Normalization
+    
+    func testIdentityNormalizationWithEqualValues() {
+        let uuid = UUID()
+        TS.assert(uuid, equals: uuid, after: Normalization { $0 })
+    }
+    
+    func testIdentityNormalizationWithUnequalValues() {
+        let message =
+            """
+            Difference from expectation:
+            --- 6
+            +++ 5
+            """
+        TS.assertFailsOnces(expectedMessage: message) {
+            TS.assert(5, equals: 6, after: Normalization { $0 })
+        }
+    }
+    
+    func testNormalizationWithUnequalValues() {
+        TS.assert(5, equals: 6, after: Normalization { _ in 5 })
+    }
+    
+    func testNormalizationWithMultipleNormalizers() {
+        TS.assert(5, equals: 6, after: Normalization { $0 }, Normalization { _ in 5 })
+        TS.assert(5, equals: 6, after: Normalization { _ in 5 }, Normalization { $0 })
     }
     
 }
