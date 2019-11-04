@@ -1,15 +1,13 @@
 import Foundation
 
-private let contentTypeHeaderName = "content-type"
-
 public struct HTTPRemote {
     
-    private var host: String
-    private var path: String
-    private var port: Int?
-    private var user: String?
-    private var password: String?
-    private var headers: [String: String]
+    public let host: String
+    public let path: String
+    public let port: Int?
+    public let user: String?
+    public let password: String?
+    public let headers: [String: String]
     
     public init(
         host: String,
@@ -24,7 +22,7 @@ public struct HTTPRemote {
             Thread.fatalError("`path` must start with `/` if it’s not empty.")
         }
         
-        guard !headers.containsKey(contentTypeHeaderName, options: .caseInsensitive) else {
+        guard !headers.containsKey(HTTPRequest.contentTypeHeaderName, options: .caseInsensitive) else {
             Thread.fatalError("content-type header must not be set on a remote. Provide this value for each request.")
         }
         
@@ -68,7 +66,7 @@ extension HTTPRemote {
                 .forEach { urlRequest.addValue($0.value, forHTTPHeaderField: $0.key) }
             if let body = request.body {
                 urlRequest.httpBody = body.content
-                urlRequest.addValue(body.type, forHTTPHeaderField: "content-type")
+                urlRequest.addValue(body.type, forHTTPHeaderField: HTTPRequest.contentTypeHeaderName)
             }
         }
     }
@@ -89,10 +87,6 @@ private extension Dictionary where Key == String {
             lazy
             .map { $0.key.lowercased() }
         )
-    }
-    
-    func containsKey(_ key: String, options: String.CompareOptions = []) -> Bool {
-        keys.contains(where: { $0.compare(key, options: options) == .orderedSame })
     }
     
 }

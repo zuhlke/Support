@@ -113,16 +113,4 @@ class HTTPRemoteTests: XCTestCase {
         XCTAssertThrowsError(try remote.urlRequest(from: request))
     }
     
-//    func testRemoteQueryItemsCanNotBeOverriddenByRequest() {
-//        let remote = HTTPRemote(
-//            host: "example.com",
-//            path: "",
-//            queryParameters: ["verbose": "true"]
-//        )
-//
-//        let request = HTTPRequest.get("/path", queryParameters: ["verbose": "false"])
-//
-//        XCTAssertThrowsError(try remote.urlRequest(from: request))
-//    }
-    
 }

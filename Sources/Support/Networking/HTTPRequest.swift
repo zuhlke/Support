@@ -2,12 +2,12 @@ import Foundation
 
 public struct HTTPRequest: Equatable {
     
-    let method: HTTPMethod
-    let path: String
-    let body: Body?
-    let fragment: String?
-    let queryParameters: [String: String]
-    let headers: [String: String]
+    public let method: HTTPMethod
+    public let path: String
+    public let body: Body?
+    public let fragment: String?
+    public let queryParameters: [String: String]
+    public let headers: [String: String]
     
     public init(
         method: HTTPMethod,
@@ -28,6 +28,10 @@ public struct HTTPRequest: Equatable {
         
         if !hasBody, method.mustHaveBody {
             Thread.fatalError("Method \(method) requires a body.")
+        }
+        
+        guard !headers.containsKey(HTTPRequest.contentTypeHeaderName, options: .caseInsensitive) else {
+            Thread.fatalError("content-type header must not be set separately. Set the content type on the body.")
         }
         
         self.method = method
@@ -91,5 +95,11 @@ extension HTTPRequest {
             headers: headers
         )
     }
+    
+}
+
+extension HTTPRequest {
+    
+    static let contentTypeHeaderName = "content-type"
     
 }

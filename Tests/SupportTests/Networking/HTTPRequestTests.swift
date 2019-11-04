@@ -23,6 +23,12 @@ class HTTPRequestTests: XCTestCase {
         }
     }
     
+    func testCanNotCreateRequestWithContentTypeHeader() {
+        TS.assertFatalError {
+            _ = HTTPRequest(method: .get, path: "", body: nil, headers: ["Content-Type": "a"])
+        }
+    }
+    
     func testCanNotCreatePostRequestWithoutBody() {
         TS.assertFatalError {
             _ = HTTPRequest(method: .post, path: "", body: nil)
