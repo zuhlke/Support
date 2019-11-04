@@ -2,13 +2,20 @@ import Foundation
 
 public struct HTTPRequest: Equatable {
     
+    let method: HTTPMethod
+    let path: String
+    let body: Body?
+    let fragment: String?
+    let queryParameters: [String: String]
+    let headers: [String: String]
+    
     public init(
         method: HTTPMethod,
         path: String,
         body: Body?,
-        fragment _: String? = nil,
-        queryParameters _: [String: String] = [:],
-        headers _: [String: String] = [:]
+        fragment: String? = nil,
+        queryParameters: [String: String] = [:],
+        headers: [String: String] = [:]
     ) {
         guard path.isEmpty || path.starts(with: "/") else {
             Thread.fatalError("`path` must start with `/` if it’s not empty.")
@@ -22,6 +29,13 @@ public struct HTTPRequest: Equatable {
         if !hasBody, method.mustHaveBody {
             Thread.fatalError("Method \(method) requires a body.")
         }
+        
+        self.method = method
+        self.path = path
+        self.body = body
+        self.fragment = fragment
+        self.queryParameters = queryParameters
+        self.headers = headers
     }
     
 }
@@ -52,7 +66,7 @@ extension HTTPRequest {
         headers: [String: String] = [:]
     ) -> HTTPRequest {
         HTTPRequest(
-            method: .get,
+            method: .post,
             path: path,
             body: body,
             fragment: fragment,
@@ -69,7 +83,7 @@ extension HTTPRequest {
         headers: [String: String] = [:]
     ) -> HTTPRequest {
         HTTPRequest(
-            method: .get,
+            method: .put,
             path: path,
             body: body,
             fragment: fragment,

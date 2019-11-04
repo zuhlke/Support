@@ -1,8 +1,13 @@
 import Foundation
 
 extension HTTPRequest {
-    public struct Body {
-        public init(content _: Data, type _: String) {}
+    public struct Body: Equatable {
+        var content: Data
+        var type: String
+        public init(content: Data, type: String) {
+            self.content = content
+            self.type = type
+        }
     }
 }
 
