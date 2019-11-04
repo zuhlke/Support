@@ -9,3 +9,4 @@
 --disable blankLinesAtStartOfScope
 --disable blankLinesAtEndOfScope
 --disable hoistPatternLet
+--disable unusedArguments

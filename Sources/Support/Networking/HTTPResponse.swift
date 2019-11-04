@@ -45,8 +45,9 @@ extension HTTPResponse {
 private extension HTTPURLResponse {
     
     var headers: [String: String] {
-        Dictionary(uniqueKeysWithValues: allHeaderFields
-            .map { (($0.key as! String).lowercased(), $0.value as! String )}
+        Dictionary(
+            uniqueKeysWithValues: allHeaderFields
+                .map { (($0.key as! String).lowercased(), $0.value as! String) }
         )
     }
     

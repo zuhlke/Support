@@ -13,7 +13,7 @@ class HTTPResponseTests: XCTestCase {
             httpVersion: nil,
             headerFields: [
                 "content-type": "text/plain",
-                "header": "value"
+                "header": "value",
             ]
         )!
         let body = "body".data(using: .utf8)!
@@ -22,7 +22,7 @@ class HTTPResponseTests: XCTestCase {
             statusCode: 200,
             body: HTTPResponse.Body(content: body, type: "text/plain"),
             headers: [
-                "header": "value"
+                "header": "value",
             ]
         )
         TS.assert(actual, equals: expected)
@@ -36,7 +36,7 @@ class HTTPResponseTests: XCTestCase {
             httpVersion: nil,
             headerFields: [
                 "Content-Type": "text/plain",
-                "header": "value"
+                "header": "value",
             ]
         )!
         let body = "body".data(using: .utf8)!
@@ -45,7 +45,7 @@ class HTTPResponseTests: XCTestCase {
             statusCode: 200,
             body: HTTPResponse.Body(content: body, type: "text/plain"),
             headers: [
-                "header": "value"
+                "header": "value",
             ]
         )
         TS.assert(actual, equals: expected)
@@ -58,7 +58,7 @@ class HTTPResponseTests: XCTestCase {
             statusCode: 200,
             httpVersion: nil,
             headerFields: [
-                "Header": "value"
+                "Header": "value",
             ]
         )!
         let body = "body".data(using: .utf8)!
@@ -67,7 +67,7 @@ class HTTPResponseTests: XCTestCase {
             statusCode: 200,
             body: HTTPResponse.Body(content: body, type: nil),
             headers: [
-                "header": "value"
+                "header": "value",
             ]
         )
         TS.assert(actual, equals: expected)
