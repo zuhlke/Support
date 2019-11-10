@@ -36,13 +36,13 @@ public struct HTTPRemote {
     
 }
 
-extension HTTPRemote {
+extension HTTPRemote: URLRequestProviding {
     
     private enum Errors: Error {
         case requestOverridesHeaders(Set<String>)
     }
     
-    func urlRequest(from request: HTTPRequest) throws -> URLRequest {
+    public func urlRequest(from request: HTTPRequest) throws -> URLRequest {
         try validate(request)
         
         let url = mutating(URLComponents()) {
