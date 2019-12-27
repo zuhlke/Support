@@ -1,8 +1,11 @@
 import XCTest
+import TestingSupport
 import Combine
 import Support
 
 class HTTPInterceptProtocolTests: XCTestCase {
+    
+    // MARK: canInit
     
     func testCanNotInitNonHTTPSRequests() {
         let request = URLRequest(url: URL(string: "ftp://example.com")!)
@@ -13,13 +16,20 @@ class HTTPInterceptProtocolTests: XCTestCase {
         let request = URLRequest(url: URL(string: "https://example.com")!)
         XCTAssertFalse(HTTPInterceptProtocol.canInit(with: request))
     }
-    ç
+    
     func testCanInitForRequestWithHandlerInstalled() {
         let registration = HTTPInterceptProtocol.register(Client())
         let request = try! registration.remote.urlRequest(from: .get(""))
         XCTAssert(HTTPInterceptProtocol.canInit(with: request))
         registration.deregister()
         XCTAssertFalse(HTTPInterceptProtocol.canInit(with: request))
+    }
+    
+    func testInitThrowsForRequestsWithoutClient() {
+        let request = URLRequest(url: URL(string: "https://example.com")!)
+        TS.assertFatalError {
+            _ = HTTPInterceptProtocol(request: request, cachedResponse: nil, client: nil)
+        }
     }
     
 }
