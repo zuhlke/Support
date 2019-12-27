@@ -14,18 +14,18 @@ extension HTTPRequest {
 extension HTTPRequest.Body {
     
     public static func plain(_ data: Data) -> HTTPRequest.Body {
-        return HTTPRequest.Body(
+        HTTPRequest.Body(
             content: data,
             type: "text/plain"
         )
     }
     
     public static func plain(_ text: String) -> HTTPRequest.Body {
-        return .plain(text.data(using: .utf8)!)
+        .plain(text.data(using: .utf8)!)
     }
     
     public static func json(_ data: Data) -> HTTPRequest.Body {
-        return HTTPRequest.Body(
+        HTTPRequest.Body(
             content: data,
             type: "application/json"
         )

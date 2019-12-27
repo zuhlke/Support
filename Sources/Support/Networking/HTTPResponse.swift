@@ -1,15 +1,6 @@
 import Foundation
 
 public struct HTTPResponse: Equatable {
-    public struct Body: Equatable {
-        public let content: Data
-        public let type: String?
-        public init(content: Data, type: String?) {
-            self.content = content
-            self.type = type
-        }
-    }
-    
     public let statusCode: Int
     public let body: Body
     public let headers: [String: String]
