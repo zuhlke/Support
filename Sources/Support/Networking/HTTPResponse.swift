@@ -31,6 +31,10 @@ extension HTTPResponse {
         )
     }
     
+    public static func ok(with body: HTTPResponse.Body) -> HTTPResponse {
+        HTTPResponse(statusCode: 200, body: body)
+    }
+    
 }
 
 private extension HTTPURLResponse {

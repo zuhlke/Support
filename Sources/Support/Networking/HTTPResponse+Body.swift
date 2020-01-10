@@ -13,7 +13,12 @@ extension HTTPResponse {
 
 extension HTTPResponse.Body {
     
-    public static func data(_ data: Data) -> HTTPResponse.Body {
+    public static let empty = HTTPResponse.Body(
+        content: Data(),
+        type: nil
+    )
+    
+    public static func untyped(_ data: Data) -> HTTPResponse.Body {
         HTTPResponse.Body(
             content: data,
             type: nil
