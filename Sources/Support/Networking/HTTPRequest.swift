@@ -30,8 +30,14 @@ public struct HTTPRequest: Equatable {
             Thread.fatalError("Method \(method) requires a body.")
         }
         
-        guard !headers.containsKey(HTTPRequest.contentTypeHeaderName, options: .caseInsensitive) else {
-            Thread.fatalError("content-type header must not be set separately. Set the content type on the body.")
+        let bodyHeaders = [
+            HTTPRequest.contentTypeHeaderName,
+            HTTPRequest.contentLengthHeaderName,
+        ]
+        for header in bodyHeaders {
+            guard !headers.containsKey(header, options: .caseInsensitive) else {
+                Thread.fatalError("\(header) header must not be set separately. Set the content type on the body.")
+            }
         }
         
         self.method = method
@@ -101,5 +107,6 @@ extension HTTPRequest {
 extension HTTPRequest {
     
     static let contentTypeHeaderName = "content-type"
-    
+    static let contentLengthHeaderName = "content-length"
+
 }

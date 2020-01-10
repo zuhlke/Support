@@ -76,6 +76,7 @@ class HTTPRemoteTests: XCTestCase {
                 $0.addValue("1", forHTTPHeaderField: "client_id")
                 $0.addValue("1234", forHTTPHeaderField: "state")
                 $0.addValue("text/plain", forHTTPHeaderField: "content-type")
+                $0.addValue("4", forHTTPHeaderField: "content-length")
                 $0.httpBody = "body".data(using: .utf8)
                 $0.httpMethod = "POST"
             }

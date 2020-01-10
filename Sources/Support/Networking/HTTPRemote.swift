@@ -68,6 +68,7 @@ extension HTTPRemote: URLRequestProviding {
                 urlRequest.httpBody = body.content
                 urlRequest.httpMethod = request.method.rawValue
                 urlRequest.addValue(body.type, forHTTPHeaderField: HTTPRequest.contentTypeHeaderName)
+                urlRequest.addValue("\(body.content.count)", forHTTPHeaderField: HTTPRequest.contentLengthHeaderName)
             }
         }
     }
