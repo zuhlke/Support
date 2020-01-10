@@ -77,6 +77,7 @@ class HTTPRemoteTests: XCTestCase {
                 $0.addValue("1234", forHTTPHeaderField: "state")
                 $0.addValue("text/plain", forHTTPHeaderField: "content-type")
                 $0.httpBody = "body".data(using: .utf8)
+                $0.httpMethod = "POST"
             }
             TS.assert(actual, equals: expected, after: .applying(URLRequest.normalizingForTesting))
         } catch {

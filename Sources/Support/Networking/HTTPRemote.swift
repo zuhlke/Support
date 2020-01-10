@@ -66,6 +66,7 @@ extension HTTPRemote: URLRequestProviding {
                 .forEach { urlRequest.addValue($0.value, forHTTPHeaderField: $0.key) }
             if let body = request.body {
                 urlRequest.httpBody = body.content
+                urlRequest.httpMethod = request.method.rawValue
                 urlRequest.addValue(body.type, forHTTPHeaderField: HTTPRequest.contentTypeHeaderName)
             }
         }
