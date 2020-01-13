@@ -7,7 +7,7 @@ public struct HTTPRequest: Equatable {
     public let body: Body?
     public let fragment: String?
     public let queryParameters: [String: String]
-    public let headers: [String: String]
+    public let headers: HTTPHeaders
     
     public init(
         method: HTTPMethod,
@@ -15,7 +15,7 @@ public struct HTTPRequest: Equatable {
         body: Body?,
         fragment: String? = nil,
         queryParameters: [String: String] = [:],
-        headers: [String: String] = [:]
+        headers fields: [String: String] = [:]
     ) {
         guard path.isEmpty || path.starts(with: "/") else {
             Thread.fatalError("`path` must start with `/` if it’s not empty.")
@@ -30,13 +30,11 @@ public struct HTTPRequest: Equatable {
             Thread.fatalError("Method \(method) requires a body.")
         }
         
-        let bodyHeaders = [
-            HTTPHeaderFieldName.contentType.lowercaseName,
-            HTTPHeaderFieldName.contentLength.lowercaseName,
-        ]
-        for header in bodyHeaders {
-            guard !headers.containsKey(header, options: .caseInsensitive) else {
-                Thread.fatalError("\(header) header must not be set separately. Set the content type on the body.")
+        let headers = HTTPHeaders(fields: fields)
+        
+        for bodyHeader in Self.bodyHeaders {
+            guard !headers.hasValue(for: bodyHeader) else {
+                Thread.fatalError("\(bodyHeader.lowercaseName) header must not be set separately. Set the content type on the body.")
             }
         }
         
@@ -101,5 +99,14 @@ extension HTTPRequest {
             headers: headers
         )
     }
+    
+}
+
+private extension HTTPRequest {
+    
+    static let bodyHeaders: [HTTPHeaderFieldName] = [
+        .contentLength,
+        .contentType,
+    ]
     
 }

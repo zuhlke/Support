@@ -41,7 +41,7 @@ public struct HTTPRemote {
 extension HTTPRemote: URLRequestProviding {
     
     private enum Errors: Error {
-        case requestOverridesHeaders(Set<String>)
+        case requestOverridesHeaders(Set<HTTPHeaderFieldName>)
     }
     
     public func urlRequest(from request: HTTPRequest) throws -> URLRequest {
@@ -62,10 +62,10 @@ extension HTTPRemote: URLRequestProviding {
         }.url!
         
         return mutating(URLRequest(url: url)) { urlRequest in
-            [headers.stringFields, request.headers]
+            [headers.fields, request.headers.fields]
                 .lazy
                 .flatMap { $0 }
-                .forEach { urlRequest.addValue($0.value, forHTTPHeaderField: $0.key) }
+                .forEach { urlRequest.addValue($0.value, forHTTPHeaderField: $0.key.lowercaseName) }
             if let body = request.body {
                 urlRequest.httpBody = body.content
                 urlRequest.httpMethod = request.method.rawValue
@@ -76,7 +76,8 @@ extension HTTPRemote: URLRequestProviding {
     }
     
     private func validate(_ request: HTTPRequest) throws {
-        let overriddenHeaders = headers.stringFields.lowercasedKeys.intersection(request.headers.lowercasedKeys)
+        let overriddenHeaders = Set(headers.fields.keys)
+            .intersection(request.headers.fields.keys)
         guard overriddenHeaders.isEmpty else {
             throw Errors.requestOverridesHeaders(overriddenHeaders)
         }
@@ -90,16 +91,5 @@ private extension HTTPRemote {
         .contentLength,
         .contentType,
     ]
-    
-}
-
-private extension Dictionary where Key == String {
-    
-    var lowercasedKeys: Set<String> {
-        Set(
-            lazy
-            .map { $0.key.lowercased() }
-        )
-    }
     
 }
