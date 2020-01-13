@@ -24,7 +24,7 @@ public struct HTTPRemote {
         
         headers = HTTPHeaders(fields: fields)
         
-        guard !fields.containsKey(HTTPHeaderFieldName.contentType.lowercaseName, options: .caseInsensitive) else {
+        guard !headers.hasValue(for: .contentLength) else {
             Thread.fatalError("content-type header must not be set on a remote. Provide this value for each request.")
         }
         

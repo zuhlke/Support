@@ -1,5 +1,6 @@
 import Foundation
 
+@dynamicMemberLookup
 public struct HTTPHeaders: Equatable {
     
     public var fields: [HTTPHeaderFieldName: String]
@@ -19,4 +20,18 @@ public struct HTTPHeaders: Equatable {
         }
         self.init(fields: fields)
     }
+    
+    public subscript<Value>(dynamicMember keyPath: WritableKeyPath<[HTTPHeaderFieldName: String], Value>) -> Value {
+        get {
+            fields[keyPath: keyPath]
+        }
+        set {
+            fields[keyPath: keyPath] = newValue
+        }
+    }
+    
+    public func hasValue(for name: HTTPHeaderFieldName) -> Bool {
+        fields.keys.contains(name)
+    }
+    
 }
