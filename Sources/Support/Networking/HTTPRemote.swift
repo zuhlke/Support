@@ -22,7 +22,9 @@ public struct HTTPRemote {
             Thread.fatalError("`path` must start with `/` if it’s not empty.")
         }
         
-        guard !fields.containsKey(HTTPRequest.contentTypeHeaderName, options: .caseInsensitive) else {
+        headers = HTTPHeaders(fields: fields)
+        
+        guard !fields.containsKey(HTTPHeaderFieldName.contentType.lowercaseName, options: .caseInsensitive) else {
             Thread.fatalError("content-type header must not be set on a remote. Provide this value for each request.")
         }
         
@@ -31,7 +33,6 @@ public struct HTTPRemote {
         self.port = port
         self.user = user
         self.password = password
-        headers = HTTPHeaders(fields: fields)
     }
     
 }
@@ -67,8 +68,8 @@ extension HTTPRemote: URLRequestProviding {
             if let body = request.body {
                 urlRequest.httpBody = body.content
                 urlRequest.httpMethod = request.method.rawValue
-                urlRequest.addValue(body.type, forHTTPHeaderField: HTTPRequest.contentTypeHeaderName)
-                urlRequest.addValue("\(body.content.count)", forHTTPHeaderField: HTTPRequest.contentLengthHeaderName)
+                urlRequest.addValue(body.type, forHTTPHeaderField: HTTPHeaderFieldName.contentType.lowercaseName)
+                urlRequest.addValue("\(body.content.count)", forHTTPHeaderField: HTTPHeaderFieldName.contentLength.lowercaseName)
             }
         }
     }

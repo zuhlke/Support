@@ -20,7 +20,7 @@ extension HTTPResponse {
     
     public init(httpUrlResponse: HTTPURLResponse, bodyContent: Data) {
         var headers = httpUrlResponse.headers
-        let contentType = headers.removeValue(forKey: HTTPRequest.contentTypeHeaderName)
+        let contentType = headers.removeValue(forKey: HTTPHeaderFieldName.contentType.lowercaseName)
         self.init(
             statusCode: httpUrlResponse.statusCode,
             body: HTTPResponse.Body(

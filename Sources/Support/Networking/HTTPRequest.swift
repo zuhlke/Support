@@ -31,8 +31,8 @@ public struct HTTPRequest: Equatable {
         }
         
         let bodyHeaders = [
-            HTTPRequest.contentTypeHeaderName,
-            HTTPRequest.contentLengthHeaderName,
+            HTTPHeaderFieldName.contentType.lowercaseName,
+            HTTPHeaderFieldName.contentLength.lowercaseName,
         ]
         for header in bodyHeaders {
             guard !headers.containsKey(header, options: .caseInsensitive) else {
@@ -101,12 +101,5 @@ extension HTTPRequest {
             headers: headers
         )
     }
-    
-}
-
-extension HTTPRequest {
-    
-    static let contentTypeHeaderName = "content-type"
-    static let contentLengthHeaderName = "content-length"
     
 }

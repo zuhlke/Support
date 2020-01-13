@@ -7,3 +7,11 @@ public struct HTTPHeaderFieldName: Hashable {
         lowercaseName = name.lowercased()
     }
 }
+
+extension HTTPHeaderFieldName {
+    
+    static let contentType = HTTPHeaderFieldName("content-type")
+    
+    static let contentLength = HTTPHeaderFieldName("content-length")
+
+}
