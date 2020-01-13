@@ -55,13 +55,13 @@ class HTTPRemoteTests: XCTestCase {
             password: "password",
             headers: [HTTPHeaderFieldName("client_id"): "1"]
         )
-        
+                
         let request = HTTPRequest.post(
             "/destination",
             body: .plain("body"),
             fragment: "subpage",
             queryParameters: ["query": "value"],
-            headers: ["state": "1234"]
+            headers: [HTTPHeaderFieldName("state"): "1234"]
         )
         
         do {
@@ -110,13 +110,14 @@ class HTTPRemoteTests: XCTestCase {
     }
     
     func testRemoteQueryItemsCanNotBeOverriddenByRequest() {
+        let headerName = HTTPHeaderFieldName("verbose")
         let remote = HTTPRemote(
             host: "example.com",
             path: "",
-            headers: [HTTPHeaderFieldName("verbose"): "true"]
+            headers: [headerName: "true"]
         )
         
-        let request = HTTPRequest.get("/path", headers: ["verbose": "false"])
+        let request = HTTPRequest.get("/path", headers: [headerName: "false"])
         
         XCTAssertThrowsError(try remote.urlRequest(from: request))
     }
