@@ -1,4 +1,4 @@
-import Support
+@testable import Support
 import TestingSupport
 import XCTest
 

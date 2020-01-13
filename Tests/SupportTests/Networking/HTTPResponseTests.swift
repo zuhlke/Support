@@ -21,9 +21,9 @@ class HTTPResponseTests: XCTestCase {
         let expected = HTTPResponse(
             statusCode: 200,
             body: HTTPResponse.Body(content: body, type: "text/plain"),
-            headers: HTTPHeaders(fields: [
-                "header": "value",
-            ])
+            headers: [
+                HTTPHeaderFieldName("header"): "value",
+            ]
         )
         TS.assert(actual, equals: expected)
     }
@@ -44,9 +44,9 @@ class HTTPResponseTests: XCTestCase {
         let expected = HTTPResponse(
             statusCode: 200,
             body: HTTPResponse.Body(content: body, type: "text/plain"),
-            headers: HTTPHeaders(fields: [
-                "header": "value",
-            ])
+            headers: [
+                HTTPHeaderFieldName("header"): "value",
+            ]
         )
         TS.assert(actual, equals: expected)
     }
@@ -66,9 +66,9 @@ class HTTPResponseTests: XCTestCase {
         let expected = HTTPResponse(
             statusCode: 200,
             body: HTTPResponse.Body(content: body, type: nil),
-            headers: HTTPHeaders(fields: [
-                "header": "value",
-            ])
+            headers: [
+                HTTPHeaderFieldName("header"): "value",
+            ]
         )
         TS.assert(actual, equals: expected)
     }

@@ -12,15 +12,19 @@ public struct HTTPHeaders: ExpressibleByDictionaryLiteral, Equatable {
         self.init(fields: Dictionary(uniqueKeysWithValues: elements))
     }
     
-    public init(fields: [String: String]) {
+    public func hasValue(for name: HTTPHeaderFieldName) -> Bool {
+        fields.keys.contains(name)
+    }
+    
+}
+
+extension HTTPHeaders {
+    
+    init(fields: [String: String]) {
         let fields = Dictionary(fields.map { (HTTPHeaderFieldName($0), $1) }) { _, _ -> String in
             Thread.fatalError("Duplicate header fields: \(fields).")
         }
         self.init(fields: fields)
-    }
-    
-    public func hasValue(for name: HTTPHeaderFieldName) -> Bool {
-        fields.keys.contains(name)
     }
     
 }
