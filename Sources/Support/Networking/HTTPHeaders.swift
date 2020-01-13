@@ -1,7 +1,7 @@
 import Foundation
 
 @dynamicMemberLookup
-public struct HTTPHeaders: Equatable {
+public struct HTTPHeaders: ExpressibleByDictionaryLiteral, Equatable {
     
     public var fields: [HTTPHeaderFieldName: String]
     
@@ -10,8 +10,12 @@ public struct HTTPHeaders: Equatable {
         Dictionary(uniqueKeysWithValues: fields.map { ($0.lowercaseName, $1) })
     }
     
-    public init(fields: [HTTPHeaderFieldName: String]) {
+    public init(fields: [HTTPHeaderFieldName: String] = [:]) {
         self.fields = fields
+    }
+    
+    public init(dictionaryLiteral elements: (HTTPHeaderFieldName, String)...) {
+        self.init(fields: Dictionary(uniqueKeysWithValues: elements))
     }
     
     public init(fields: [String: String]) {

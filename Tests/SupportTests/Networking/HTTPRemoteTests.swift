@@ -28,19 +28,19 @@ class HTTPRemoteTests: XCTestCase {
     
     func testCanNotPreSetContentLengthHeader() {
         TS.assertFatalError {
-            _ = HTTPRemote(host: "example.com", path: "/somewhere", headers: ["content-length": "a"])
+            _ = HTTPRemote(host: "example.com", path: "/somewhere", headers: [.contentLength: "a"])
         }
     }
     
     func testCanNotPreSetContentTypeHeader() {
         TS.assertFatalError {
-            _ = HTTPRemote(host: "example.com", path: "/somewhere", headers: ["content-type": "a"])
+            _ = HTTPRemote(host: "example.com", path: "/somewhere", headers: [.contentType: "a"])
         }
     }
     
     func testCanNotPreSetContentTypeHeaderWithDifferentCase() {
         TS.assertFatalError {
-            _ = HTTPRemote(host: "example.com", path: "/somewhere", headers: ["Content-Type": "a"])
+            _ = HTTPRemote(host: "example.com", path: "/somewhere", headers: [.contentType: "a"])
         }
     }
     
@@ -53,7 +53,7 @@ class HTTPRemoteTests: XCTestCase {
             port: 9000,
             user: "user",
             password: "password",
-            headers: ["client_id": "1"]
+            headers: [HTTPHeaderFieldName("client_id"): "1"]
         )
         
         let request = HTTPRequest.post(
@@ -113,7 +113,7 @@ class HTTPRemoteTests: XCTestCase {
         let remote = HTTPRemote(
             host: "example.com",
             path: "",
-            headers: ["verbose": "true"]
+            headers: [HTTPHeaderFieldName("verbose"): "true"]
         )
         
         let request = HTTPRequest.get("/path", headers: ["verbose": "false"])

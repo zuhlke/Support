@@ -15,14 +15,12 @@ public struct HTTPRemote {
         port: Int? = nil,
         user: String? = nil,
         password: String? = nil,
-        headers fields: [String: String] = [:]
+        headers: HTTPHeaders = HTTPHeaders()
     ) {
         
         guard path.isEmpty || path.starts(with: "/") else {
             Thread.fatalError("`path` must start with `/` if it’s not empty.")
         }
-        
-        headers = HTTPHeaders(fields: fields)
         
         for disallowedHeader in Self.disallowedHeaders {
             guard !headers.hasValue(for: disallowedHeader) else {
@@ -35,6 +33,7 @@ public struct HTTPRemote {
         self.port = port
         self.user = user
         self.password = password
+        self.headers = headers
     }
     
 }
