@@ -1,6 +1,6 @@
 import Foundation
 
-public struct HTTPHeaderFieldName: Equatable {
+public struct HTTPHeaderFieldName: Hashable {
     public var lowercaseName: String
     
     public init(_ name: String) {

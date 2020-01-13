@@ -60,7 +60,7 @@ extension HTTPRemote: URLRequestProviding {
         }.url!
         
         return mutating(URLRequest(url: url)) { urlRequest in
-            [headers.fields, request.headers]
+            [headers.stringFields, request.headers]
                 .lazy
                 .flatMap { $0 }
                 .forEach { urlRequest.addValue($0.value, forHTTPHeaderField: $0.key) }
@@ -74,7 +74,7 @@ extension HTTPRemote: URLRequestProviding {
     }
     
     private func validate(_ request: HTTPRequest) throws {
-        let overriddenHeaders = headers.fields.lowercasedKeys.intersection(request.headers.lowercasedKeys)
+        let overriddenHeaders = headers.stringFields.lowercasedKeys.intersection(request.headers.lowercasedKeys)
         guard overriddenHeaders.isEmpty else {
             throw Errors.requestOverridesHeaders(overriddenHeaders)
         }
