@@ -3,12 +3,12 @@ import Foundation
 public struct HTTPResponse: Equatable {
     public let statusCode: Int
     public let body: Body
-    public let headers: [String: String]
+    public let headers: HTTPHeaders
     
     public init(
         statusCode: Int,
         body: Body,
-        headers: [String: String] = [:]
+        headers: HTTPHeaders = HTTPHeaders()
     ) {
         self.statusCode = statusCode
         self.body = body
@@ -20,7 +20,7 @@ extension HTTPResponse {
     
     public init(httpUrlResponse: HTTPURLResponse, bodyContent: Data) {
         var headers = httpUrlResponse.headers
-        let contentType = headers.removeValue(forKey: HTTPHeaderFieldName.contentType.lowercaseName)
+        let contentType = headers.fields.removeValue(forKey: .contentType)
         self.init(
             statusCode: httpUrlResponse.statusCode,
             body: HTTPResponse.Body(
@@ -39,10 +39,12 @@ extension HTTPResponse {
 
 private extension HTTPURLResponse {
     
-    var headers: [String: String] {
-        Dictionary(
-            uniqueKeysWithValues: allHeaderFields
-                .map { (($0.key as! String).lowercased(), $0.value as! String) }
+    var headers: HTTPHeaders {
+        HTTPHeaders(
+            fields: Dictionary(
+                uniqueKeysWithValues: allHeaderFields
+                    .map { (($0.key as! String), $0.value as! String) }
+            )
         )
     }
     
