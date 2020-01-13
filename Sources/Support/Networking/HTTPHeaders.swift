@@ -27,4 +27,8 @@ extension HTTPHeaders {
         self.init(fields: fields)
     }
     
+    var stringFields: [String: String] {
+        Dictionary(uniqueKeysWithValues: fields.lazy.map { ($0.lowercaseName, $1) })
+    }
+    
 }

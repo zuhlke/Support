@@ -1,8 +1,11 @@
+import Combine
 import Foundation
 
 public final class HTTPInterceptProtocol: URLProtocol {
     
     private let httpClient: HTTPClient
+    
+    private var cancellable: AnyCancellable?
     
     public override init(request: URLRequest, cachedResponse: CachedURLResponse?, client: URLProtocolClient?) {
         guard let httpClient = Self.httpClient(for: request) else {
@@ -10,6 +13,68 @@ public final class HTTPInterceptProtocol: URLProtocol {
         }
         self.httpClient = httpClient
         super.init(request: request, cachedResponse: cachedResponse, client: client)
+    }
+    
+    public override func startLoading() {
+        guard
+            let method = HTTPMethod(rawValue: request.httpMethod ?? ""),
+            let url = request.url,
+            let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        else { return }
+        
+        let pathComponents = mutating(components.path.components(separatedBy: "/")) {
+            $0.remove(at: 1) // remove service path
+        }
+        
+        let queryParameters = Dictionary(uniqueKeysWithValues: (components.queryItems ?? []).map {
+            ($0.name, $0.value ?? "")
+        })
+        
+        var headers = request.headers
+        
+        let body = request.httpBodyStream.map { stream in
+            HTTPRequest.Body(content: try! Data(from: stream), type: headers.fields[.contentType] ?? "")
+        }
+        
+        HTTPHeaderFieldName.bodyHeaders.forEach {
+            headers.fields.removeValue(forKey: $0)
+        }
+        
+        let httpRequest = HTTPRequest(
+            method: method,
+            path: pathComponents.joined(separator: "/"),
+            body: body,
+            fragment: components.fragment,
+            queryParameters: queryParameters,
+            headers: headers
+        )
+        cancellable = httpClient.perform(httpRequest).sink(
+            receiveCompletion: { [weak self] completion in
+                guard let self = self, let client = self.client else { return }
+//                switch completion {
+//                case .failure(let error):
+//                case .s
+//                }
+                client.urlProtocolDidFinishLoading(self)
+            },
+            receiveValue: { [weak self] httpResponse in
+                guard let self = self, let client = self.client else { return }
+                var headers = httpResponse.headers
+                headers.fields[.contentType] = httpResponse.body.type
+                let response = HTTPURLResponse(
+                    url: url,
+                    statusCode: httpResponse.statusCode,
+                    httpVersion: nil,
+                    headerFields: headers.stringFields
+                )!
+                client.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+                client.urlProtocol(self, didLoad: httpResponse.body.content)
+            }
+        )
+    }
+    
+    public override func stopLoading() {
+        cancellable = nil
     }
     
 }
@@ -64,4 +129,31 @@ extension HTTPInterceptProtocol {
         return clientsById[pathComponents[1]]
     }
     
+}
+
+private extension Data {
+    init(from input: InputStream) throws {
+        self.init()
+        input.open()
+        defer {
+            input.close()
+        }
+        
+        let bufferSize = 1024
+        let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
+        defer {
+            buffer.deallocate()
+        }
+        while input.hasBytesAvailable {
+            let read = input.read(buffer, maxLength: bufferSize)
+            if read < 0 {
+                // Stream error occured
+                throw input.streamError!
+            } else if read == 0 {
+                // EOF
+                break
+            }
+            append(buffer, count: read)
+        }
+    }
 }
