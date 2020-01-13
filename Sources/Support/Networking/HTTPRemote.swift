@@ -31,7 +31,7 @@ public struct HTTPRemote {
         self.port = port
         self.user = user
         self.password = password
-        self.headers = HTTPHeaders(fields: fields)
+        headers = HTTPHeaders(fields: fields)
     }
     
 }

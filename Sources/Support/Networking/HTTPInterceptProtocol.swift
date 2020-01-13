@@ -15,6 +15,7 @@ public final class HTTPInterceptProtocol: URLProtocol {
 }
 
 // MARK: Registration
+
 extension HTTPInterceptProtocol {
     
     public struct Registration {
@@ -53,7 +54,7 @@ extension HTTPInterceptProtocol {
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
             components.scheme == "https",
             components.host == host
-            else { return nil }
+        else { return nil }
         
         let pathComponents = components.path.components(separatedBy: "/")
         guard pathComponents.count > 1, pathComponents[0] == "" else {

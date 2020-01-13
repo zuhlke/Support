@@ -1,6 +1,6 @@
-import XCTest
-import TestingSupport
 import Support
+import TestingSupport
+import XCTest
 
 class HTTPHeaderFieldNameTests: XCTestCase {
     
@@ -14,4 +14,3 @@ class HTTPHeaderFieldNameTests: XCTestCase {
     }
     
 }
-
