@@ -66,9 +66,9 @@ extension HTTPRemote: URLRequestProviding {
                 .lazy
                 .flatMap { $0 }
                 .forEach { urlRequest.addValue($0.value, forHTTPHeaderField: $0.key.lowercaseName) }
+            urlRequest.httpMethod = request.method.rawValue
             if let body = request.body {
                 urlRequest.httpBody = body.content
-                urlRequest.httpMethod = request.method.rawValue
                 urlRequest.addValue(body.type, forHTTPHeaderField: HTTPHeaderFieldName.contentType.lowercaseName)
                 urlRequest.addValue("\(body.content.count)", forHTTPHeaderField: HTTPHeaderFieldName.contentLength.lowercaseName)
             }

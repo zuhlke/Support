@@ -46,6 +46,50 @@ class HTTPRemoteTests: XCTestCase {
     
     // MARK: Creating requests
     
+    func testCreatingRequestWithoutBody() {
+        let remote = HTTPRemote(
+            host: "example.com",
+            path: "/service/v1",
+            port: 9000,
+            user: "user",
+            password: "password",
+            headers: [HTTPHeaderFieldName("client_id"): "1"]
+        )
+                
+        let request = HTTPRequest(
+            method: .delete,
+            path: "/destination",
+            body: nil,
+            fragment: "subpage",
+            queryParameters: ["query": "value"],
+            headers: [HTTPHeaderFieldName("state"): "1234"]
+        )
+        
+        do {
+            let actual = try remote.urlRequest(from: request)
+            let components = mutating(URLComponents()) {
+                $0.scheme = "https"
+                $0.host = "example.com"
+                $0.path = "/service/v1/destination"
+                $0.fragment = "subpage"
+                $0.port = 9000
+                $0.user = "user"
+                $0.password = "password"
+                $0.queryItems = [
+                    URLQueryItem(name: "query", value: "value"),
+                ]
+            }
+            let expected = mutating(URLRequest(url: components.url!)) {
+                $0.httpMethod = "DELETE"
+                $0.addValue("1", forHTTPHeaderField: "client_id")
+                $0.addValue("1234", forHTTPHeaderField: "state")
+            }
+            TS.assert(actual, equals: expected, after: .applying(URLRequest.normalizingForTesting))
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
+    }
+    
     func testCreatingRequestWithAllPartsSet() {
         let remote = HTTPRemote(
             host: "example.com",
@@ -79,12 +123,12 @@ class HTTPRemoteTests: XCTestCase {
                 ]
             }
             let expected = mutating(URLRequest(url: components.url!)) {
+                $0.httpMethod = "POST"
                 $0.addValue("1", forHTTPHeaderField: "client_id")
                 $0.addValue("1234", forHTTPHeaderField: "state")
                 $0.addValue("text/plain", forHTTPHeaderField: "content-type")
                 $0.addValue("4", forHTTPHeaderField: "content-length")
                 $0.httpBody = "body".data(using: .utf8)
-                $0.httpMethod = "POST"
             }
             TS.assert(actual, equals: expected, after: .applying(URLRequest.normalizingForTesting))
         } catch {
