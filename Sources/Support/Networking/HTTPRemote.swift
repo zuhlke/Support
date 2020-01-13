@@ -24,8 +24,10 @@ public struct HTTPRemote {
         
         headers = HTTPHeaders(fields: fields)
         
-        guard !headers.hasValue(for: .contentLength) else {
-            Thread.fatalError("content-type header must not be set on a remote. Provide this value for each request.")
+        for disallowedHeader in Self.disallowedHeaders {
+            guard !headers.hasValue(for: disallowedHeader) else {
+                Thread.fatalError("\(disallowedHeader.lowercaseName) header must not be set on a remote. Provide this value for each request.")
+            }
         }
         
         self.host = host
@@ -80,6 +82,15 @@ extension HTTPRemote: URLRequestProviding {
             throw Errors.requestOverridesHeaders(overriddenHeaders)
         }
     }
+    
+}
+
+private extension HTTPRemote {
+    
+    static let disallowedHeaders: [HTTPHeaderFieldName] = [
+        .contentLength,
+        .contentType,
+    ]
     
 }
 

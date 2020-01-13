@@ -26,15 +26,21 @@ class HTTPRemoteTests: XCTestCase {
         }
     }
     
+    func testCanNotPreSetContentLengthHeader() {
+        TS.assertFatalError {
+            _ = HTTPRemote(host: "example.com", path: "/somewhere", headers: ["content-length": "a"])
+        }
+    }
+    
     func testCanNotPreSetContentTypeHeader() {
         TS.assertFatalError {
-            _ = HTTPRemote(host: "example.com", path: "somewhere", headers: ["content-type": "a"])
+            _ = HTTPRemote(host: "example.com", path: "/somewhere", headers: ["content-type": "a"])
         }
     }
     
     func testCanNotPreSetContentTypeHeaderWithDifferentCase() {
         TS.assertFatalError {
-            _ = HTTPRemote(host: "example.com", path: "somewhere", headers: ["Content-Type": "a"])
+            _ = HTTPRemote(host: "example.com", path: "/somewhere", headers: ["Content-Type": "a"])
         }
     }
     
