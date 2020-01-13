@@ -14,7 +14,9 @@ public struct HTTPHeaders: Equatable {
     }
     
     public init(fields: [String: String]) {
-        let fields = Dictionary(fields.map { (HTTPHeaderFieldName($0), $1) }) { $1 }
+        let fields = Dictionary(fields.map { (HTTPHeaderFieldName($0), $1) }) { _, _ -> String in
+            Thread.fatalError("Duplicate header fields: \(fields).")
+        }
         self.init(fields: fields)
     }
 }
