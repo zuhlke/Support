@@ -30,7 +30,7 @@ public struct HTTPRequest: Equatable {
             Thread.fatalError("Method \(method) requires a body.")
         }
         
-        for bodyHeader in Self.bodyHeaders {
+        for bodyHeader in HTTPHeaderFieldName.bodyHeaders {
             guard !headers.hasValue(for: bodyHeader) else {
                 Thread.fatalError("\(bodyHeader.lowercaseName) header must not be set separately. Set the content type on the body.")
             }
@@ -97,14 +97,5 @@ extension HTTPRequest {
             headers: headers
         )
     }
-    
-}
-
-private extension HTTPRequest {
-    
-    static let bodyHeaders: [HTTPHeaderFieldName] = [
-        .contentLength,
-        .contentType,
-    ]
     
 }

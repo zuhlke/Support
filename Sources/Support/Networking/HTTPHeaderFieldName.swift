@@ -14,4 +14,9 @@ extension HTTPHeaderFieldName {
     
     static let contentLength = HTTPHeaderFieldName("content-length")
     
+    static let bodyHeaders: [HTTPHeaderFieldName] = [
+        .contentLength,
+        .contentType,
+    ]
+    
 }
