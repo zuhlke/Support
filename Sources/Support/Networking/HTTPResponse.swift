@@ -43,7 +43,7 @@ private extension HTTPURLResponse {
         HTTPHeaders(
             fields: Dictionary(
                 uniqueKeysWithValues: allHeaderFields
-                    .map { (($0.key as! String), $0.value as! String) }
+                    .map { ($0.key as! String, $0.value as! String) }
             )
         )
     }

@@ -29,7 +29,7 @@ public struct HTTPRequest: Equatable {
         if !hasBody, method.mustHaveBody {
             Thread.fatalError("Method \(method) requires a body.")
         }
-                
+        
         for bodyHeader in Self.bodyHeaders {
             guard !headers.hasValue(for: bodyHeader) else {
                 Thread.fatalError("\(bodyHeader.lowercaseName) header must not be set separately. Set the content type on the body.")

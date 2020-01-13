@@ -55,7 +55,7 @@ class HTTPRemoteTests: XCTestCase {
             password: "password",
             headers: [HTTPHeaderFieldName("client_id"): "1"]
         )
-                
+        
         let request = HTTPRequest(
             method: .delete,
             path: "/destination",
@@ -99,7 +99,7 @@ class HTTPRemoteTests: XCTestCase {
             password: "password",
             headers: [HTTPHeaderFieldName("client_id"): "1"]
         )
-                
+        
         let request = HTTPRequest.post(
             "/destination",
             body: .plain("body"),

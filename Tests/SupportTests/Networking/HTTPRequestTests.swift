@@ -1,7 +1,7 @@
 import Foundation
-@testable import Support
 import TestingSupport
 import XCTest
+@testable import Support
 
 class HTTPRequestTests: XCTestCase {
     
