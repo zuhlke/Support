@@ -7,7 +7,7 @@ public struct HTTPRemote {
     public let port: Int?
     public let user: String?
     public let password: String?
-    public let headers: [String: String]
+    public let headers: HTTPHeaders
     
     public init(
         host: String,
@@ -15,14 +15,14 @@ public struct HTTPRemote {
         port: Int? = nil,
         user: String? = nil,
         password: String? = nil,
-        headers: [String: String] = [:]
+        headers fields: [String: String] = [:]
     ) {
         
         guard path.isEmpty || path.starts(with: "/") else {
             Thread.fatalError("`path` must start with `/` if it’s not empty.")
         }
         
-        guard !headers.containsKey(HTTPRequest.contentTypeHeaderName, options: .caseInsensitive) else {
+        guard !fields.containsKey(HTTPRequest.contentTypeHeaderName, options: .caseInsensitive) else {
             Thread.fatalError("content-type header must not be set on a remote. Provide this value for each request.")
         }
         
@@ -31,7 +31,7 @@ public struct HTTPRemote {
         self.port = port
         self.user = user
         self.password = password
-        self.headers = headers
+        self.headers = HTTPHeaders(fields: fields)
     }
     
 }
@@ -60,7 +60,7 @@ extension HTTPRemote: URLRequestProviding {
         }.url!
         
         return mutating(URLRequest(url: url)) { urlRequest in
-            [headers, request.headers]
+            [headers.fields, request.headers]
                 .lazy
                 .flatMap { $0 }
                 .forEach { urlRequest.addValue($0.value, forHTTPHeaderField: $0.key) }
@@ -74,7 +74,7 @@ extension HTTPRemote: URLRequestProviding {
     }
     
     private func validate(_ request: HTTPRequest) throws {
-        let overriddenHeaders = headers.lowercasedKeys.intersection(request.headers.lowercasedKeys)
+        let overriddenHeaders = headers.fields.lowercasedKeys.intersection(request.headers.lowercasedKeys)
         guard overriddenHeaders.isEmpty else {
             throw Errors.requestOverridesHeaders(overriddenHeaders)
         }
