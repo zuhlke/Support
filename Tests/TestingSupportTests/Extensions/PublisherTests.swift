@@ -12,9 +12,14 @@ class PublisherTests: XCTestCase {
     }
     
     func testAwaitHandlesSynchronousFailure() throws {
-        let publisher = Fail<Void, Error>(error: NSError())
+        let publisher = Fail<Void, Error>(error: SomeError())
         let result = try publisher.await(timeout: 0)
-        XCTAssertFalse(result.isSuccess)
+        switch result {
+        case .success:
+            XCTFail("Unexpected success")
+        case .failure(let error):
+            XCTAssert(error is SomeError)
+        }
     }
     
     func testAwaitTimoutWithoutCompletion() {
@@ -39,10 +44,19 @@ class PublisherTests: XCTestCase {
     func testAwaitHandlesAsynchronousFailure() throws {
         let subject = PassthroughSubject<Void, Error>()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            subject.send(completion: .failure(NSError()))
+            subject.send(completion: .failure(SomeError()))
         }
         let result = try subject.await(timeout: 3)
-        XCTAssertFalse(result.isSuccess)
+        switch result {
+        case .success:
+            XCTFail("Unexpected success")
+        case .failure(let error):
+            XCTAssert(error is SomeError)
+        }
     }
+    
+}
+
+private struct SomeError: Error {
     
 }

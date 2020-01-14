@@ -48,13 +48,19 @@ public final class HTTPInterceptProtocol: URLProtocol {
             queryParameters: queryParameters,
             headers: headers
         )
+        
         cancellable = httpClient.perform(httpRequest).sink(
             receiveCompletion: { [weak self] completion in
                 guard let self = self, let client = self.client else { return }
-//                switch completion {
-//                case .failure(let error):
-//                case .s
-//                }
+                if case .failure(let error) = completion {
+                    switch error {
+                    case .networkFailure(let underlyingError):
+                        client.urlProtocol(self, didFailWithError: underlyingError)
+                    case .rejectedRequest(let underlyingError):
+                        let urlError = URLError(.unknown, userInfo: [NSUnderlyingErrorKey: underlyingError])
+                        client.urlProtocol(self, didFailWithError: urlError)
+                    }
+                }
                 client.urlProtocolDidFinishLoading(self)
             },
             receiveValue: { [weak self] httpResponse in

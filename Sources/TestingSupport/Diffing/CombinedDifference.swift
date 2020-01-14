@@ -25,7 +25,6 @@ extension BidirectionalCollection where Element: Equatable {
         }
         
         difference.insertions.forEach { change in
-            print(indexes)
             let indexToInsert = (change.offset < indexes.count) ? indexes[change.offset] : lines.count
             lines.insert(CombinedDifference(element: change.element, change: .added), at: indexToInsert)
             for i in 0 ..< indexes.count {
