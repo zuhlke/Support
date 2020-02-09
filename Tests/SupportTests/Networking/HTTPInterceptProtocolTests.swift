@@ -187,7 +187,7 @@ class HTTPInterceptProtocolTests: XCTestCase {
         do {
             let result = try session.dataTaskPublisher(for: request).await(timeout: 0.1)
             TS.assert(client.requestsReceived[0], equals: httpRequest)
-
+            
             switch result {
             case .success:
                 XCTFail("Did not expect a value")

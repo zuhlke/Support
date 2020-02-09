@@ -57,6 +57,4 @@ class PublisherTests: XCTestCase {
     
 }
 
-private struct SomeError: Error {
-    
-}
+private struct SomeError: Error {}
