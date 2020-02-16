@@ -72,6 +72,20 @@ class PropertyTests: XCTestCase {
         TS.assert(callbackCount, equals: 1)
     }
     
+    
+    func testObservableKVOAfterMappingChangeNotification() {
+        let host = KVOHost()
+        let property = ObservableProperty(keyValueObservableHost: host, keyPath: \.id)
+        
+        var callbackCount = 0
+        let cancellable = property.map { $0.uuidString }.objectWillChange.sink { callbackCount += 1 }
+        defer { cancellable.cancel() }
+        
+        TS.assert(callbackCount, equals: 0)
+        host.id = UUID()
+        TS.assert(callbackCount, equals: 1)
+    }
+    
     // MARK: -WritableProperty
     
     func testValueIsSet() {
@@ -112,6 +126,22 @@ class PropertyTests: XCTestCase {
         defer { cancellable.cancel() }
         
         property.wrappedValue = UUID()
+        TS.assert(callbackCount, equals: 1)
+    }
+    
+    func testReferenceWritableChangeNotificationAfterMapping() {
+        let host = Host()
+        let property = WritableProperty(host: host, keyPath: \.id)
+        let mappedProperty = property.bimap(
+            transform: { $0.uuidString },
+            inverseTransform: { UUID(uuidString: $0)! }
+        )
+        
+        var callbackCount = 0
+        let cancellable = mappedProperty.objectWillChange.sink { callbackCount += 1 }
+        defer { cancellable.cancel() }
+        
+        mappedProperty.wrappedValue = UUID().uuidString
         TS.assert(callbackCount, equals: 1)
     }
     
