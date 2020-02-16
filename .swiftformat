@@ -3,6 +3,8 @@
 --trimwhitespace nonblank-lines
 --importgrouping testable-bottom
 --wraparguments before-first
+--header strip
+--ifdef no-indent
 
 # Rules
 
