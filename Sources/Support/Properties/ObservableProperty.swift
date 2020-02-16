@@ -1,5 +1,5 @@
-import Foundation
 import Combine
+import Foundation
 
 public class ObservableProperty<Value>: Property<Value>, ObservableObject {
     

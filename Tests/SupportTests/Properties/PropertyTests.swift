@@ -72,7 +72,6 @@ class PropertyTests: XCTestCase {
         TS.assert(callbackCount, equals: 1)
     }
     
-    
     func testObservableKVOAfterMappingChangeNotification() {
         let host = KVOHost()
         let property = ObservableProperty(keyValueObservableHost: host, keyPath: \.id)
