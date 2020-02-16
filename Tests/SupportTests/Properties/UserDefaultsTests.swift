@@ -1,11 +1,13 @@
-import Support
 import TestingSupport
 import XCTest
+@testable import Support
 
 class UserDefaultsTests: XCTestCase {
     
+    // MARK: - Normal defaults
+    
     func testPropertiesWithoutDefault() {
-        UserDefaults.withTemporaryKey { defaults, key in
+        withTemporaryDefaultKey { defaults, key in
             let property = defaults.property(ofType: String.self, forKey: key)
             XCTAssertNil(property.wrappedValue)
             
@@ -26,9 +28,9 @@ class UserDefaultsTests: XCTestCase {
     }
     
     func testPropertiesWithDefault() {
-        UserDefaults.withTemporaryKey { defaults, key in
+        withTemporaryDefaultKey { defaults, key in
             let defaultValue = UUID().uuidString
-            let property = defaults.property(ofType: String.self, forKey: key, defaultTo: defaultValue)
+            let property = defaults.property(ofType: String.self, forKey: key, defaultingTo: defaultValue)
             TS.assert(property.wrappedValue, equals: defaultValue)
             
             let expected = UUID().uuidString
@@ -47,17 +49,144 @@ class UserDefaultsTests: XCTestCase {
         }
     }
     
+    // MARK: - Settings
+    
+    func testCreatingNonExistingSettingFails() {
+        let key = UUID().uuidString
+        TS.assertFatalError {
+            _ = UserDefaults.standard.setting(ofType: String.self, forKey: key)
+        }
+    }
+    
+    func testCreatingSettingWithWrongTypeFails() throws {
+        let key = UUID().uuidString
+        let defaultValue = UUID().uuidString
+        let specifiers: [AnyHashable] = [
+            [
+                "Type": "PSTextFieldSpecifier",
+                "Key": key,
+                "DefaultValue": defaultValue,
+            ],
+        ]
+        try withTemporarySettings(specifiers: specifiers) { defaults, bundle in
+            TS.assertFatalError {
+                _ = defaults.setting(ofType: Int.self, forKey: key, bundle: bundle)
+            }
+        }
+    }
+    
+    func testCreatingSettingWithoutDefaultValueFails() throws {
+        let key = UUID().uuidString
+        let specifiers: [AnyHashable] = [
+            [
+                "Type": "PSTextFieldSpecifier",
+                "Key": key,
+            ],
+        ]
+        try withTemporarySettings(specifiers: specifiers) { defaults, bundle in
+            TS.assertFatalError {
+                _ = defaults.setting(ofType: String.self, forKey: key, bundle: bundle)
+            }
+        }
+    }
+    
+    func testCreatingSettingWithStringType() throws {
+        let key = UUID().uuidString
+        let defaultValue = UUID().uuidString
+        let specifiers: [AnyHashable] = [
+            [
+                "Key": key,
+                "DefaultValue": defaultValue,
+            ],
+        ]
+        try withTemporarySettings(specifiers: specifiers) { defaults, bundle in
+            let property = UserDefaults.standard.setting(ofType: String.self, forKey: key, bundle: bundle)
+            TS.assert(property.wrappedValue, equals: defaultValue)
+        }
+    }
+    
+    func testCreatingSettingFromNonRootPlistWithStringType() throws {
+        let key = UUID().uuidString
+        let defaultValue = UUID().uuidString
+        let specifiers: [AnyHashable] = [
+            [
+                "Key": key,
+                "DefaultValue": defaultValue,
+            ],
+        ]
+        try withTemporarySettings(specifiers: specifiers, settingsFileName: "Other") { defaults, bundle in
+            let property = UserDefaults.standard.setting(ofType: String.self, forKey: key, bundle: bundle)
+            TS.assert(property.wrappedValue, equals: defaultValue)
+        }
+    }
+    
+    func testCreatingSettingWithIntType() throws {
+        let key = UUID().uuidString
+        let defaultValue = Int.random(in: 0 ... 1000)
+        let specifiers: [[String: AnyHashable]] = [
+            [
+                "Key": key,
+                "DefaultValue": defaultValue,
+            ],
+        ]
+        try withTemporarySettings(specifiers: specifiers) { defaults, bundle in
+            let property = UserDefaults.standard.setting(ofType: Int.self, forKey: key, bundle: bundle)
+            TS.assert(property.wrappedValue, equals: defaultValue)
+        }
+    }
+    
+    func testCreatingSettingWithBoolType() throws {
+        let key = UUID().uuidString
+        let defaultValue = true
+        let specifiers: [[String: AnyHashable]] = [
+            [
+                "Key": key,
+                "DefaultValue": defaultValue,
+            ],
+        ]
+        try withTemporarySettings(specifiers: specifiers) { defaults, bundle in
+            let property = UserDefaults.standard.setting(ofType: Bool.self, forKey: key, bundle: bundle)
+            TS.assert(property.wrappedValue, equals: defaultValue)
+        }
+    }
+    
 }
 
-private extension UserDefaults {
+extension UserDefaultsTests {
     
-    static func withTemporaryKey(perform work: (UserDefaults, String) throws -> Void) rethrows {
+    func withTemporaryDefaultKey(perform work: (UserDefaults, String) throws -> Void) rethrows {
         let defaults = UserDefaults.standard
         let key = UUID().uuidString
         
         defaults.removeObject(forKey: key)
         try work(defaults, key)
         defaults.removeObject(forKey: key)
+    }
+    
+    func withTemporarySettings(specifiers: [AnyHashable], settingsFileName: String = "Root", perform work: (UserDefaults, Bundle) throws -> Void) throws {
+        let fileManager = FileManager()
+        try fileManager.makeTemporaryDirectory { directory in
+            let bundle = Bundle(url: directory)!
+            
+            let settingsBundleDirectory = directory.appendingPathComponent("Settings.bundle")
+            let rootFilePath = settingsBundleDirectory.appendingPathComponent("\(settingsFileName).plist")
+            
+            try fileManager.createDirectory(
+                at: settingsBundleDirectory,
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
+            
+            let dict = [
+                "PreferenceSpecifiers": specifiers,
+            ]
+            
+            try PropertyListSerialization
+                .data(fromPropertyList: dict, format: .binary, options: 0)
+                .write(to: rootFilePath)
+            
+            try work(UserDefaults.standard, bundle)
+        }
     }
     
 }
