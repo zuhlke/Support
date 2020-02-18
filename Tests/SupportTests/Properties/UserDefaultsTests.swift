@@ -150,6 +150,23 @@ class UserDefaultsTests: XCTestCase {
         }
     }
     
+    func testCreatingSettingWithVaryingFloatTypesType() throws {
+        let key = UUID().uuidString
+        let defaultValue = 13.0
+        let specifiers: [[String: AnyHashable]] = [
+            [
+                "Key": key,
+                "DefaultValue": defaultValue,
+            ],
+        ]
+        try withTemporarySettings(specifiers: specifiers) { defaults, bundle in
+            let property = UserDefaults.standard.setting(ofType: Double.self, forKey: key, bundle: bundle)
+            TS.assert(property.wrappedValue, equals: defaultValue)
+            let property2 = UserDefaults.standard.setting(ofType: Float.self, forKey: key, bundle: bundle)
+            TS.assert(property2.wrappedValue, equals: Float(defaultValue))
+        }
+    }
+    
 }
 
 extension UserDefaultsTests {
