@@ -28,16 +28,32 @@ public struct UserDefault<Value: Decodable> {
     
 }
 
-extension UserDefault where Value: ExpressibleByNilLiteral {
+extension UserDefault where Value: _OptionalType {
     
     public init(_ key: String, userDefaults: UserDefaults = .standard) {
         self.init(
-            userDefaults.property(ofType: Value.self, forKey: key)
+            userDefaults.property(ofType: Value.Wrapped.self, forKey: key)
                 .bimap(
-                    transform: { $0 ?? nil },
-                    inverseTransform: { $0 }
+                    transform: { Value._make(from: $0) },
+                    inverseTransform: { $0._asOptional() }
                 )
         )
     }
     
+}
+
+// Implementation detail protocol to allow perforing generic
+public protocol _OptionalType: ExpressibleByNilLiteral {
+    associatedtype Wrapped
+    static func _make(from optional: Optional<Wrapped>) -> Self
+    func _asOptional() -> Wrapped?
+}
+
+extension Optional: _OptionalType {
+    public static func _make(from optional: Optional<Wrapped>) -> Optional<Wrapped> {
+        optional
+    }
+    public func _asOptional() -> Wrapped? {
+        self
+    }
 }

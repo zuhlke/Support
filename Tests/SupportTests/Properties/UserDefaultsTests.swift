@@ -32,6 +32,9 @@ class UserDefaultsTests: XCTestCase {
             
             defaults.removeObject(forKey: key)
             XCTAssertNil(property.wrappedValue)
+            
+            property.wrappedValue = nil
+            XCTAssertNil(property.wrappedValue)
         }
     }
     
