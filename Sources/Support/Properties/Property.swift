@@ -2,7 +2,6 @@ import Combine
 import Foundation
 
 @dynamicMemberLookup
-@propertyWrapper
 public class Property<Value> {
     
     private let _get: () -> Value
