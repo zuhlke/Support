@@ -1,15 +1,23 @@
+import Combine
 import Foundation
 
 extension UserDefaults {
     
     public func property<Value>(ofType type: Value.Type, forKey key: String) -> WritableProperty<Value?> {
-        WritableProperty(keyValueObservableHost: self, keyPath: \.[key: key])
+        /// We can’t use `NSObject.publisher` for KVO as it fails to extract a string from our key paths.
+        /// We use our own `KVOChangePublisher` instead.
+        WritableProperty(
+            objectWillChange: KVOChangePublisher(forKeyPath: key, on: self),
+            get: { self[key: key] },
+            set: { self[key: key] = $0 }
+        )
     }
     
     public func property<Value>(ofType type: Value.Type, forKey key: String, defaultingTo defaultValue: Value) -> WritableProperty<Value> {
-        WritableProperty<Value?>(keyValueObservableHost: self, keyPath: \.[key: key]).bimap(
-            transform: { $0 ?? defaultValue },
-            inverseTransform: { $0 }
+        WritableProperty(
+            objectWillChange: KVOChangePublisher(forKeyPath: key, on: self),
+            get: { self[key: key] ?? defaultValue },
+            set: { self[key: key] = $0 }
         )
     }
     
@@ -100,6 +108,54 @@ private struct Settings<Value: Decodable>: Decodable {
                 )
             }
         )
+    }
+    
+}
+
+private class KVOChangePublisher: Publisher {
+    typealias Output = Void
+    typealias Failure = Never
+    
+    private let observedObject: NSObject
+    private let keyPath: String
+    
+    init(forKeyPath keyPath: String, on observedObject: NSObject) {
+        self.observedObject = observedObject
+        self.keyPath = keyPath
+    }
+    
+    func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Never, S.Input == Void {
+        let subscription = KVOChangeSubscription(forKeyPath: keyPath, on: observedObject, subscriber: subscriber)
+        subscriber.receive(subscription: subscription)
+    }
+    
+}
+
+private class KVOChangeSubscription<SubscriberType: Subscriber>: NSObject, Subscription
+    where SubscriberType.Failure == Never, SubscriberType.Input == Void {
+    typealias Output = Void
+    typealias Failure = Never
+    
+    private let subscriber: SubscriberType
+    private let observedObject: NSObject
+    private let keyPath: String
+    
+    init(forKeyPath keyPath: String, on observedObject: NSObject, subscriber: SubscriberType) {
+        self.subscriber = subscriber
+        self.observedObject = observedObject
+        self.keyPath = keyPath
+        super.init()
+        observedObject.addObserver(self, forKeyPath: keyPath, options: [], context: nil)
+    }
+    
+    func request(_ demand: Subscribers.Demand) {}
+    
+    func cancel() {
+        observedObject.removeObserver(self, forKeyPath: keyPath)
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
+        _ = subscriber.receive(())
     }
     
 }

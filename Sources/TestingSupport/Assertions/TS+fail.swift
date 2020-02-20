@@ -13,7 +13,7 @@ extension TS {
     
     private static var _capture: ((Failure) -> Void)? {
         get {
-            return Thread.current.threadDictionary[key] as? (Failure) -> Void
+            Thread.current.threadDictionary[key] as? (Failure) -> Void
         }
         set {
             Thread.current.threadDictionary[key] = newValue

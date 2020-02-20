@@ -291,7 +291,7 @@ private class MyClass: Equatable {
     }
     
     static func == (_: MyClass, _: MyClass) -> Bool {
-        return false // don’t care. Just trigger diffing
+        false // don’t care. Just trigger diffing
     }
 }
 
@@ -304,6 +304,6 @@ private class MySubclass: MyClass {
     }
     
     static func == (_: MySubclass, _: MySubclass) -> Bool {
-        return false // don’t care. Just trigger diffing
+        false // don’t care. Just trigger diffing
     }
 }

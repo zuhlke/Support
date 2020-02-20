@@ -52,7 +52,7 @@ class HTTPRequestTests: XCTestCase {
 private extension HTTPRequest.Body {
     
     static func empty() -> HTTPRequest.Body {
-        return .plain("")
+        .plain("")
     }
     
 }

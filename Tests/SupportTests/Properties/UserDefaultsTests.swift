@@ -11,12 +11,20 @@ class UserDefaultsTests: XCTestCase {
             let property = defaults.property(ofType: String.self, forKey: key)
             XCTAssertNil(property.wrappedValue)
             
+            var objectChangesCount = 0
+            let cancelable = property.objectWillChange.sink {
+                objectChangesCount += 1
+            }
+            defer { cancelable.cancel() }
+            
             let expected = UUID().uuidString
             defaults.setValue(expected, forKey: key)
+            TS.assert(objectChangesCount, equals: 1)
             TS.assert(property.wrappedValue, equals: expected)
             
             let expected2 = UUID().uuidString
             property.wrappedValue = expected2
+            TS.assert(objectChangesCount, equals: 2)
             TS.assert(defaults.string(forKey: key), equals: expected2)
             
             defaults.setValue(5, forKey: key)
@@ -33,12 +41,20 @@ class UserDefaultsTests: XCTestCase {
             let property = defaults.property(ofType: String.self, forKey: key, defaultingTo: defaultValue)
             TS.assert(property.wrappedValue, equals: defaultValue)
             
+            var objectChangesCount = 0
+            let cancelable = property.objectWillChange.sink {
+                objectChangesCount += 1
+            }
+            defer { cancelable.cancel() }
+            
             let expected = UUID().uuidString
             defaults.setValue(expected, forKey: key)
+            TS.assert(objectChangesCount, equals: 1)
             TS.assert(property.wrappedValue, equals: expected)
             
             let expected2 = UUID().uuidString
             property.wrappedValue = expected2
+            TS.assert(objectChangesCount, equals: 2)
             TS.assert(defaults.string(forKey: key), equals: expected2)
             
             defaults.setValue(5, forKey: key)

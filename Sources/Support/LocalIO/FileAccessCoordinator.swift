@@ -53,7 +53,7 @@ public class FileAccessCoordinator {
     }
     
     private func synchronouslyRead(contentsOf url: URL) throws -> Data {
-        return try coordinator.coordinate(readingItemAt: url) { url in
+        try coordinator.coordinate(readingItemAt: url) { url in
             try Data(contentsOf: url)
         }
     }

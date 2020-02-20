@@ -112,11 +112,11 @@ extension HTTPInterceptProtocol {
     }
     
     public override class func canInit(with request: URLRequest) -> Bool {
-        return httpClient(for: request) != nil
+        httpClient(for: request) != nil
     }
     
     public override class func canonicalRequest(for request: URLRequest) -> URLRequest {
-        return request
+        request
     }
     
     private static func httpClient(for request: URLRequest) -> HTTPClient? {

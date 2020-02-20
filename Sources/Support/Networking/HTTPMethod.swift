@@ -36,11 +36,11 @@ extension HTTPMethod {
     }
     
     var mustHaveBody: Bool {
-        return bodyRequirement == .mustHave
+        bodyRequirement == .mustHave
     }
     
     var mustNotHaveBody: Bool {
-        return bodyRequirement == .mustNotHave
+        bodyRequirement == .mustNotHave
     }
     
 }

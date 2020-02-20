@@ -71,7 +71,7 @@ private extension Thread {
     
     var trapHandler: TrapHandler? {
         get {
-            return Thread.current.threadDictionary[type(of: self).trapHandlerKey] as? TrapHandler
+            Thread.current.threadDictionary[type(of: self).trapHandlerKey] as? TrapHandler
         }
         set {
             Thread.current.threadDictionary[type(of: self).trapHandlerKey] = newValue

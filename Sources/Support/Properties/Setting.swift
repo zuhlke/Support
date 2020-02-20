@@ -6,9 +6,9 @@ import Foundation
 /// It’s a programmer error if there is no default value of suitable type provided in the settings bundle.
 @propertyWrapper
 public struct Setting<Value: Decodable> {
-        
+    
     public let projectedValue: WritableProperty<Value>
-   
+    
     public var wrappedValue: Value {
         get {
             projectedValue.wrappedValue
@@ -23,4 +23,3 @@ public struct Setting<Value: Decodable> {
     }
     
 }
-

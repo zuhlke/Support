@@ -6,9 +6,9 @@ import Foundation
 /// It’s a programmer error if there is no default value of suitable type provided in the settings bundle.
 @propertyWrapper
 public struct UserDefault<Value: Decodable> {
-        
+    
     public let projectedValue: WritableProperty<Value>
-   
+    
     public var wrappedValue: Value {
         get {
             projectedValue.wrappedValue
@@ -33,10 +33,10 @@ extension UserDefault where Value: ExpressibleByNilLiteral {
     public init(_ key: String, userDefaults: UserDefaults = .standard) {
         self.init(
             userDefaults.property(ofType: Value.self, forKey: key)
-            .bimap(
-                transform: { $0 ?? nil },
-                inverseTransform: { $0 }
-            )
+                .bimap(
+                    transform: { $0 ?? nil },
+                    inverseTransform: { $0 }
+                )
         )
     }
     

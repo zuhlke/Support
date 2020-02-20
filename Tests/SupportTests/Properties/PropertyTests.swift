@@ -5,7 +5,7 @@ import XCTest
 
 class PropertyTests: XCTestCase {
     
-    // MARK: -Property
+    // MARK: - Property
     
     func testGettingValue() {
         let value = UUID()
@@ -45,7 +45,7 @@ class PropertyTests: XCTestCase {
         TS.assert(property.wrappedValue, equals: value)
     }
     
-    // MARK: -ObservableProperty
+    // MARK: - ObservableProperty
     
     func testChangesArePropegated() {
         let objectWillChange = PassthroughSubject<Void, Never>()
@@ -85,7 +85,7 @@ class PropertyTests: XCTestCase {
         TS.assert(callbackCount, equals: 1)
     }
     
-    // MARK: -WritableProperty
+    // MARK: - WritableProperty
     
     func testValueIsSet() {
         var writtenValue = 0
