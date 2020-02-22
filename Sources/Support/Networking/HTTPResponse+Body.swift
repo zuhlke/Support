@@ -39,4 +39,8 @@ extension HTTPResponse.Body {
         )
     }
     
+    public static func json(_ string: String) -> HTTPResponse.Body {
+        json(text.data(using: .utf8)!)
+    }
+    
 }
