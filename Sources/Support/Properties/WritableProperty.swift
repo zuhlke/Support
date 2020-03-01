@@ -43,10 +43,20 @@ public class WritableProperty<Value>: ObservableProperty<Value> {
         )
     }
     
+    public convenience init<Failure: Error>(from source: CurrentValueSubject<Value, Failure>) {
+        self.init(
+            objectWillChange: source
+                .map { _ in }
+                .catch { _ in Empty() },
+            get: { source.value },
+            set: source.send
+        )
+    }
+    
 }
 
 extension WritableProperty {
-    
+        
     public func bimap<NewValue>(transform: @escaping (Value) -> NewValue, inverseTransform: @escaping (NewValue) -> Value)
         -> WritableProperty<NewValue> {
         WritableProperty<NewValue>(

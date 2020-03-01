@@ -21,6 +21,15 @@ public class ObservableProperty<Value>: Property<Value>, ObservableObject {
         )
     }
     
+    public convenience init<Failure: Error>(from source: CurrentValueSubject<Value, Failure>) {
+        self.init(
+            objectWillChange: source
+                .map { _ in }
+                .catch { _ in Empty() },
+            get: { source.value }
+        )
+    }
+    
 }
 
 extension ObservableProperty {
