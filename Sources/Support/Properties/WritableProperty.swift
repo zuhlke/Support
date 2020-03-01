@@ -56,7 +56,7 @@ public class WritableProperty<Value>: ObservableProperty<Value> {
 }
 
 extension WritableProperty {
-        
+    
     public func bimap<NewValue>(transform: @escaping (Value) -> NewValue, inverseTransform: @escaping (NewValue) -> Value)
         -> WritableProperty<NewValue> {
         WritableProperty<NewValue>(
