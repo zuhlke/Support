@@ -85,6 +85,37 @@ class PropertyTests: XCTestCase {
         TS.assert(callbackCount, equals: 1)
     }
     
+    func testCreatingFromCurrentValueSubject() {
+        let subject = CurrentValueSubject<UUID, Never>(UUID())
+        let property = ObservableProperty(from: subject)
+        
+        TS.assert(property.wrappedValue, equals: subject.value)
+        subject.value = UUID()
+        TS.assert(property.wrappedValue, equals: subject.value)
+    }
+    
+    func testCreatingFromPublisher() {
+        let initialValue = UUID()
+        let subject = PassthroughSubject<UUID, Never>()
+        let property = subject.makeProperty(initialValue: initialValue)
+        
+        TS.assert(property.wrappedValue, equals: initialValue)
+        let newValue = UUID()
+        subject.send(newValue)
+        TS.assert(property.wrappedValue, equals: newValue)
+    }
+    
+    func testCreatingFromPublisherWithoutInitialValue() {
+        let initialValue = UUID()
+        let subject = PassthroughSubject<UUID, Never>()
+        let property = subject.makeProperty()
+        
+        TS.assert(property.wrappedValue, equals: initialValue)
+        let newValue = UUID()
+        subject.send(newValue)
+        TS.assert(property.wrappedValue, equals: newValue)
+    }
+    
     // MARK: - WritableProperty
     
     func testValueIsSet() {

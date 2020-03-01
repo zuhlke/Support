@@ -6,9 +6,9 @@ public class Cache<Key: Hashable, Resource>: Subscriptable {
     
     public init() {}
     
-    public subscript (_ key: Key) -> Resource? {
+    public subscript(_ key: Key) -> Resource? {
         get {
-            return storage.object(forKey: WrappedKey(key))?.rawValue
+            storage.object(forKey: WrappedKey(key))?.rawValue
         }
         set {
             if let newValue = newValue {

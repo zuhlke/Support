@@ -47,7 +47,7 @@ public class LoadableCache<Key: Hashable, Resource> {
     }
     
     private func loader(for key: Key) -> AnyPublisher<Resource, Never> {
-        return publishers.get(key) {
+        publishers.get(key) {
             let cache = self.cache
             return load(key)
                 .first()

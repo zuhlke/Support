@@ -201,8 +201,8 @@ class LoadableCacheTests: XCTestCase {
             TS.assert(actual, equals: key)
             if subscriptionCount == 0 {
                 return Empty(completeImmediately: true)
-                .handleEvents(receiveSubscription: { _ in subscriptionCount += 1 })
-                .eraseToAnyPublisher()
+                    .handleEvents(receiveSubscription: { _ in subscriptionCount += 1 })
+                    .eraseToAnyPublisher()
             } else {
                 return response
                     .handleEvents(receiveSubscription: { _ in subscriptionCount += 1 })
@@ -217,7 +217,6 @@ class LoadableCacheTests: XCTestCase {
         defer { cancellable1.cancel() }
         
         TS.assert(subscriptionCount, equals: 1)
-        
         
         let subject2 = CurrentValueSubject<String?, Never>(nil)
         let cancellable2 = publisher.map { $0 }.subscribe(subject2)
@@ -239,8 +238,8 @@ class LoadableCacheTests: XCTestCase {
             TS.assert(actual, equals: key)
             if subscriptionCount == 0 {
                 return Fail(error: SomeError())
-                .handleEvents(receiveSubscription: { _ in subscriptionCount += 1 })
-                .eraseToAnyPublisher()
+                    .handleEvents(receiveSubscription: { _ in subscriptionCount += 1 })
+                    .eraseToAnyPublisher()
             } else {
                 return response
                     .handleEvents(receiveSubscription: { _ in subscriptionCount += 1 })
@@ -256,7 +255,6 @@ class LoadableCacheTests: XCTestCase {
         defer { cancellable1.cancel() }
         
         TS.assert(subscriptionCount, equals: 1)
-        
         
         let subject2 = CurrentValueSubject<String?, Never>(nil)
         let cancellable2 = publisher.map { $0 }.subscribe(subject2)

@@ -41,3 +41,45 @@ extension ObservableProperty {
     }
     
 }
+
+extension Publisher {
+    
+    public func makeProperty(initialValue: Output) -> ObservableProperty<Output> {
+        let observingObject = ObservingObject(source: self, initialValue: initialValue)
+        return ObservableProperty(
+            objectWillChange: observingObject.objectWillChange,
+            get: { observingObject.value }
+        )
+    }
+    
+    public func makeProperty() -> ObservableProperty<Output?> {
+        map { $0 }
+            .makeProperty(initialValue: nil)
+    }
+    
+}
+
+extension Publisher where Output: ExpressibleByNilLiteral {
+    
+    public func makeProperty() -> ObservableProperty<Output> {
+        makeProperty(initialValue: nil)
+    }
+    
+}
+
+private class ObservingObject<Value>: ObservableObject {
+    
+    @Published
+    var value: Value
+    
+    private var cancellable: AnyCancellable!
+    
+    init<Source: Publisher>(source: Source, initialValue: Value) where Source.Output == Value {
+        value = initialValue
+        cancellable = source.sink(
+            receiveCompletion: { _ in },
+            receiveValue: { self.value = $0 }
+        )
+    }
+    
+}
