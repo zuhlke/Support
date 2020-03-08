@@ -35,19 +35,29 @@ class PublisherRegulationMonitoringTests: XCTestCase {
     
     func testCapturedRegulationsAreReported() {
         let regulator = EmptyingRegulator()
-        let first = PublisherEventKind(regulator: regulator)
-        let second = PublisherEventKind(regulator: regulator)
+        let kind = PublisherEventKind(regulator: regulator)
         
         TS.capturePublisherRegulations { monitor in
-            _ = Just(1)
-                .regulate(as: first)
+            var completionCount = 0
+            var emittedCount = 0
+            Just(1)
+                .regulate(as: kind)
+                .sink(
+                    receiveCompletion: { _ in
+                        completionCount += 1
+                        XCTAssert(monitor.isBeingRegualted(as: kind))
+                    },
+                    receiveValue: { _ in
+                        emittedCount += 1
+                        XCTAssert(monitor.isBeingRegualted(as: kind))
+                    }
+                )
+                .cancel()
             
-            TS.assert(monitor.capturedRegulationKinds, equals: [first])
+            XCTAssertFalse(monitor.isBeingRegualted(as: kind))
             
-            _ = Just(1)
-                .regulate(as: second)
-            
-            TS.assert(monitor.capturedRegulationKinds, equals: [first, second])
+            TS.assert(emittedCount, equals: 1)
+            TS.assert(completionCount, equals: 1)
         }
     }
     
