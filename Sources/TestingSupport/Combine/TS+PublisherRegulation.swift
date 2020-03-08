@@ -12,20 +12,25 @@ extension TS {
         }
     }
     
-    private class Regulator: PublisherRegulationMonitor, __CombineTestingRegulator {
-        func regulate<T>(_ publisher: T, as kind: PublisherEventKind) -> AnyPublisher<T.Output, T.Failure> where T: Publisher {
-            return RegulatedPublisher(base: publisher, kind: kind, monitor: self)
-                .eraseToAnyPublisher()
-        }
-    }
-    
     public static func capturePublisherRegulations<Output>(in work: @escaping (PublisherRegulationMonitor) throws -> Output) rethrows -> Output {
-        let regulator = Regulator()
-        return try __CombineTesting.withRegulator(regulator) {
-            try work(regulator)
+        let monitor = PublisherRegulationMonitor()
+        return try __CombineTesting.withRegulator(Regulator(monitor: monitor)) {
+            try work(monitor)
         }
     }
     
+}
+
+private class Regulator: __CombineTestingRegulator {
+    var monitor: TS.PublisherRegulationMonitor
+    init(monitor: TS.PublisherRegulationMonitor) {
+        self.monitor = monitor
+    }
+    
+    func regulate<T>(_ publisher: T, as kind: PublisherEventKind) -> AnyPublisher<T.Output, T.Failure> where T: Publisher {
+        return RegulatedPublisher(base: publisher, kind: kind, monitor: monitor)
+            .eraseToAnyPublisher()
+    }
 }
 
 private struct RegulatedPublisher<Base: Publisher>: Publisher {
