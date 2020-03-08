@@ -106,11 +106,10 @@ class PropertyTests: XCTestCase {
     }
     
     func testCreatingFromPublisherWithoutInitialValue() {
-        let initialValue = UUID()
         let subject = PassthroughSubject<UUID, Never>()
         let property = subject.makeProperty()
         
-        TS.assert(property.wrappedValue, equals: initialValue)
+        XCTAssertNil(property.wrappedValue)
         let newValue = UUID()
         subject.send(newValue)
         TS.assert(property.wrappedValue, equals: newValue)
