@@ -61,6 +61,42 @@ class PublisherRegulationMonitoringTests: XCTestCase {
         }
     }
     
+    func testPausingEventDelivery() {
+        let regulator = EmptyingRegulator()
+        let kind = PublisherEventKind(regulator: regulator)
+        
+        TS.capturePublisherRegulations { monitor in
+            var completionCount = 0
+            var emittedCount = 0
+            
+            monitor.pauseEvents(for: kind)
+            
+            let cancellable = Just(1)
+                .regulate(as: kind)
+                .sink(
+                    receiveCompletion: { _ in
+                        completionCount += 1
+                        // Should be regulated even if delivered after resume
+                        XCTAssert(monitor.isBeingRegualted(as: kind))
+                    },
+                    receiveValue: { _ in
+                        emittedCount += 1
+                        // Should be regulated even if delivered after resume
+                        XCTAssert(monitor.isBeingRegualted(as: kind))
+                    }
+                )
+            defer { cancellable.cancel() }
+            
+            TS.assert(emittedCount, equals: 0)
+            TS.assert(completionCount, equals: 0)
+            
+            monitor.resumeEvents(for: kind)
+            
+            TS.assert(emittedCount, equals: 1)
+            TS.assert(completionCount, equals: 1)
+        }
+    }
+    
 }
 
 private class EmptyingRegulator: PublisherRegulator {

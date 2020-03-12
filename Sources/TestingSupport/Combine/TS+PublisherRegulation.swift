@@ -5,10 +5,23 @@ import Support
 extension TS {
     
     public class PublisherRegulationMonitor {
+        private var isEnabled = [PublisherEventKind: CurrentValueSubject<Bool, Never>]()
         fileprivate var currentRegulationKind: PublisherEventKind?
         
         public func isBeingRegualted(as kind: PublisherEventKind) -> Bool {
             kind == currentRegulationKind
+        }
+        
+        public func pauseEvents(for kind: PublisherEventKind) {
+            enabledSubject(for: kind).value = false
+        }
+        
+        public func resumeEvents(for kind: PublisherEventKind) {
+            enabledSubject(for: kind).value = true
+        }
+        
+        fileprivate func enabledSubject(for kind: PublisherEventKind) -> CurrentValueSubject<Bool, Never> {
+            isEnabled.get(kind) { CurrentValueSubject(true) }
         }
     }
     
@@ -47,13 +60,34 @@ private struct RegulatedPublisher<Base: Publisher>: Publisher {
     
 }
 
-private struct RegulatedSubscriber<Base: Subscriber>: Subscriber {
+private class RegulatedSubscriber<Base: Subscriber>: Subscriber {
     typealias Input = Base.Input
     typealias Failure = Base.Failure
     
-    var base: Base
-    var kind: PublisherEventKind
-    var monitor: TS.PublisherRegulationMonitor
+    private let base: Base
+    private let kind: PublisherEventKind
+    private let monitor: TS.PublisherRegulationMonitor
+    
+    private var isEnabledCancellable: AnyCancellable?
+    private var bufferedInputs = [Base.Input]()
+    private var bufferedCompletion: Subscribers.Completion<Base.Failure>?
+    private var isEnabled = true {
+        didSet {
+            flushIfNeeded()
+        }
+    }
+    
+    init(
+        base: Base,
+        kind: PublisherEventKind,
+        monitor: TS.PublisherRegulationMonitor
+    ) {
+        self.base = base
+        self.kind = kind
+        self.monitor = monitor
+        let isEnabled = monitor.enabledSubject(for: kind)
+        isEnabledCancellable = isEnabled.assign(to: \.isEnabled, on: self)
+    }
     
     var combineIdentifier: CombineIdentifier {
         base.combineIdentifier
@@ -64,14 +98,44 @@ private struct RegulatedSubscriber<Base: Subscriber>: Subscriber {
     }
     
     func receive(_ input: Base.Input) -> Subscribers.Demand {
-        monitor.currentRegulationKind = kind
-        defer { monitor.currentRegulationKind = nil }
-        return base.receive(input)
+        if isEnabled {
+            regulate {
+                _ = base.receive(input)
+            }
+        } else {
+            bufferedInputs.append(input)
+        }
+        
+        return .unlimited
     }
     
     func receive(completion: Subscribers.Completion<Base.Failure>) {
+        if isEnabled {
+            regulate {
+                base.receive(completion: completion)
+            }
+        } else {
+            bufferedCompletion = completion
+        }
+    }
+    
+    private func flushIfNeeded() {
+        guard isEnabled else { return }
+        
+        regulate {
+            bufferedInputs.forEach { _ = base.receive($0) }
+            bufferedInputs.removeAll()
+            
+            if let bufferedCompletion = bufferedCompletion {
+                base.receive(completion: bufferedCompletion)
+            }
+        }
+    }
+    
+    private func regulate(work: () -> Void) {
         monitor.currentRegulationKind = kind
         defer { monitor.currentRegulationKind = nil }
-        base.receive(completion: completion)
+        
+        work()
     }
 }

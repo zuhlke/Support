@@ -1,7 +1,7 @@
 import Combine
 import Foundation
 
-public class PublisherEventKind: Equatable, CustomStringConvertible {
+public class PublisherEventKind: Hashable, CustomStringConvertible {
     private let label: String
     fileprivate let regulator: PublisherRegulator
     
@@ -16,6 +16,10 @@ public class PublisherEventKind: Equatable, CustomStringConvertible {
     
     public var description: String {
         "\(Self.self)(\(label))"
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        label.hash(into: &hasher)
     }
 }
 
