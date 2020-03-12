@@ -89,10 +89,6 @@ private class RegulatedSubscriber<Base: Subscriber>: Subscriber {
         isEnabledCancellable = isEnabled.assign(to: \.isEnabled, on: self)
     }
     
-    var combineIdentifier: CombineIdentifier {
-        base.combineIdentifier
-    }
-    
     func receive(subscription: Subscription) {
         base.receive(subscription: subscription)
     }
