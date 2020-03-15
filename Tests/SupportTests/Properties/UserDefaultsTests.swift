@@ -1,3 +1,4 @@
+import Combine
 import TestingSupport
 import XCTest
 @testable import Support
@@ -66,6 +67,14 @@ class UserDefaultsTests: XCTestCase {
             defaults.removeObject(forKey: key)
             TS.assert(property.wrappedValue, equals: defaultValue)
         }
+    }
+    
+    func testRepeatedCancellationDoesNotCauseACrash() {
+        let property = UserDefaults.standard.property(ofType: String.self, forKey: UUID().uuidString)
+        let subscriber = MockSubscriber()
+        property.objectWillChange.subscribe(subscriber)
+        subscriber.subscription?.cancel()
+        XCTAssertNoThrow(subscriber.subscription?.cancel())
     }
     
     // MARK: - Settings
@@ -225,4 +234,18 @@ extension UserDefaultsTests {
         }
     }
     
+}
+
+private class MockSubscriber: Subscriber {
+    var subscription: Subscription?
+    
+    func receive(subscription: Subscription) {
+        self.subscription = subscription
+    }
+    
+    func receive(_ input: Void) -> Subscribers.Demand {
+        .unlimited
+    }
+    
+    func receive(completion: Subscribers.Completion<Never>) {}
 }

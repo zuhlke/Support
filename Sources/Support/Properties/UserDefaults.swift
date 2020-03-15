@@ -137,7 +137,7 @@ private class KVOChangeSubscription<SubscriberType: Subscriber>: NSObject, Subsc
     typealias Failure = Never
     
     private let subscriber: SubscriberType
-    private let observedObject: NSObject
+    private var observedObject: NSObject?
     private let keyPath: String
     
     init(forKeyPath keyPath: String, on observedObject: NSObject, subscriber: SubscriberType) {
@@ -151,7 +151,8 @@ private class KVOChangeSubscription<SubscriberType: Subscriber>: NSObject, Subsc
     func request(_ demand: Subscribers.Demand) {}
     
     func cancel() {
-        observedObject.removeObserver(self, forKeyPath: keyPath)
+        observedObject?.removeObserver(self, forKeyPath: keyPath)
+        observedObject = nil
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
