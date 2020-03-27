@@ -10,9 +10,9 @@ public struct HTTPHeaderFieldName: Hashable {
 
 extension HTTPHeaderFieldName {
     
-    static let contentType = HTTPHeaderFieldName("content-type")
+    public static let contentType = HTTPHeaderFieldName("content-type")
     
-    static let contentLength = HTTPHeaderFieldName("content-length")
+    public static let contentLength = HTTPHeaderFieldName("content-length")
     
     static let bodyHeaders: [HTTPHeaderFieldName] = [
         .contentLength,
