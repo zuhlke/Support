@@ -12,8 +12,8 @@ import Foundation
 ///   - value: The value to mutate.
 ///   - mutate: The mutating.
 /// - Returns: The mutated value.
-public func mutating<Value>(_ value: Value, with mutate: (inout Value) -> Void) -> Value {
+public func mutating<Value>(_ value: Value, with mutate: (inout Value) throws -> Void) rethrows -> Value {
     var copy = value
-    mutate(&copy)
+    try mutate(&copy)
     return copy
 }

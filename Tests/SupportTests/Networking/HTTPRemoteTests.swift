@@ -153,7 +153,7 @@ class HTTPRemoteTests: XCTestCase {
         }
     }
     
-    func testRemoteQueryItemsCanNotBeOverriddenByRequest() {
+    func testDefaultHeaderMergePolicyDisallowsOverrides() {
         let headerName = HTTPHeaderFieldName("verbose")
         let remote = HTTPRemote(
             host: "example.com",
@@ -164,6 +164,23 @@ class HTTPRemoteTests: XCTestCase {
         let request = HTTPRequest.get("/path", headers: [headerName: "false"])
         
         XCTAssertThrowsError(try remote.urlRequest(from: request))
+    }
+    
+    func testUpdatingHeaderMergePolicyWorks() throws {
+        let headerName = HTTPHeaderFieldName("verbose")
+        var remote = HTTPRemote(
+            host: "example.com",
+            path: "",
+            headers: [headerName: "true"]
+        )
+        
+        remote.headerMergePolicy = HTTPRemote.HeaderMergePolicy { remoteHeaders, _ in remoteHeaders }
+        
+        let request = HTTPRequest.get("/path", headers: [headerName: "false"])
+        
+        let urlRequest = try remote.urlRequest(from: request)
+        TS.assert(urlRequest.allHTTPHeaderFields?.count, equals: 1)
+        TS.assert(urlRequest.value(forHTTPHeaderField: headerName.lowercaseName), equals: "true")
     }
     
 }

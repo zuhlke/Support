@@ -12,7 +12,7 @@ import Foundation
 ///   - configure: The mutating.
 /// - Returns: The configured value.
 @discardableResult
-public func configuring<Value>(_ value: Value, with configure: (Value) -> Void) -> Value {
-    configure(value)
+public func configuring<Value>(_ value: Value, with configure: (Value) throws -> Void) rethrows -> Value {
+    try configure(value)
     return value
 }
