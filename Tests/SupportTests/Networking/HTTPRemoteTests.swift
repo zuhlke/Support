@@ -97,6 +97,7 @@ class HTTPRemoteTests: XCTestCase {
             port: 9000,
             user: "user",
             password: "password",
+            queryParameters: ["remote-query": "remote-value"],
             headers: [HTTPHeaderFieldName("client_id"): "1"]
         )
         
@@ -119,6 +120,7 @@ class HTTPRemoteTests: XCTestCase {
                 $0.user = "user"
                 $0.password = "password"
                 $0.queryItems = [
+                    URLQueryItem(name: "remote-query", value: "remote-value"),
                     URLQueryItem(name: "query", value: "value"),
                 ]
             }
@@ -153,6 +155,33 @@ class HTTPRemoteTests: XCTestCase {
         }
     }
     
+    func testDefaultQueryParameterMergePolicyDisallowsOverridesCaseInsensitive() {
+        let remote = HTTPRemote(
+            host: "example.com",
+            path: "",
+            queryParameters: ["Query": "true"]
+        )
+        
+        let request = HTTPRequest.get("/path", queryParameters: ["query": "false"])
+        
+        XCTAssertThrowsError(try remote.urlRequest(from: request))
+    }
+    
+    func testUpdatingQueryParameterMergePolicyWorks() throws {
+        var remote = HTTPRemote(
+            host: "example.com",
+            path: "",
+            queryParameters: ["Query": "true"]
+        )
+        
+        remote.queryParametersMergePolicy = .custom { remoteParameters, _ in remoteParameters }
+        
+        let request = HTTPRequest.get("/path", queryParameters: ["query": "false"])
+        
+        let urlRequest = try remote.urlRequest(from: request)
+        TS.assert(urlRequest.url?.query, equals: "Query=true")
+    }
+    
     func testDefaultHeaderMergePolicyDisallowsOverrides() {
         let headerName = HTTPHeaderFieldName("verbose")
         let remote = HTTPRemote(
@@ -174,7 +203,7 @@ class HTTPRemoteTests: XCTestCase {
             headers: [headerName: "true"]
         )
         
-        remote.headerMergePolicy = HTTPRemote.HeaderMergePolicy { remoteHeaders, _ in remoteHeaders }
+        remote.headersMergePolicy = .custom { remoteHeaders, _ in remoteHeaders }
         
         let request = HTTPRequest.get("/path", headers: [headerName: "false"])
         
