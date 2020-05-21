@@ -196,7 +196,7 @@ class LoadableCacheTests: XCTestCase {
         let key = UUID()
         var subscriptionCount = 0
         
-        var response = PassthroughSubject<String, Never>()
+        let response = PassthroughSubject<String, Never>()
         let cache = LoadableCache { (actual: UUID) -> AnyPublisher<String, Never> in
             TS.assert(actual, equals: key)
             if subscriptionCount == 0 {
@@ -233,7 +233,7 @@ class LoadableCacheTests: XCTestCase {
         let key = UUID()
         var subscriptionCount = 0
         
-        var response = PassthroughSubject<String, Never>()
+        let response = PassthroughSubject<String, Never>()
         let cache = LoadableCache { (actual: UUID) -> AnyPublisher<String, SomeError> in
             TS.assert(actual, equals: key)
             if subscriptionCount == 0 {
