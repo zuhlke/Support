@@ -25,7 +25,7 @@ extension TS {
         }
     }
     
-    public static func capturePublisherRegulations<Output>(in work: @escaping (PublisherRegulationMonitor) throws -> Output) rethrows -> Output {
+    public static func capturePublisherRegulations<Output>(in work: (PublisherRegulationMonitor) throws -> Output) rethrows -> Output {
         let monitor = PublisherRegulationMonitor()
         return try __CombineTesting.withRegulator(Regulator(monitor: monitor)) {
             try work(monitor)
