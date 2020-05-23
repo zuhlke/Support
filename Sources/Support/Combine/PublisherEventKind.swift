@@ -35,6 +35,21 @@ extension Publisher {
     
 }
 
+extension PublisherEventKind {
+    
+    public static func receive<S>(
+        on scheduler: S,
+        options: S.SchedulerOptions? = nil,
+        label: String = "\(#file).\(#function)L\(#line)"
+    ) -> PublisherEventKind where S: Scheduler {
+        PublisherEventKind(
+            label: label,
+            regulator: ReceiveOnRegulator(scheduler: scheduler, options: options)
+        )
+    }
+    
+}
+
 public protocol __CombineTestingRegulator {
     func regulate<T: Publisher>(_ publisher: T, as kind: PublisherEventKind) -> AnyPublisher<T.Output, T.Failure>
 }
@@ -64,4 +79,16 @@ private extension Thread {
         }
     }
     
+}
+
+private struct ReceiveOnRegulator<SchedulerType: Scheduler>: PublisherRegulator {
+    
+    var scheduler: SchedulerType
+    var options: SchedulerType.SchedulerOptions?
+    
+    func regulate<T>(_ publisher: T) -> AnyPublisher<T.Output, T.Failure> where T: Publisher {
+        publisher
+            .receive(on: scheduler, options: options)
+            .eraseToAnyPublisher()
+    }
 }
