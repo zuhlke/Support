@@ -37,14 +37,17 @@ extension Publisher {
 
 extension PublisherEventKind {
     
-    public static func receive<S>(
-        on scheduler: S,
-        options: S.SchedulerOptions? = nil,
-        label: String = "\(#file).\(#function)L\(#line)"
-    ) -> PublisherEventKind where S: Scheduler {
+    public static func receive<S>(on scheduler: S, options: S.SchedulerOptions? = nil, label: String = "\(#file).\(#function)L\(#line)") -> PublisherEventKind where S: Scheduler {
         PublisherEventKind(
             label: label,
             regulator: ReceiveOnRegulator(scheduler: scheduler, options: options)
+        )
+    }
+
+    public static func debounce<S>(for dueTime: S.SchedulerTimeType.Stride, scheduler: S, options: S.SchedulerOptions? = nil, label: String = "\(#file).\(#function)L\(#line)") -> PublisherEventKind where S: Scheduler {
+        PublisherEventKind(
+            label: label,
+            regulator: DebounceRegulator(scheduler: scheduler, options: options, dueTime: dueTime)
         )
     }
     
@@ -89,6 +92,19 @@ private struct ReceiveOnRegulator<SchedulerType: Scheduler>: PublisherRegulator 
     func regulate<T>(_ publisher: T) -> AnyPublisher<T.Output, T.Failure> where T: Publisher {
         publisher
             .receive(on: scheduler, options: options)
+            .eraseToAnyPublisher()
+    }
+}
+
+private struct DebounceRegulator<SchedulerType: Scheduler>: PublisherRegulator {
+    
+    var scheduler: SchedulerType
+    var options: SchedulerType.SchedulerOptions?
+    var dueTime: SchedulerType.SchedulerTimeType.Stride
+    
+    func regulate<T>(_ publisher: T) -> AnyPublisher<T.Output, T.Failure> where T: Publisher {
+        publisher
+            .debounce(for: dueTime, scheduler: scheduler, options: options)
             .eraseToAnyPublisher()
     }
 }
