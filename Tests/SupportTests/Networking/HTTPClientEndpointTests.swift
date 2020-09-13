@@ -1,7 +1,7 @@
+import Combine
 import Support
 import TestingSupport
 import XCTest
-import Combine
 
 class HTTPClientEndpointTests: XCTestCase {
     
@@ -103,6 +103,7 @@ private struct MockEndpoint: HTTPEndpoint {
             return .get("")
         }
     }
+
     func parse(_ response: HTTPResponse) throws -> UUID {
         if shouldFailDecoding {
             throw DecodingError()

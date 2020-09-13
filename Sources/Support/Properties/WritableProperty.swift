@@ -5,7 +5,7 @@ public class WritableProperty<Value>: ObservableProperty<Value> {
     
     private let _set: (Value) -> Void
     
-    public override var wrappedValue: Value {
+    override public var wrappedValue: Value {
         get {
             super.wrappedValue
         }
@@ -58,7 +58,8 @@ public class WritableProperty<Value>: ObservableProperty<Value> {
 extension WritableProperty {
     
     public func bimap<NewValue>(transform: @escaping (Value) -> NewValue, inverseTransform: @escaping (NewValue) -> Value)
-        -> WritableProperty<NewValue> {
+        -> WritableProperty<NewValue>
+    {
         WritableProperty<NewValue>(
             objectWillChange: objectWillChange,
             get: { transform(self.wrappedValue) },

@@ -132,7 +132,8 @@ private class KVOChangePublisher: Publisher {
 }
 
 private class KVOChangeSubscription<SubscriberType: Subscriber>: NSObject, Subscription
-    where SubscriberType.Failure == Never, SubscriberType.Input == Void {
+    where SubscriberType.Failure == Never, SubscriberType.Input == Void
+{
     typealias Output = Void
     typealias Failure = Never
     

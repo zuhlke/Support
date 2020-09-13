@@ -1,5 +1,5 @@
-import Foundation
 import Combine
+import Foundation
 
 public protocol HTTPEndpoint {
     associatedtype Input
@@ -31,7 +31,7 @@ extension HTTPClient {
     public func fetch<E: HTTPEndpoint>(_ endpoint: E, with input: E.Input) -> AnyPublisher<E.Output, NetworkRequestError> {
         do {
             let request = try endpoint.request(for: input)
-            return self.perform(request)
+            return perform(request)
                 .mapError { error in
                     switch error {
                     case .rejectedRequest(let underlyingError):

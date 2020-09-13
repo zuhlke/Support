@@ -7,7 +7,7 @@ public final class HTTPInterceptProtocol: URLProtocol {
     
     private var cancellable: AnyCancellable?
     
-    public override init(request: URLRequest, cachedResponse: CachedURLResponse?, client: URLProtocolClient?) {
+    override public init(request: URLRequest, cachedResponse: CachedURLResponse?, client: URLProtocolClient?) {
         guard let httpClient = Self.httpClient(for: request) else {
             Thread.fatalError("\(Self.self) should not be initialised without a registered `HTTPClient`.")
         }
@@ -15,7 +15,7 @@ public final class HTTPInterceptProtocol: URLProtocol {
         super.init(request: request, cachedResponse: cachedResponse, client: client)
     }
     
-    public override func startLoading() {
+    override public func startLoading() {
         guard
             let method = HTTPMethod(rawValue: request.httpMethod ?? ""),
             let url = request.url,
@@ -79,7 +79,7 @@ public final class HTTPInterceptProtocol: URLProtocol {
         )
     }
     
-    public override func stopLoading() {
+    override public func stopLoading() {
         cancellable = nil
     }
     
@@ -111,11 +111,11 @@ extension HTTPInterceptProtocol {
         )
     }
     
-    public override class func canInit(with request: URLRequest) -> Bool {
+    override public class func canInit(with request: URLRequest) -> Bool {
         httpClient(for: request) != nil
     }
     
-    public override class func canonicalRequest(for request: URLRequest) -> URLRequest {
+    override public class func canonicalRequest(for request: URLRequest) -> URLRequest {
         request
     }
     

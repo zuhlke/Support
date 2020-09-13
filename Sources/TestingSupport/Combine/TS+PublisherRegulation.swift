@@ -41,7 +41,7 @@ private class Regulator: __CombineTestingRegulator {
     }
     
     func regulate<T>(_ publisher: T, as kind: PublisherEventKind) -> AnyPublisher<T.Output, T.Failure> where T: Publisher {
-        return RegulatedPublisher(base: publisher, kind: kind, monitor: monitor)
+        RegulatedPublisher(base: publisher, kind: kind, monitor: monitor)
             .eraseToAnyPublisher()
     }
 }
