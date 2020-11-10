@@ -82,7 +82,7 @@ extension TS {
     private static func description(for subject: Any) -> String {
         let object = descriptionObject(for: subject)
         switch descriptionObject(for: subject) {
-        case .dictionary, .array:
+        case .dictionary, .array, .jsonObject:
             let json = try! JSONSerialization.data(withJSONObject: object.jsonObject, options: [.prettyPrinted, .sortedKeys])
             return String(data: json, encoding: .utf8)!
         case .string(let string):
@@ -105,10 +105,15 @@ private extension CombinedDifference.Change {
     
 }
 
-private enum Description {
+protocol CustomDescriptionConvertible {
+    var descriptionObject: Description { get }
+}
+
+enum Description {
     case string(String)
     case dictionary([String: Description])
     case array([Description])
+    case jsonObject(Any)
     case null
     
     var jsonObject: Any {
@@ -119,6 +124,8 @@ private enum Description {
             return value.mapValues { $0.jsonObject }
         case .array(let value):
             return value.map { $0.jsonObject }
+        case .jsonObject(let object):
+            return object
         case .null:
             return NSNull()
         }
@@ -126,6 +133,10 @@ private enum Description {
 }
 
 private func descriptionObject(for subject: Any) -> Description {
+    if let descriptionConvertible = subject as? CustomDescriptionConvertible {
+        return descriptionConvertible.descriptionObject
+    }
+    
     let mirror = Mirror(reflecting: subject)
     switch mirror.displayStyle ?? .struct {
     case .struct, .class:
