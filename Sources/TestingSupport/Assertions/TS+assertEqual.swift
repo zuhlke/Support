@@ -81,9 +81,9 @@ extension TS {
     }
     
     private static func description(for subject: Any) -> String {
-        let object = descriptionObject(for: subject)
-        switch descriptionObject(for: subject) {
-        case .dictionary, .array, .jsonObject:
+        let object = Description(for: subject)
+        switch object {
+        case .dictionary, .array, .set:
             let json = try! JSONSerialization.data(withJSONObject: object.jsonObject, options: [.prettyPrinted, .sortedKeys])
             return String(data: json, encoding: .utf8)!
         case .string(let string):
@@ -115,89 +115,12 @@ extension Description {
             return value.mapValues { $0.jsonObject }
         case .array(let value):
             return value.map { $0.jsonObject }
-        case .jsonObject(let object):
-            return object
+        case .set(let value):
+            return value
+                .sorted { "\($0)" < "\($1)" } // doesn’t matter as long as it’s predictable
+                .map { $0.jsonObject }
         case .null:
             return NSNull()
         }
-    }
-}
-
-private func descriptionObject(for subject: Any) -> Description {
-    if let descriptionConvertible = subject as? CustomDescriptionConvertible {
-        return descriptionConvertible.structuredDescription
-    }
-    
-    let mirror = Mirror(reflecting: subject)
-    switch mirror.displayStyle ?? .struct {
-    case .struct, .class:
-        guard !mirror.children.isEmpty else {
-            return .string("\(subject)")
-        }
-        var dictionary = [String: Description]()
-        var instanceMirror: Mirror? = mirror
-        while instanceMirror != nil {
-            instanceMirror?.children.forEach { key, value in
-                if let key = key {
-                    dictionary[key] = descriptionObject(for: value)
-                }
-            }
-            instanceMirror = instanceMirror?.superclassMirror
-        }
-        
-        return .dictionary(dictionary)
-        
-    case .optional:
-        var value: Any?
-        mirror.children.forEach { _, child in
-            value = child
-        }
-        if let value = value {
-            return descriptionObject(for: value)
-        } else {
-            return .null
-        }
-        
-    case .collection:
-        let array = mirror.children.map { _, child in
-            descriptionObject(for: child)
-        }
-        return .array(array)
-        
-    case .set:
-        let array = mirror.children
-            .sorted { "\($0.1)" < "\($1.1)" } // doesn’t matter as long as it’s predictable
-            .map { _, child in
-                descriptionObject(for: child)
-            }
-        return .array(array)
-        
-    case .dictionary:
-        var dictionary = [String: Description]()
-        mirror.children.forEach { _, child in
-            var key: String?
-            var value: Any?
-            Mirror(reflecting: child).children.forEach { label, subchild in
-                switch label {
-                case "key":
-                    key = subchild as? String
-                case "value":
-                    value = subchild
-                default:
-                    break
-                }
-            }
-            if let key = key, let value = value {
-                dictionary[key] = descriptionObject(for: value)
-            }
-        }
-        return .dictionary(dictionary)
-        
-    case .enum, .tuple:
-        // Not worth the effort at the moment. Refine if the need comes up.
-        return .string("\(subject)")
-        
-    @unknown default:
-        return .string("\(subject)")
     }
 }
