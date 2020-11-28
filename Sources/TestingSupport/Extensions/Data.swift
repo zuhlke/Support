@@ -1,4 +1,5 @@
 import Foundation
+import Support
 
 extension Data {
     
@@ -13,7 +14,7 @@ extension Data {
 }
 
 extension Data: CustomDescriptionConvertible {
-    var descriptionObject: Description {
+    public var structuredDescription: Description {
         if let string = String(data: self, encoding: .utf8) {
             return .string(string)
         } else {

@@ -1,4 +1,5 @@
 import Foundation
+import Support
 
 extension TS {
     
@@ -105,17 +106,7 @@ private extension CombinedDifference.Change {
     
 }
 
-protocol CustomDescriptionConvertible {
-    var descriptionObject: Description { get }
-}
-
-enum Description {
-    case string(String)
-    case dictionary([String: Description])
-    case array([Description])
-    case jsonObject(Any)
-    case null
-    
+extension Description {
     var jsonObject: Any {
         switch self {
         case .string(let value):
@@ -134,7 +125,7 @@ enum Description {
 
 private func descriptionObject(for subject: Any) -> Description {
     if let descriptionConvertible = subject as? CustomDescriptionConvertible {
-        return descriptionConvertible.descriptionObject
+        return descriptionConvertible.structuredDescription
     }
     
     let mirror = Mirror(reflecting: subject)
