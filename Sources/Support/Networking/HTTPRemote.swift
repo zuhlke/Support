@@ -68,7 +68,7 @@ extension HTTPRemote {
     /// Creates a URL for the specified request and scheme.
     /// - Throws: An error if `request` overries query parameters already defined in the receiver.
     public func url(for request: HTTPRequest, scheme: URLScheme) throws -> URL {
-        let combinedQueryParameters = try queryParametersMergePolicy.merge(self.queryParameters, request.queryParameters)
+        let combinedQueryParameters = try queryParametersMergePolicy.merge(queryParameters, request.queryParameters)
         return mutating(URLComponents()) {
             $0.scheme = scheme.canonicalValue
             $0.host = host
@@ -84,7 +84,7 @@ extension HTTPRemote {
         }.url!
     }
 
- }
+}
 
 extension HTTPRemote: URLRequestProviding {
     
