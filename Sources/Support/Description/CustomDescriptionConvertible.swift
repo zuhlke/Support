@@ -10,7 +10,7 @@ extension Data: CustomDescriptionConvertible {
             return .string(string)
         } else {
             return .dictionary([
-                "base64Encoded": .string(base64EncodedString())
+                "base64Encoded": .string(base64EncodedString()),
             ])
         }
     }
