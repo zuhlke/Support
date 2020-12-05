@@ -63,25 +63,33 @@ public struct HTTPRemote {
     
 }
 
-extension HTTPRemote: URLRequestProviding {
-    
-    public func urlRequest(from request: HTTPRequest) throws -> URLRequest {
-        let queryParameters = try queryParametersMergePolicy.merge(self.queryParameters, request.queryParameters)
-        let headers = try headersMergePolicy.merge(self.headers, request.headers)
-        
-        let url = mutating(URLComponents()) {
-            $0.scheme = "https"
+extension HTTPRemote {
+
+    func url(for request: HTTPRequest, scheme: URLScheme) throws -> URL {
+        let combinedQueryParameters = try queryParametersMergePolicy.merge(self.queryParameters, request.queryParameters)
+        return mutating(URLComponents()) {
+            $0.scheme = scheme.canonicalValue
             $0.host = host
             $0.path = "\(path)\(request.path)"
             $0.fragment = request.fragment
             $0.port = port
             $0.user = user
             $0.password = password
-            if !queryParameters.isEmpty {
-                $0.queryItems = queryParameters
+            if !combinedQueryParameters.isEmpty {
+                $0.queryItems = combinedQueryParameters
                     .map { URLQueryItem(name: $0.key, value: $0.value) }
             }
         }.url!
+    }
+
+ }
+
+extension HTTPRemote: URLRequestProviding {
+    
+    public func urlRequest(from request: HTTPRequest) throws -> URLRequest {
+        let headers = try headersMergePolicy.merge(self.headers, request.headers)
+        
+        let url = try self.url(for: request, scheme: .https)
         
         return mutating(URLRequest(url: url)) { urlRequest in
             headers.fields.forEach {
