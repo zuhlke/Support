@@ -81,6 +81,30 @@ class TSAssertEqualTests: XCTestCase {
         }
     }
     
+    func testEmptyLineDifferenceInequalityResult() {
+        let actual =
+            """
+            line 1
+            
+            line 3
+            """
+        let expected =
+            """
+            line 1
+            line 3
+            """
+        let message =
+            """
+            Difference from expectation:
+                line 1
+            +++ 
+                line 3
+            """
+        TS.assertFailsOnces(expectedMessage: message) {
+            TS.assert(actual, equals: expected)
+        }
+    }
+    
     func testOptionalInequalityResult() {
         let message =
             """

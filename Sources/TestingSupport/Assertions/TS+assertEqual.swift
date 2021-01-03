@@ -67,8 +67,8 @@ extension TS {
     private static func differenceMessage<T>(expected: T, actual: T) -> String {
         let actualDescription = description(for: actual)
         let expectedDescription = description(for: expected)
-        let lines = actualDescription.split(separator: "\n")
-            .combinedDifference(from: expectedDescription.split(separator: "\n"))
+        let lines = actualDescription.split(separator: "\n", omittingEmptySubsequences: false)
+            .combinedDifference(from: expectedDescription.split(separator: "\n", omittingEmptySubsequences: false))
         
         let diff = lines
             .map { "\($0.change.description) \($0.element)" }
