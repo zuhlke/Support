@@ -45,7 +45,8 @@ public protocol ExhaustiveGenerator: SamplingGenerator {
     /// This API adds a few restrictions on the `sampleElements` element:
     /// * all possible elements __must__ be included.
     /// * the collection __must not__ be infinite.
-    /// * each `Element` __must__ appear exactly once.
+    ///
+    /// It’s permitted for `allElements` to contain the same `Element` multiple times.
     var allElements: AllElements { get }
 }
 
