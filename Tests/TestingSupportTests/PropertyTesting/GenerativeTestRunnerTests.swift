@@ -83,6 +83,127 @@ class GenerativeTestRunnerTests: XCTestCase {
         TS.assert(callbackCount, equals: maxIterations)
     }
     
+    // MARK: Shrinking
+    
+    func testNonShrinkingErrorReturnsThatError() {
+        let runner = GenerativeTestRunner()
+        
+        let generator = ShrinkingGenerator(
+            sampleElements: [.failure(.large)],
+            shrunkElements: { _ in [] }
+        )
+        
+        let run = {
+            try runner.run(with: generator) {
+                try $0.get()
+            }
+        }
+        
+        XCTAssertThrowsError(try run(), "") { error in
+            switch error {
+            case let e as ShrinkingError:
+                TS.assert(e, equals: .large)
+            default:
+                XCTFail("Unexpected error: \(error)")
+            }
+        }
+    }
+    
+    func testShrinkingErrorReturnsShrunkError() {
+        let runner = GenerativeTestRunner()
+        
+        let generator = ShrinkingGenerator(
+            sampleElements: [.failure(.large)],
+            shrunkElements: { element in
+                switch element {
+                case .failure(.large):
+                    return [.success(()), .success(()), .failure(.small)]
+                default:
+                    return []
+                }
+            }
+        )
+        
+        let run = {
+            try runner.run(with: generator) {
+                try $0.get()
+            }
+        }
+        
+        XCTAssertThrowsError(try run(), "") { error in
+            switch error {
+            case let e as ShrinkingError:
+                TS.assert(e, equals: .small)
+            default:
+                XCTFail("Unexpected error: \(error)")
+            }
+        }
+    }
+    
+    func testShrinkingErrorIsRecursive() {
+        let runner = GenerativeTestRunner()
+        
+        let generator = ShrinkingGenerator(
+            sampleElements: [.failure(.large)],
+            shrunkElements: { element in
+                switch element {
+                case .failure(.large):
+                    return [.success(()), .success(()), .failure(.medium)]
+                case .failure(.medium):
+                    return [.success(()), .success(()), .failure(.small)]
+                default:
+                    return []
+                }
+            }
+        )
+        
+        let run = {
+            try runner.run(with: generator) {
+                try $0.get()
+            }
+        }
+        
+        XCTAssertThrowsError(try run(), "") { error in
+            switch error {
+            case let e as ShrinkingError:
+                TS.assert(e, equals: .small)
+            default:
+                XCTFail("Unexpected error: \(error)")
+            }
+        }
+    }
+    
+    func testShrinkingErrorReturnsFirstMatch() {
+        let runner = GenerativeTestRunner()
+        
+        let generator = ShrinkingGenerator(
+            sampleElements: [.failure(.large)],
+            shrunkElements: { element in
+                switch element {
+                case .failure(.large):
+                    return [.success(()), .success(()), .failure(.small), .failure(.medium)]
+                default:
+                    return []
+                }
+            }
+        )
+        
+        let run = {
+            try runner.run(with: generator) {
+                try $0.get()
+            }
+        }
+        
+        XCTAssertThrowsError(try run(), "") { error in
+            switch error {
+            case let e as ShrinkingError:
+                TS.assert(e, equals: .small)
+            default:
+                XCTFail("Unexpected error: \(error)")
+            }
+        }
+    }
+    
 }
 
 private enum MockCases: CaseIterable {
@@ -103,7 +224,39 @@ private struct MockInfiniteGenerator: SamplingGenerator {
     }
 }
 
-private struct MockFullConformanceGenerator: ExhaustiveGenerator {
-    var sampleElements: [Int]
-    var allElements: [Int]
+private struct MockFullConformanceGenerator<Element>: ExhaustiveGenerator {
+    var sampleElements: [Element]
+    var allElements: [Element]
+}
+
+private struct ShrinkingGenerator: SamplingGenerator {
+    
+    struct _ShrunkGenerator<Element>: ExhaustiveGenerator {
+        var allElements: [Element]
+        var shrunkElements: (Element) -> [Element]
+        
+        func shrink(_ element: Element) -> _ShrunkGenerator<Element> {
+            ShrunkGenerator(
+                allElements: shrunkElements(element),
+                shrunkElements: shrunkElements
+            )
+        }
+    }
+    
+    var sampleElements: [Result<Void, ShrinkingError>]
+    
+    var shrunkElements: (Element) -> [Result<Void, ShrinkingError>]
+    
+    func shrink(_ element: Result<Void, ShrinkingError>) -> _ShrunkGenerator<Result<Void, ShrinkingError>> {
+        ShrunkGenerator(
+            allElements: shrunkElements(element),
+            shrunkElements: shrunkElements
+        )
+    }
+}
+
+private enum ShrinkingError: Error {
+    case large
+    case medium
+    case small
 }
