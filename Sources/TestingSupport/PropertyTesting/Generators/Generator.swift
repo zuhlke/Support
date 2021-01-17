@@ -1,6 +1,6 @@
 import Foundation
 
-protocol SamplingGenerator {
+public protocol SamplingGenerator {
     associatedtype Elements: Sequence
     typealias Element = Elements.Element
     
@@ -32,12 +32,12 @@ protocol SamplingGenerator {
 }
 
 extension SamplingGenerator {
-    func shrink(_ element: Element) -> EmptyGenerator<Element> {
+    public func shrink(_ element: Element) -> EmptyGenerator<Element> {
         EmptyGenerator()
     }
 }
 
-protocol ExhaustiveGenerator: SamplingGenerator {
+public protocol ExhaustiveGenerator: SamplingGenerator {
     associatedtype AllElements: Collection where AllElements.Element == Element
     
     /// All `Element`s that can be returned by this generator.
@@ -51,38 +51,8 @@ protocol ExhaustiveGenerator: SamplingGenerator {
 
 extension ExhaustiveGenerator where Elements == AllElements {
     
-    var sampleElements: Elements {
+    public var sampleElements: Elements {
         allElements
-    }
-    
-}
-
-extension Bool: CaseIterable {
-    
-    public static var allCases: [Bool] {
-        [false, true]
-    }
-    
-}
-
-struct SingleGenerator<Element>: ExhaustiveGenerator {
-    var element: Element
-    
-    var allElements: [Element] {
-        [element]
-    }
-}
-
-struct EmptyGenerator<Element>: ExhaustiveGenerator {
-    var allElements: [Element] {
-        []
-    }
-}
-
-struct CaseIterableGenerator<Element: CaseIterable>: ExhaustiveGenerator {
-    
-    var allElements: Element.AllCases {
-        Element.allCases
     }
     
 }
