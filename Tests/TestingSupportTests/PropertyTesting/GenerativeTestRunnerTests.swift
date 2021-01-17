@@ -29,6 +29,22 @@ class GenerativeTestRunnerTests: XCTestCase {
         TS.assert(callbackCount, equals: maxIterations)
     }
     
+    func testExhaustiveRunsUseAllElementsNotSampleElements() {
+        let runner = GenerativeTestRunner()
+        
+        let generator = MockFullConformanceGenerator(
+            sampleElements: [0],
+            allElements: [0, 1]
+        )
+        
+        var callbackCount = 0
+        runner.run(with: generator) { s in
+            callbackCount += 1
+        }
+        
+        TS.assert(callbackCount, equals: generator.allElements.count)
+    }
+    
     // MARK: SamplingGenerators
     
     func testSamplingRunsAllSampleElementsIfCountLessThanIterations() {
@@ -85,4 +101,9 @@ private struct MockInfiniteGenerator: SamplingGenerator {
     var sampleElements: UnfoldFirstSequence<Int> {
         sequence(first: 0) { _ in 0 }
     }
+}
+
+private struct MockFullConformanceGenerator: ExhaustiveGenerator {
+    var sampleElements: [Int]
+    var allElements: [Int]
 }
