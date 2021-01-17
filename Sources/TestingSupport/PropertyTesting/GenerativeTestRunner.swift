@@ -9,14 +9,20 @@ public struct GenerativeTestRunner {
         self.maxIterations = maxIterations
     }
     
-    public func run<Generator: SamplingGenerator>(with generator: Generator, action: (Generator.Element) throws -> Void) rethrows {
-        try generator.sampleElements.prefix(maxIterations).forEach { element in
-            try action(element)
-        }
+    public func run<Gen>(with generator: Gen, action: (Gen.Element) throws -> Void) rethrows where Gen: SamplingGenerator {
+        try run(generator.sampleElements, generator: generator, action: action)
     }
     
-    public func run<Generator: ExhaustiveGenerator>(with generator: Generator, action: (Generator.Element) throws -> Void) rethrows {
-        try generator.allElements.prefix(maxIterations).forEach { element in
+    public func run<Gen>(with generator: Gen, action: (Gen.Element) throws -> Void) rethrows where Gen: ExhaustiveGenerator {
+        try run(generator.allElements, generator: generator, action: action)
+    }
+    
+    private func run<Seq, Gen>(_ elements: Seq, generator: Gen, action: (Gen.Element) throws -> Void) rethrows
+        where Gen: SamplingGenerator,
+        Seq: Sequence,
+        Gen.Element == Seq.Element
+    {
+        try elements.prefix(maxIterations).forEach { element in
             try action(element)
         }
     }
