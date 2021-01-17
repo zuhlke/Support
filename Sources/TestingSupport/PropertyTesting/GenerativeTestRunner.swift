@@ -44,3 +44,13 @@ public struct GenerativeTestRunner {
     }
     
 }
+
+extension GenerativeTestRunner {
+    
+    public func run<G>(for type: G.Type, configure: (inout G.Configuration) -> Void = { _ in }, action: (G) throws -> Void) rethrows where G: ExhaustivelyGeneratable {
+        let configuration = mutating(G.Configuration(), with: configure)
+        let generator = type.makeExhaustiveGenerator(with: configuration)
+        try run(with: generator, action: action)
+    }
+    
+}
