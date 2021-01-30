@@ -12,6 +12,12 @@ public struct AnyExhaustiveGenerator<Element>: ExhaustiveGenerator {
         _shrink = { AnyExhaustiveGenerator(base.shrink($0)) }
     }
     
+    public init<Elements>(allElements: Elements) where Elements: Collection, Elements.Element == Element {
+        _sampleElements = { AnySequence(allElements) }
+        _allElements = { AnyCollection(allElements) }
+        _shrink = { _ in AnyExhaustiveGenerator(allElements: []) }
+    }
+    
     public var sampleElements: AnySequence<Element> {
         _sampleElements()
     }

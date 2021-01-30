@@ -4,21 +4,6 @@ import XCTest
 
 class IntegerGeneratableTests: XCTestCase {
     
-    // MARK: ExhaustiveGeneratable
-    
-    func testExhaustiveDefaultRange() {
-        TS.assert(Int.makeExhaustiveGenerator(with: IntegerGeneratorConfiguration()).allElements, equals: .min ... .max)
-    }
-    
-    func testExhaustiveOneElementRange() {
-        let range = 7 ... 7
-        let configuration = mutating(IntegerGeneratorConfiguration<Int>()) {
-            $0.range = range
-        }
-        
-        TS.assert(Int.makeExhaustiveGenerator(with: configuration).allElements, equals: range)
-    }
-    
     // MARK: SignificantCasesGeneratable
     
     func testSignificantCasesDefaultRange() {
