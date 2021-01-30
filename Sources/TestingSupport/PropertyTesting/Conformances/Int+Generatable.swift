@@ -27,6 +27,10 @@ extension FixedWidthInteger {
         IntegerGenerator(configuration: configuration)
     }
     
+    public static func makeRandomCasesGenerator<RNG: RandomNumberGenerator>(with configuration: IntegerGeneratorConfiguration<Self>, numberGenerator: RNG) -> RandomIntegerGenerator<Self> {
+        RandomIntegerGenerator(configuration: configuration, numberGenerator: numberGenerator)
+    }
+
     private static var negativeOne: Self? {
         if isSigned {
             return -1
@@ -36,21 +40,31 @@ extension FixedWidthInteger {
     }
 }
 
-extension Int: ExhaustivelyGeneratable, SignificantCasesGeneratable {}
-extension Int16: ExhaustivelyGeneratable, SignificantCasesGeneratable {}
-extension Int32: ExhaustivelyGeneratable, SignificantCasesGeneratable {}
-extension Int64: ExhaustivelyGeneratable, SignificantCasesGeneratable {}
-extension Int8: ExhaustivelyGeneratable, SignificantCasesGeneratable {}
-extension UInt: ExhaustivelyGeneratable, SignificantCasesGeneratable {}
-extension UInt16: ExhaustivelyGeneratable, SignificantCasesGeneratable {}
-extension UInt32: ExhaustivelyGeneratable, SignificantCasesGeneratable {}
-extension UInt64: ExhaustivelyGeneratable, SignificantCasesGeneratable {}
-extension UInt8: ExhaustivelyGeneratable, SignificantCasesGeneratable {}
+extension Int: ExhaustivelyGeneratable, SignificantCasesGeneratable, RandomCasesGeneratable {}
+extension Int16: ExhaustivelyGeneratable, SignificantCasesGeneratable, RandomCasesGeneratable {}
+extension Int32: ExhaustivelyGeneratable, SignificantCasesGeneratable, RandomCasesGeneratable {}
+extension Int64: ExhaustivelyGeneratable, SignificantCasesGeneratable, RandomCasesGeneratable {}
+extension Int8: ExhaustivelyGeneratable, SignificantCasesGeneratable, RandomCasesGeneratable {}
+extension UInt: ExhaustivelyGeneratable, SignificantCasesGeneratable, RandomCasesGeneratable {}
+extension UInt16: ExhaustivelyGeneratable, SignificantCasesGeneratable, RandomCasesGeneratable {}
+extension UInt32: ExhaustivelyGeneratable, SignificantCasesGeneratable, RandomCasesGeneratable {}
+extension UInt64: ExhaustivelyGeneratable, SignificantCasesGeneratable, RandomCasesGeneratable {}
+extension UInt8: ExhaustivelyGeneratable, SignificantCasesGeneratable, RandomCasesGeneratable {}
 
 public struct IntegerGenerator<Integer: FixedWidthInteger>: ExhaustiveGenerator {
     var configuration: IntegerGeneratorConfiguration<Integer>
     
     public var allElements: ClosedRange<Integer> {
         configuration.range
+    }
+}
+
+public struct RandomIntegerGenerator<Integer: FixedWidthInteger>: SamplingGenerator {
+    public var sampleElements: AnySequence<Integer>
+    
+    init<RNG: RandomNumberGenerator>(configuration: IntegerGeneratorConfiguration<Integer>, numberGenerator: RNG) {
+        sampleElements = AnySequence(sequence(state: numberGenerator) { numberGenerator in
+            .random(in: configuration.range, using: &numberGenerator)
+        })
     }
 }
