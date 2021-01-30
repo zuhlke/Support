@@ -1,7 +1,7 @@
 import Foundation
 
-/// A generator that doesn’t return any elements.
-public struct CollectionGenerator<Element>: ExhaustiveGenerator {
+/// A generator that makes all ellements ahead of time.
+public struct EagerGenerator<Element>: ExhaustiveGenerator {
     
     public var allElements: [Element]
     
