@@ -27,8 +27,8 @@ extension FixedWidthInteger {
         IntegerGenerator(configuration: configuration)
     }
     
-    public static func makeRandomCasesGenerator<RNG: RandomNumberGenerator>(with configuration: IntegerGeneratorConfiguration<Self>, numberGenerator: RNG) -> RandomIntegerGenerator<Self> {
-        RandomIntegerGenerator(configuration: configuration, numberGenerator: numberGenerator)
+    public static func makeRandomCasesGenerator<RNG: RandomNumberGenerator>(with configuration: IntegerGeneratorConfiguration<Self>, numberGenerator: RNG) -> AnySamplingGenerator<Self> {
+        AnySamplingGenerator(RandomIntegerGenerator(configuration: configuration, numberGenerator: numberGenerator))
     }
 
     private static var negativeOne: Self? {
@@ -59,7 +59,7 @@ public struct IntegerGenerator<Integer: FixedWidthInteger>: ExhaustiveGenerator 
     }
 }
 
-public struct RandomIntegerGenerator<Integer: FixedWidthInteger>: SamplingGenerator {
+private struct RandomIntegerGenerator<Integer: FixedWidthInteger>: SamplingGenerator {
     public var sampleElements: AnySequence<Integer>
     
     init<RNG: RandomNumberGenerator>(configuration: IntegerGeneratorConfiguration<Integer>, numberGenerator: RNG) {
