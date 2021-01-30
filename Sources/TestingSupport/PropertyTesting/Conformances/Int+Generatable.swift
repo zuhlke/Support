@@ -8,11 +8,11 @@ public struct IntegerGeneratorConfiguration<Integer: FixedWidthInteger>: Generat
 }
 
 extension FixedWidthInteger {
-    public static func makeSignificantCasesGenerator(with configuration: IntegerGeneratorConfiguration<Self>) -> CollectionGenerator<Self> {
+    public static func makeSignificantCasesGenerator(with configuration: IntegerGeneratorConfiguration<Self>) -> EagerGenerator<Self> {
         let range = configuration.range
         
         var includedValues = Set<Self>()
-        return CollectionGenerator(
+        return EagerGenerator(
             allElements: Array(
                 [0, 1, negativeOne, range.first, range.last]
                     .lazy
