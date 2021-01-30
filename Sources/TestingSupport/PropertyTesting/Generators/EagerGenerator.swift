@@ -5,7 +5,7 @@ public struct EagerGenerator<Element>: ExhaustiveGenerator {
     
     public var allElements: [Element]
     
-    public init(allElements: [Element]) {
+    public init(allElements: [Element] = []) {
         self.allElements = allElements
     }
 }

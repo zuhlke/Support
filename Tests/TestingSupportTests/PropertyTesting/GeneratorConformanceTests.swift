@@ -9,9 +9,10 @@ class GeneratorConformanceTests: XCTestCase {
         TS.assert(generator.sampleElements, equals: generator.allElements)
     }
     
-    func testEmptyGeneratorDoesNotReturnElements() {
-        let generator = EmptyGenerator<Int>()
-        XCTAssert(generator.allElements.isEmpty)
+    func testDefaultConformanceOfShrinkReturnsNoElements() {
+        let elements = [Int.random(in: .min ... .max), .random(in: .min ... .max)]
+        let generator = MockGenerator(allElements: elements)
+        XCTAssert(generator.shrink(elements[0]).allElements.isEmpty)
     }
     
     func testCaseIterableGeneratorReturnsAllElements() {
