@@ -32,8 +32,8 @@ public protocol SamplingGenerator {
 }
 
 extension SamplingGenerator {
-    public func shrink(_ element: Element) -> EmptyGenerator<Element> {
-        EmptyGenerator()
+    public func shrink(_ element: Element) -> EagerGenerator<Element> {
+        EagerGenerator()
     }
 }
 
