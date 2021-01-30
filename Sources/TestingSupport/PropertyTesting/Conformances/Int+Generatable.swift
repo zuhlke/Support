@@ -23,8 +23,8 @@ extension FixedWidthInteger {
         )
     }
     
-    public static func makeExhaustiveGenerator(with configuration: IntegerGeneratorConfiguration<Self>) -> IntegerGenerator<Self> {
-        IntegerGenerator(configuration: configuration)
+    public static func makeExhaustiveGenerator(with configuration: IntegerGeneratorConfiguration<Self>) -> AnyExhaustiveGenerator<Self> {
+        AnyExhaustiveGenerator(allElements: configuration.range)
     }
     
     public static func makeRandomCasesGenerator<RNG: RandomNumberGenerator>(with configuration: IntegerGeneratorConfiguration<Self>, numberGenerator: RNG) -> AnySamplingGenerator<Self> {
@@ -52,11 +52,3 @@ extension UInt16: ExhaustivelyGeneratable, SignificantCasesGeneratable, RandomCa
 extension UInt32: ExhaustivelyGeneratable, SignificantCasesGeneratable, RandomCasesGeneratable {}
 extension UInt64: ExhaustivelyGeneratable, SignificantCasesGeneratable, RandomCasesGeneratable {}
 extension UInt8: ExhaustivelyGeneratable, SignificantCasesGeneratable, RandomCasesGeneratable {}
-
-public struct IntegerGenerator<Integer: FixedWidthInteger>: ExhaustiveGenerator {
-    var configuration: IntegerGeneratorConfiguration<Integer>
-    
-    public var allElements: ClosedRange<Integer> {
-        configuration.range
-    }
-}
