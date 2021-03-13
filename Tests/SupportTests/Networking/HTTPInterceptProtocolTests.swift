@@ -112,7 +112,7 @@ class HTTPInterceptProtocolTests: XCTestCase {
                 XCTFail("Expected error to be URLError")
                 return
             }
-            TS.assert(urlError, equals: expectedError)
+            TS.assert(urlError.errorCode, equals: expectedError.errorCode)
         }
         task.resume()
         defer { task.cancel() } // keep alive
