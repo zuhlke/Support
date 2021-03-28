@@ -1,7 +1,7 @@
 import Foundation
 
 @propertyWrapper
-public final class Generated<Value: RandomCasesGeneratable>: Randomizable {
+public final class Generated<Value: Generatable> {
     private var configuration = Value.Configuration()
     private var _wrappedValue: Value!
     public var wrappedValue: Value {
@@ -14,9 +14,13 @@ public final class Generated<Value: RandomCasesGeneratable>: Randomizable {
     public init(configure: (inout Value.Configuration) -> Void = { _ in }) {
         configure(&configuration)
     }
+}
+
+extension Generated: Randomizable where Value: RandomCasesGeneratable {
     
     func randomize<RNG: RandomNumberGenerator>(with numberGenerator: inout RNG) {
         var iterator = Value.makeRandomCasesGenerator(with: configuration, numberGenerator: numberGenerator).sampleElements.makeIterator()
         _wrappedValue = iterator.next()!
     }
+    
 }
