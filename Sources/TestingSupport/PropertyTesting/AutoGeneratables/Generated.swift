@@ -1,7 +1,9 @@
 import Foundation
 
+protocol _Generated {}
+
 @propertyWrapper
-public final class Generated<Value: Generatable> {
+public final class Generated<Value: Generatable>: _Generated {
     private var configuration = Value.Configuration()
     private var _wrappedValue: Value!
     public var wrappedValue: Value {
