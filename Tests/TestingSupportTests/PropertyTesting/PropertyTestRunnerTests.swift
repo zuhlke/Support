@@ -17,7 +17,7 @@ class PropertyTestRunnerTests: XCTestCase {
     
     func testGeneratingCompoundClassType() {
         
-        final class Data: AutoGeneratable {
+        final class Data: AutoRandomCasesGeneratable {
             
             @Generated(configure: {
                 $0.minimumCount = 2
@@ -53,7 +53,7 @@ class PropertyTestRunnerTests: XCTestCase {
     
     func testGeneratingCompoundStructType() {
         
-        struct Data: AutoGeneratable {
+        struct Data: AutoRandomCasesGeneratable {
             
             @Generated
             var username: String
@@ -84,7 +84,7 @@ class PropertyTestRunnerTests: XCTestCase {
     
     func testCombiningTwoBooleans() {
         
-        struct Data: AutoGeneratable {
+        struct Data: AutoRandomCasesGeneratable {
             
             @Generated
             var flag1: Bool
