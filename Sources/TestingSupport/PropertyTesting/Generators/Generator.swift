@@ -38,7 +38,7 @@ extension SamplingGenerator {
 }
 
 public protocol ExhaustiveGenerator: SamplingGenerator {
-    associatedtype AllElements: Collection where AllElements.Element == Element
+    associatedtype AllElements: Collection = Elements where AllElements.Element == Element
     
     /// All `Element`s that can be returned by this generator.
     ///
