@@ -2,6 +2,14 @@ import Support
 import TestingSupport
 import XCTest
 
+@dynamicMemberLookup
+struct Thingy<GenType: AutoRandomCasesGeneratable> {
+    
+    subscript<Value>(dynamicMember dynamicMember: KeyPath<GenType.Type, Value>) -> Value {
+        GenType.self[keyPath: dynamicMember]
+    }
+}
+
 class PropertyTestRunnerTests: XCTestCase {
     
     func testGeneratingPrimitiveType() {
@@ -31,14 +39,26 @@ class PropertyTestRunnerTests: XCTestCase {
                 $0.maximumCount = 14
                 $0.characters.allowedRange = .lowercaseASCII
             })
-            var password: String
+            var password1: String
+            
+//            @Generated(configure: {
+//                $0.minimumCount = 8
+//                $0.maximumCount = 14
+//                $0.characters.allowedRange = .lowercaseASCII
+//            })
+            static var password2: String = "45"
             
             lazy var credentials = URLCredential(
                 user: username,
-                password: password,
+                password: password1,
                 persistence: .forSession
             )
         }
+        
+        let s: KeyPath<Data.Type, String> = \.password2
+        
+        let t = Thingy<Data>()
+        print(t.password2)
         
         let iterations = 72
         let runner = PropertyTestRunner(iterations: iterations)

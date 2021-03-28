@@ -1,12 +1,12 @@
 import Foundation
 
-public protocol AutoRandomCasesGeneratable: RandomCasesGeneratable {
-    init()
+public protocol AutoRandomCasesGeneratable: _AutoGeneratable, RandomCasesGeneratable {
 }
 
 extension AutoRandomCasesGeneratable where Configuration == EmptyConfiguration {
     public static func makeRandomCasesGenerator<RNG>(with configuration: Configuration, numberGenerator: RNG) -> AnySamplingGenerator<Self> where RNG: RandomNumberGenerator {
-        AnySamplingGenerator(state: numberGenerator) { numberGenerator in
+        _ = autoGenerationContext
+        return AnySamplingGenerator(state: numberGenerator) { numberGenerator in
             self.init(with: &numberGenerator)
         }
     }
@@ -19,7 +19,7 @@ extension AutoRandomCasesGeneratable {
     }
     
     func randomize<RNG: RandomNumberGenerator>(with numberGenerator: inout RNG) {
-        generatedChildren.forEach { child in
+        generatedChildren.forEach { label, child in
             guard let randomizable = child as? Randomizable else {
                 Thread.fatalError("Expected `Generated` property to `RandomCasesGeneratable`.")
             }
@@ -29,9 +29,11 @@ extension AutoRandomCasesGeneratable {
 }
 
 private extension AutoRandomCasesGeneratable {
-    var generatedChildren: [_Generated] {
-        Mirror(reflecting: self).children.compactMap { _, child in
-            child as? _Generated
-        }
+    var generatedChildren: [String: _Generated] {
+        Dictionary(uniqueKeysWithValues: Mirror(reflecting: self).children.compactMap { label, child in
+            guard let child = child as? _Generated else { return nil }
+            guard let label = label else { Thread.fatalError("Expected `Generated` property to be labeled.") }
+            return (label, child)
+        })
     }
 }

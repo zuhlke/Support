@@ -1,9 +1,11 @@
 import Foundation
 
-protocol _Generated {}
+protocol _Generated {
+    var valueType: Any.Type { get }
+}
 
 @propertyWrapper
-public final class Generated<Value: Generatable>: _Generated {
+public final class Generated<Value: Generatable> {
     private var configuration = Value.Configuration()
     private var _wrappedValue: Value!
     public var wrappedValue: Value {
@@ -15,6 +17,18 @@ public final class Generated<Value: Generatable>: _Generated {
     
     public init(configure: (inout Value.Configuration) -> Void = { _ in }) {
         configure(&configuration)
+    }
+}
+
+extension Generated: _Generated {
+
+    var valueType: Any.Type {
+        Value.self
+    }
+    
+    func set(_ value: Any) {
+        guard let value = value as? Value else { Thread.fatalError("Did not set value of correct type on `Generated`.") }
+        _wrappedValue = value
     }
 }
 
