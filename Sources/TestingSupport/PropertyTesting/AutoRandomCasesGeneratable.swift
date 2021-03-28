@@ -1,10 +1,10 @@
 import Foundation
 
-public protocol AutoGeneratable: RandomCasesGeneratable {
+public protocol AutoRandomCasesGeneratable: RandomCasesGeneratable {
     init()
 }
 
-extension AutoGeneratable where Configuration == EmptyConfiguration {
+extension AutoRandomCasesGeneratable where Configuration == EmptyConfiguration {
     public static func makeRandomCasesGenerator<RNG>(with configuration: Configuration, numberGenerator: RNG) -> AnySamplingGenerator<Self> where RNG: RandomNumberGenerator {
         AnySamplingGenerator(state: numberGenerator) { numberGenerator in
             self.init(with: &numberGenerator)
@@ -12,7 +12,7 @@ extension AutoGeneratable where Configuration == EmptyConfiguration {
     }
 }
 
-extension AutoGeneratable {
+extension AutoRandomCasesGeneratable {
     init<RNG: RandomNumberGenerator>(with numberGenerator: inout RNG) {
         self.init()
         randomize(with: &numberGenerator)
