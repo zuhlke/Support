@@ -14,7 +14,7 @@ extension Character: RandomCasesGeneratable {
         public init() {}
     }
     
-    public static func makeRandomCasesGenerator<RNG>(with configuration: Configuration, numberGenerator: RNG) -> AnySamplingGenerator<Character> where RNG : RandomNumberGenerator {
+    public static func makeRandomCasesGenerator<RNG>(with configuration: Configuration, numberGenerator: RNG) -> AnySamplingGenerator<Character> where RNG: RandomNumberGenerator {
         AnySamplingGenerator(state: numberGenerator) { numberGenerator in
             let upperBound = configuration.allowedRange.characters.upperBound.value
             let lowerBound = configuration.allowedRange.characters.lowerBound.value

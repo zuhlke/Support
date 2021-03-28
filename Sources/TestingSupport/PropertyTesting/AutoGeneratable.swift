@@ -5,7 +5,7 @@ public protocol AutoGeneratable: RandomCasesGeneratable {
 }
 
 extension AutoGeneratable where Configuration == EmptyConfiguration {
-    public static func makeRandomCasesGenerator<RNG>(with configuration: Configuration, numberGenerator: RNG) -> AnySamplingGenerator<Self> where RNG : RandomNumberGenerator {
+    public static func makeRandomCasesGenerator<RNG>(with configuration: Configuration, numberGenerator: RNG) -> AnySamplingGenerator<Self> where RNG: RandomNumberGenerator {
         AnySamplingGenerator(state: numberGenerator) { numberGenerator in
             self.init(with: &numberGenerator)
         }

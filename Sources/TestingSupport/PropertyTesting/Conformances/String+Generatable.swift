@@ -10,7 +10,7 @@ extension String: RandomCasesGeneratable {
         public init() {}
     }
     
-    public static func makeRandomCasesGenerator<RNG>(with configuration: Configuration, numberGenerator: RNG) -> AnySamplingGenerator<String> where RNG : RandomNumberGenerator {
+    public static func makeRandomCasesGenerator<RNG>(with configuration: Configuration, numberGenerator: RNG) -> AnySamplingGenerator<String> where RNG: RandomNumberGenerator {
         AnySamplingGenerator(state: numberGenerator) { numberGenerator in
             String._random(with: configuration)
         }
