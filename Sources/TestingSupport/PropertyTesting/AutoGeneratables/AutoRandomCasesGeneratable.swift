@@ -19,10 +19,19 @@ extension AutoRandomCasesGeneratable {
     }
     
     func randomize<RNG: RandomNumberGenerator>(with numberGenerator: inout RNG) {
-        Mirror(reflecting: self).children.forEach { _, child in
-            if let randomizable = child as? Randomizable {
-                randomizable.randomize(with: &numberGenerator)
+        generatedChildren.forEach { child in
+            guard let randomizable = child as? Randomizable else {
+                Thread.fatalError("Expected `Generated` property to `RandomCasesGeneratable`.")
             }
+            randomizable.randomize(with: &numberGenerator)
+        }
+    }
+}
+
+private extension AutoRandomCasesGeneratable {
+    var generatedChildren: [_Generated] {
+        Mirror(reflecting: self).children.compactMap { _, child in
+            child as? _Generated
         }
     }
 }
