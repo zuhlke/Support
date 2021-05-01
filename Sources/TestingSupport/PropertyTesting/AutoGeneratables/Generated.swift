@@ -16,6 +16,10 @@ public final class Generated<Value: Generatable>: _Generated {
     public init(configure: (inout Value.Configuration) -> Void = { _ in }) {
         configure(&configuration)
     }
+    
+    public init(_ configuration: Value.Configuration) {
+        self.configuration = configuration
+    }
 }
 
 extension Generated: Randomizable where Value: RandomCasesGeneratable {

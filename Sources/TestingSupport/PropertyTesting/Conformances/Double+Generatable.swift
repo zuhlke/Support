@@ -22,6 +22,22 @@ public struct FloatingPointGeneratorConfiguration<Float: BinaryFloatingPoint>: G
     public init() {}
 }
 
+extension FloatingPointGeneratorConfiguration {
+    
+    public static var finiteNonNegative: Self {
+        mutating(Self.init()) {
+            $0.allowedValues = .finiteOnly(range: .zero ... .greatestFiniteMagnitude)
+        }
+    }
+    
+    public static var finitePositive: Self {
+        mutating(Self.init()) {
+            $0.allowedValues = .finiteOnly(range: .leastNonzeroMagnitude ... .greatestFiniteMagnitude)
+        }
+    }
+    
+}
+
 extension BinaryFloatingPoint {
     public static func makeSignificantCasesGenerator(with configuration: FloatingPointGeneratorConfiguration<Self>) -> EagerGenerator<Self> {
         switch configuration.allowedValues {
