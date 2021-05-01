@@ -78,7 +78,7 @@ extension BinaryFloatingPoint {
         }
     }
     
-    private static func random<T>(in range: ClosedRange<Self>, using generator: inout T) -> Self where T : RandomNumberGenerator {
+    private static func random<T>(in range: ClosedRange<Self>, using generator: inout T) -> Self where T: RandomNumberGenerator {
         let random = Double.validated_random(in: Double(range.lowerBound) ... Double(range.upperBound), using: &generator)
         return Self(random)
     }
@@ -87,7 +87,7 @@ extension BinaryFloatingPoint {
 
 private extension Double {
     
-    static func validated_random<T>(in range: ClosedRange<Double>, using generator: inout T) -> Self where T : RandomNumberGenerator {
+    static func validated_random<T>(in range: ClosedRange<Double>, using generator: inout T) -> Self where T: RandomNumberGenerator {
         precondition(range.lowerBound.isFinite, "When generating random floating points, the lower bound must be finite")
         precondition(range.upperBound.isFinite, "When generating random floating points, the upper bound must be finite")
         
