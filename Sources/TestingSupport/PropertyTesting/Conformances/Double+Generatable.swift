@@ -25,14 +25,18 @@ public struct FloatingPointGeneratorConfiguration<Float: BinaryFloatingPoint>: G
 extension FloatingPointGeneratorConfiguration {
     
     public static var finiteNonNegative: Self {
-        mutating(Self.init()) {
-            $0.allowedValues = .finiteOnly(range: .zero ... .greatestFiniteMagnitude)
-        }
+        .finite(in: .zero ... .greatestFiniteMagnitude)
     }
     
     public static var finitePositive: Self {
-        mutating(Self.init()) {
-            $0.allowedValues = .finiteOnly(range: .leastNonzeroMagnitude ... .greatestFiniteMagnitude)
+        .finite(in: .leastNonzeroMagnitude ... .greatestFiniteMagnitude)
+    }
+    
+    public static func finite(in range: ClosedRange<Float>) -> Self {
+        precondition(range.lowerBound.isFinite, "The lower bound must be finite")
+        precondition(range.upperBound.isFinite, "The upper bound must be finite")
+        return mutating(Self.init()) {
+            $0.allowedValues = .finiteOnly(range: range)
         }
     }
     
