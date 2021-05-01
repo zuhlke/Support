@@ -1,7 +1,7 @@
 import Foundation
 import Support
 
-public struct FloatingPointGeneratorConfiguration<Float: BinaryFloatingPoint>: GeneratableConfiguration {
+public struct FloatingPointGeneratorConfiguration<Float: BinaryFloatingPoint>: GeneratableConfiguration where Float.RawSignificand: FixedWidthInteger {
     public enum AllowedValues {
         case any
         case numbersOnly
@@ -42,7 +42,7 @@ extension FloatingPointGeneratorConfiguration {
     
 }
 
-extension BinaryFloatingPoint {
+extension BinaryFloatingPoint where Self.RawSignificand: FixedWidthInteger {
     public static func makeSignificantCasesGenerator(with configuration: FloatingPointGeneratorConfiguration<Self>) -> EagerGenerator<Self> {
         switch configuration.allowedValues {
         case .any:
@@ -99,20 +99,17 @@ extension BinaryFloatingPoint {
     }
     
     private static func random<T>(in range: ClosedRange<Self>, using generator: inout T) -> Self where T: RandomNumberGenerator {
-        let random = Double.validated_random(in: Double(range.lowerBound) ... Double(range.upperBound), using: &generator)
+        let random = validated_random(in:range, using: &generator)
         return Self(random)
     }
     
-}
-
-private extension Double {
-    
-    static func validated_random<T>(in range: ClosedRange<Double>, using generator: inout T) -> Self where T: RandomNumberGenerator {
+    private static func validated_random<T>(in range: ClosedRange<Self>, using generator: inout T) -> Self where T: RandomNumberGenerator {
         precondition(range.lowerBound.isFinite, "When generating random floating points, the lower bound must be finite")
         precondition(range.upperBound.isFinite, "When generating random floating points, the upper bound must be finite")
         
         guard (range.upperBound - range.lowerBound).isFinite else {
-            // `Double.random` throws an error in this scenario, _thinking_ the range is infinite, even though that's not the case.
+            // System’s implementation of `random` throws an error in this scenario, _thinking_ the range is infinite,
+            // even though that's not the case: https://github.com/apple/swift/blob/7123d2614b5f222d03b3762cb110d27a9dd98e24/stdlib/public/core/FloatingPointRandom.swift#L157
             // To get around it, randomly return negavtive or positive values
             
             // Given the preconditions on the bounds, if the difference is not finite, it follows that:
@@ -141,4 +138,3 @@ private extension Double {
 
 extension Double: SignificantCasesGeneratable, RandomCasesGeneratable {}
 extension Float: SignificantCasesGeneratable, RandomCasesGeneratable {}
-extension Float80: SignificantCasesGeneratable, RandomCasesGeneratable {}
