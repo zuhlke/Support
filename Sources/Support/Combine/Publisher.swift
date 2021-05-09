@@ -9,4 +9,12 @@ extension Publisher {
             .eraseToAnyPublisher()
     }
     
+    public func scan<Result>(into initialResult: Result, _ updateAccumulatingResult: @escaping (inout Result, Output) -> ()) -> Publishers.Scan<Self, Result> {
+        scan(initialResult) { result, output in
+            mutating(result) {
+                updateAccumulatingResult(&$0, output)
+            }
+        }
+    }
+    
 }
