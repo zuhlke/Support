@@ -34,6 +34,10 @@ let package = Package(
             name: "YAMLBuilder",
             dependencies: ["Support"]
         ),
+        .target(
+            name: "CISupport",
+            dependencies: ["YAMLBuilder", "Support"]
+        ),
         .testTarget(
             name: "SupportTests",
             dependencies: ["Support", "TestingSupport"]
@@ -45,6 +49,10 @@ let package = Package(
         .testTarget(
             name: "YAMLBuilderTests",
             dependencies: ["YAMLBuilder", "Support", "TestingSupport"]
+        ),
+        .testTarget(
+            name: "CISupportTests",
+            dependencies: ["CISupport", "Support", "TestingSupport"]
         ),
     ]
 )
