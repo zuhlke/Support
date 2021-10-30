@@ -114,11 +114,11 @@ extension Description {
         case .dictionary(let value):
             return value.mapValues { $0.jsonObject }
         case .array(let value):
-            return value.map { $0.jsonObject }
+            return value.map(\.jsonObject)
         case .set(let value):
             return value
                 .sorted { "\($0)" < "\($1)" } // doesn’t matter as long as it’s predictable
-                .map { $0.jsonObject }
+                .map(\.jsonObject)
         case .null:
             return NSNull()
         }

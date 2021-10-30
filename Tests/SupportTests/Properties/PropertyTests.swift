@@ -77,7 +77,7 @@ class PropertyTests: XCTestCase {
         let property = ObservableProperty(keyValueObservableHost: host, keyPath: \.id)
         
         var callbackCount = 0
-        let cancellable = property.map { $0.uuidString }.objectWillChange.sink { callbackCount += 1 }
+        let cancellable = property.map(\.uuidString).objectWillChange.sink { callbackCount += 1 }
         defer { cancellable.cancel() }
         
         TS.assert(callbackCount, equals: 0)

@@ -89,9 +89,9 @@ extension HTTPRemote {
 extension HTTPRemote: URLRequestProviding {
     
     public func urlRequest(from request: HTTPRequest) throws -> URLRequest {
-        let headers = try headersMergePolicy.merge(self.headers, request.headers)
+        let headers = try headersMergePolicy.merge(headers, request.headers)
         
-        let url = try self.url(for: request, scheme: .https)
+        let url = try url(for: request, scheme: .https)
         
         return mutating(URLRequest(url: url)) { urlRequest in
             headers.fields.forEach {
@@ -116,7 +116,7 @@ extension HTTPRemote.HeadersMergePolicy {
     }
     
     /// A header policy that throws an error if a request tries to set headers already present in the remote.
-    public static let disallowOverrides: HTTPRemote.HeadersMergePolicy = HTTPRemote.HeadersMergePolicy { remoteHeaders, requestHeaders -> HTTPHeaders in
+    public static let disallowOverrides: HTTPRemote.HeadersMergePolicy = .init { remoteHeaders, requestHeaders -> HTTPHeaders in
         let overriddenHeaders = Set(remoteHeaders.fields.keys)
             .intersection(requestHeaders.fields.keys)
         guard overriddenHeaders.isEmpty else {
@@ -144,7 +144,7 @@ extension HTTPRemote.QueryParametersMergePolicy {
     }
     
     /// A policy that throws an error if a request tries to set a quert parameter already present in the remote, even if they have different cases.
-    public static let disallowOverridesCaseInsensitive: HTTPRemote.QueryParametersMergePolicy = HTTPRemote.QueryParametersMergePolicy { remoteParameters, requestParameters in
+    public static let disallowOverridesCaseInsensitive = HTTPRemote.QueryParametersMergePolicy { remoteParameters, requestParameters in
         let overriddenParameters = Set(remoteParameters.keys.map { $0.lowercased() })
             .intersection(requestParameters.keys.map { $0.lowercased() })
         guard overriddenParameters.isEmpty else {

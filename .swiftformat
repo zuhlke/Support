@@ -12,3 +12,6 @@
 --disable blankLinesAtEndOfScope
 --disable hoistPatternLet
 --disable unusedArguments
+--disable extensionAccessControl
+# Ideally, instead of disabling redundant type, there would be a rule convert right-hand side type name to `.init`.
+--disable redundantType
