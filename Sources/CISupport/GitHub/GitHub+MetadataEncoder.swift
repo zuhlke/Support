@@ -21,4 +21,8 @@ extension GitHub.MetadataEncoder {
         encoder.encode(action.yamlRepresentation)
     }
     
+    public func encode(_ workflow: GitHub.Workflow) -> String {
+        encoder.encode(workflow.yamlRepresentation)
+    }
+    
 }

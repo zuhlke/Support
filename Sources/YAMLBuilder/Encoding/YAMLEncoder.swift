@@ -5,7 +5,7 @@ public struct YAMLEncoder {
     
     public struct Options {
         public var indentationSpaces = 2
-        public var maximumGroupingDepth = 2
+        public var maximumGroupingDepth = 3
         public var includeNewLineAtEndOfFile = true
         
         public static let `default` = Options()

@@ -4,6 +4,8 @@ import YAMLBuilder
 extension GitHub {
     
     /// Represents a GitHub action.
+    ///
+    /// Action syntax is documented [here](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions).
     public struct Action {
         struct CompositeRunStep {
             var name: String
