@@ -1,6 +1,6 @@
+import TestingSupport
 import XCTest
 import YAMLBuilder
-import TestingSupport
 
 final class YAMLBuilderTests: XCTestCase {
     let encoder = YAMLEncoder()

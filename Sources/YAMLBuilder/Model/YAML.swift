@@ -5,7 +5,7 @@ public struct YAML: Equatable {
         public struct Element: Equatable {
             var key: String
             var node: Node
-            var comment: String? = nil
+            var comment: String?
             
             public init(key: String, node: YAML.Node, comment: String? = nil) {
                 self.key = key

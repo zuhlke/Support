@@ -15,3 +15,5 @@
 --disable extensionAccessControl
 # Ideally, instead of disabling redundant type, there would be a rule convert right-hand side type name to `.init`.
 --disable redundantType
+# This is buggy, it may convert a class used informally as abstract class to an enum.
+--disable enumNamespaces
