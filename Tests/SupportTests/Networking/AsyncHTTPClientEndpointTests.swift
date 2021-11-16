@@ -12,74 +12,65 @@ class AsyncHTTPClientEndpointTests: XCTestCase {
         client = MockClient()
     }
     
-    func testErrorOnBadInput() async throws {
-        do {
-            _ = try await client.fetch(MockEndpoint(shouldFailEncoding: true), with: UUID())
-            XCTFail("Expected to throw while awaiting, but succeded")
-        } catch NetworkRequestError.badInput(let underlyingError) where underlyingError is EncodingError {
-            // Do nothing
-        } catch {
-            XCTFail("Unexpected error: \(error)")
+    func testErrorOnBadInput() async {
+        let result = await client.fetch(MockEndpoint(shouldFailEncoding: true), with: UUID())
+        switch result {
+        case .failure(.badInput(let underlyingError)) where underlyingError is EncodingError:
+            break
+        default:
+            XCTFail("Unexpected result: \(result)")
         }
+    }
     
-    }
-
-    func testErrorOnRejectedRequest() async throws {
+    func testErrorOnRejectedRequest() async {
         client.shouldRejectRequest = true
-
-        do {
-            _ = try await client.fetch(MockEndpoint(), with: UUID())
-            XCTFail("Expected to throw while awaiting, but succeded")
-        } catch NetworkRequestError.rejectedRequest(let underlyingError) where underlyingError is RejectedRequestError {
-            // Do nothing
-        } catch {
-            XCTFail("Unexpected error: \(error)")
+        let result = await client.fetch(MockEndpoint(), with: UUID())
+        switch result {
+        case .failure(.rejectedRequest(let underlyingError)) where underlyingError is RejectedRequestError:
+            break
+        default:
+            XCTFail("Unexpected result: \(result)")
         }
     }
-
-    func testErrorOnNetworkFailure() async throws {
-        let urlError = URLError(.cannotConnectToHost)
-        client.urlError = urlError
-
-        do {
-            _ = try await client.fetch(MockEndpoint(), with: UUID())
-            XCTFail("Expected to throw while awaiting, but succeded")
-        } catch NetworkRequestError.networkFailure(underlyingError: urlError) {
-            // Do nothing
-        } catch {
-            XCTFail("Unexpected error: \(error)")
+    
+    func testErrorOnNetworkFailure() async {
+        let error = URLError(.cannotConnectToHost)
+        client.urlError = error
+        let result = await client.fetch(MockEndpoint(), with: UUID())
+        switch result {
+        case .failure(.networkFailure(underlyingError: error)):
+            break
+        default:
+            XCTFail("Unexpected result: \(result)")
         }
     }
-
-    func testErrorOnHTTPFailure() async throws {
+    
+    func testErrorOnHTTPFailure() async {
         let response = HTTPResponse(statusCode: 401, body: .plain(UUID().uuidString))
         client.response = response
-
-        do {
-            _ = try await client.fetch(MockEndpoint(), with: UUID())
-            XCTFail("Expected to throw while awaiting, but succeded")
-        } catch NetworkRequestError.httpError(response: response) {
-            // Do nothing
-        } catch {
-            XCTFail("Unexpected error: \(error)")
-        }
-    }
-
-    func testErrorParsingResponse() async throws {
-        do {
-            _ = try await client.fetch(MockEndpoint(shouldFailDecoding: true), with: UUID())
-            XCTFail("Expected to throw while awaiting, but succeded")
-        } catch NetworkRequestError.badResponse(let underlyingError) where underlyingError is DecodingError {
-            // Do nothing
-        } catch {
-            XCTFail("Unexpected error: \(error)")
+        let result = await client.fetch(MockEndpoint(), with: UUID())
+        switch result {
+        case .failure(.httpError(response: response)):
+            break
+        default:
+            XCTFail("Unexpected result: \(result)")
         }
     }
     
-    func testSucceeding() async throws {
+    func testErrorParsingResponse() async {
+        let result = await client.fetch(MockEndpoint(shouldFailDecoding: true), with: UUID())
+        switch result {
+        case .failure(.badResponse(let underlyingError)) where underlyingError is DecodingError:
+            break
+        default:
+            XCTFail("Unexpected result: \(result)")
+        }
+    }
+    
+    func testSucceeding() async {
         let endpoint = MockEndpoint()
-        let result = try await client.fetch(endpoint, with: UUID())
-        TS.assert(result, equals: endpoint.output)
+        let result = await client.fetch(endpoint, with: UUID())
+        TS.assert(try result.get(), equals: endpoint.output)
     }
     
 }
@@ -91,15 +82,15 @@ private class MockClient: AsyncHTTPClient {
     var urlError: URLError?
     var response = HTTPResponse.ok(with: .empty)
 
-    func perform(_ request: HTTPRequest) async throws -> HTTPResponse {
+    func perform(_ request: HTTPRequest) async -> Result<HTTPResponse, HTTPRequestError> {
         if shouldRejectRequest {
-            throw NetworkRequestError.rejectedRequest(underlyingError: RejectedRequestError())
+            return .failure(.rejectedRequest(underlyingError: RejectedRequestError()))
         }
         if let error = urlError {
-            throw NetworkRequestError.networkFailure(underlyingError: error)
+            return .failure(.networkFailure(underlyingError: error))
         }
         
-        return response
+        return .success(response)
     }
 
 }
@@ -108,7 +99,6 @@ private struct MockEndpoint: HTTPEndpoint {
     var shouldFailEncoding = false
     var shouldFailDecoding = false
     var output = UUID()
-    
     func request(for input: UUID) throws -> HTTPRequest {
         if shouldFailEncoding {
             throw EncodingError()

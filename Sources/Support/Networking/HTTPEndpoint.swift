@@ -26,20 +26,24 @@ public enum NetworkRequestError: Error {
     case badResponse(underlyingError: Error)
 }
 
+extension NetworkRequestError {
+    init(error: HTTPRequestError) {
+        switch error {
+        case .rejectedRequest(let underlyingError):
+            self = .rejectedRequest(underlyingError: underlyingError)
+        case .networkFailure(let underlyingError):
+            self = .networkFailure(underlyingError: underlyingError)
+        }
+    }
+}
+
 extension HTTPClient {
     
     public func fetch<E: HTTPEndpoint>(_ endpoint: E, with input: E.Input) -> AnyPublisher<E.Output, NetworkRequestError> {
         do {
             let request = try endpoint.request(for: input)
             return perform(request)
-                .mapError { error in
-                    switch error {
-                    case .rejectedRequest(let underlyingError):
-                        return .rejectedRequest(underlyingError: underlyingError)
-                    case .networkFailure(let underlyingError):
-                        return .networkFailure(underlyingError: underlyingError)
-                    }
-                }
+                .mapError(NetworkRequestError.init)
                 .flatMap { response -> AnyPublisher<HTTPResponse, NetworkRequestError> in
                     switch response.statusCode {
                     case 200 ..< 300:
