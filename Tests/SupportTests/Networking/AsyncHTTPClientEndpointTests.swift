@@ -16,11 +16,10 @@ class AsyncHTTPClientEndpointTests: XCTestCase {
         do {
             _ = try await client.fetch(MockEndpoint(shouldFailEncoding: true), with: UUID())
             XCTFail("Expected to throw while awaiting, but succeded")
+        } catch NetworkRequestError.badInput(let underlyingError) where underlyingError is EncodingError {
+            // Do nothing
         } catch {
-            switch error {
-            case NetworkRequestError.badInput(let underlyingError) where underlyingError is EncodingError: break
-            default: XCTFail("Unexpected error: \(error)")
-            }
+            XCTFail("Unexpected error: \(error)")
         }
     
     }
@@ -31,13 +30,11 @@ class AsyncHTTPClientEndpointTests: XCTestCase {
         do {
             _ = try await client.fetch(MockEndpoint(), with: UUID())
             XCTFail("Expected to throw while awaiting, but succeded")
+        } catch NetworkRequestError.rejectedRequest(let underlyingError) where underlyingError is RejectedRequestError {
+            // Do nothing
         } catch {
-            switch error {
-            case NetworkRequestError.rejectedRequest(let underlyingError) where underlyingError is RejectedRequestError: break
-            default: XCTFail("Unexpected error: \(error)")
-            }
+            XCTFail("Unexpected error: \(error)")
         }
-
     }
 
     func testErrorOnNetworkFailure() async throws {
@@ -47,11 +44,10 @@ class AsyncHTTPClientEndpointTests: XCTestCase {
         do {
             _ = try await client.fetch(MockEndpoint(), with: UUID())
             XCTFail("Expected to throw while awaiting, but succeded")
+        } catch NetworkRequestError.networkFailure(underlyingError: urlError) {
+            // Do nothing
         } catch {
-            switch error {
-            case NetworkRequestError.networkFailure(underlyingError: urlError): break
-            default: XCTFail("Unexpected error: \(error)")
-            }
+            XCTFail("Unexpected error: \(error)")
         }
     }
 
@@ -62,11 +58,10 @@ class AsyncHTTPClientEndpointTests: XCTestCase {
         do {
             _ = try await client.fetch(MockEndpoint(), with: UUID())
             XCTFail("Expected to throw while awaiting, but succeded")
+        } catch NetworkRequestError.httpError(response: response) {
+            // Do nothing
         } catch {
-            switch error {
-            case NetworkRequestError.httpError(response: response): break
-            default: XCTFail("Unexpected error: \(error)")
-            }
+            XCTFail("Unexpected error: \(error)")
         }
     }
 
@@ -74,11 +69,10 @@ class AsyncHTTPClientEndpointTests: XCTestCase {
         do {
             _ = try await client.fetch(MockEndpoint(shouldFailDecoding: true), with: UUID())
             XCTFail("Expected to throw while awaiting, but succeded")
+        } catch NetworkRequestError.badResponse(let underlyingError) where underlyingError is DecodingError {
+            // Do nothing
         } catch {
-            switch error {
-            case NetworkRequestError.badResponse(let underlyingError) where underlyingError is DecodingError: break
-            default: XCTFail("Unexpected result: \(error)")
-            }
+            XCTFail("Unexpected error: \(error)")
         }
     }
     
