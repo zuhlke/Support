@@ -33,20 +33,12 @@ extension AsyncHTTPClient {
 }
 
 @available(macOS 12.0.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
-public protocol URLAsyncSessionProtocol {
-    func data(for request: URLRequest, delegate: URLSessionTaskDelegate?) async throws -> (Data, URLResponse)
-}
-
-@available(macOS 12.0.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
-extension URLSession: URLAsyncSessionProtocol {}
-
-@available(macOS 12.0.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
 public final class URLSessionAsyncHTTPClient: AsyncHTTPClient {
     
     private let remote: URLRequestProviding
-    private let session: URLAsyncSessionProtocol
+    private let session: URLSessionProtocol
     
-    public init(remote: URLRequestProviding, session: URLAsyncSessionProtocol = URLSession.shared) {
+    public init(remote: URLRequestProviding, session: URLSessionProtocol = URLSession.shared) {
         self.remote = remote
         self.session = session
     }

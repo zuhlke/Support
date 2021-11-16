@@ -1,16 +1,6 @@
 import Combine
 import Foundation
 
-public protocol URLSessionProtocol {
-    func dataTaskPublisher(for request: URLRequest) -> URLSession.DataTaskPublisher
-}
-
-public protocol URLRequestProviding {
-    func urlRequest(from request: HTTPRequest) throws -> URLRequest
-}
-
-extension URLSession: URLSessionProtocol {}
-
 public final class URLSessionHTTPClient: HTTPClient {
     
     private let remote: URLRequestProviding
