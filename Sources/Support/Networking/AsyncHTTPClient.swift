@@ -31,22 +31,3 @@ extension AsyncHTTPClient {
     }
     
 }
-
-@available(macOS 12.0.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
-public final class URLSessionAsyncHTTPClient: AsyncHTTPClient {
-    
-    private let remote: URLRequestProviding
-    private let session: URLSessionProtocol
-    
-    public init(remote: URLRequestProviding, session: URLSessionProtocol = URLSession.shared) {
-        self.remote = remote
-        self.session = session
-    }
-    
-    public func perform(_ request: HTTPRequest) async throws -> HTTPResponse {
-        let urlRequest = try remote.urlRequest(from: request)
-        let (data, urlResponse) = try await URLSession.shared.data(for: urlRequest, delegate: nil)
-        return HTTPResponse(httpUrlResponse: urlResponse as! HTTPURLResponse, bodyContent: data)
-    }
-    
-}
