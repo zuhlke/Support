@@ -4,9 +4,7 @@ import TestingSupport
 import XCTest
 
 final class GitHubActionEncodingTests: XCTestCase {
-    let encoder = GitHub.MetadataEncoder(encodingOptions: mutating(.default) {
-        $0.maximumGroupingDepth = 2
-    })
+    let encoder = GitHub.MetadataEncoder()
     
     func testEncodingAction() throws {
         let action = GitHub.Action("Prepare Xcode") {

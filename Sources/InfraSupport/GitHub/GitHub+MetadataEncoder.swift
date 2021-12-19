@@ -1,5 +1,6 @@
 import Foundation
 import YAMLBuilder
+import Support
 
 extension GitHub {
     
@@ -9,13 +10,17 @@ extension GitHub {
     /// However, the output may change when the framework version changes. These will usually be cosmetic changes.
     /// Therefore, it’s recommended to regenerate any output (specially those that are committed to the repository) after upgrading this package.
     public struct MetadataEncoder {
-        
-        public typealias EncodingOptions = YAMLEncoder.Options
-        
-        private var encoder: YAMLEncoder
-        
-        public init(encodingOptions: EncodingOptions = .default) {
-            encoder = .init(options: encodingOptions)
+                
+        private var actionEncoder: YAMLEncoder
+        private var workflowEncoder: YAMLEncoder
+
+        public init() {
+            actionEncoder = .init(options: mutating(.default) {
+                $0.maximumGroupingDepth = 2
+            })
+            workflowEncoder = .init(options: mutating(.default) {
+                $0.maximumGroupingDepth = 3
+            })
         }
         
     }
@@ -25,11 +30,11 @@ extension GitHub {
 extension GitHub.MetadataEncoder {
     
     public func encode(_ action: GitHub.Action) -> String {
-        encoder.encode(action.yamlRepresentation)
+        actionEncoder.encode(action.yamlRepresentation)
     }
     
     public func encode(_ workflow: GitHub.Workflow) -> String {
-        encoder.encode(workflow.yamlRepresentation)
+        workflowEncoder.encode(workflow.yamlRepresentation)
     }
     
 }
