@@ -16,7 +16,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Prepare Xcode
       run: |
-        sudo xcode-select --switch /Applications/Xcode_13.0.app
+        sudo xcode-select --switch /Applications/Xcode_13.2.app
         xcodebuild -version
         swift --version
     - name: Boot simulator
