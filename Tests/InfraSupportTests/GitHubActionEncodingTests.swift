@@ -9,7 +9,7 @@ final class GitHubActionEncodingTests: XCTestCase {
         let action = GitHub.Action("Prepare Xcode") {
             "Select correct Xcode version and set up credentials."
         } runs: {
-            .composite(steps: [
+            Composite(steps: [
                 .init(name: "Select Xcode", shell: "bash", run: """
                 sudo xcode-select --switch /Applications/Xcode_13.0.app
                 xcodebuild -version
