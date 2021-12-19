@@ -9,13 +9,13 @@ final class GitHubActionEncodingTests: XCTestCase {
         let action = GitHub.Action("Prepare Xcode") {
             "Select correct Xcode version and set up credentials."
         } runs: {
-            Composite(steps: [
-                .init(name: "Select Xcode", shell: "bash", run: """
+            Composite {
+                Composite.Step(name: "Select Xcode", shell: "bash", run: """
                 sudo xcode-select --switch /Applications/Xcode_13.0.app
                 xcodebuild -version
                 swift --version
-                """),
-            ])
+                """)
+            }
         }
         let yaml = encoder.encode(action)
         TS.assert(yaml, equals: prepareXcode)

@@ -5,9 +5,9 @@ public typealias Composite = GitHub.Action.Composite
 
 extension GitHub.Action {
     
-    public struct Composite: GitHub.Action.Run {
+    public struct Composite {
         
-        struct Step {
+        public struct Step {
             var name: String
             var shell: String
             var run: String
@@ -15,19 +15,36 @@ extension GitHub.Action {
         
         var steps: [Step]
         
-        public var yamlDescription: YAML.Map {
-            "using".is("composite")
-            
-            "steps".is {
-                YAML.Node {
-                    for step in steps {
-                        "name".is(.text(step.name))
-                        "run".is(.text(step.run))
-                        "shell".is(.text(step.shell))
-                    }
+    }
+    
+}
+
+extension Composite: GitHub.Action.Run {
+    
+    public init(@CompositeStepsBuilder steps: () -> [Step]) {
+        self.init(steps: steps())
+    }
+    
+    public var yamlDescription: YAML.Map {
+        "using".is("composite")
+        
+        "steps".is {
+            YAML.Node {
+                for step in steps {
+                    "name".is(.text(step.name))
+                    "run".is(.text(step.run))
+                    "shell".is(.text(step.shell))
                 }
             }
         }
     }
     
+}
+
+@resultBuilder
+public class CompositeStepsBuilder: ArrayBuilder<Composite.Step> {
+    
+    public static func buildFinalResult(_ steps: [Composite.Step]) -> [Composite.Step] {
+        steps
+    }
 }

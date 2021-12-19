@@ -39,7 +39,7 @@ extension String {
     
 }
 
-public class AbstractBuilder<Element> {
+open class ArrayBuilder<Element> {
     
     public static func buildExpression(_ node: Element) -> [Element] {
         [node]
@@ -76,7 +76,7 @@ public class AbstractBuilder<Element> {
 }
 
 @resultBuilder
-public class NodeMappingBuilder: AbstractBuilder<(String, YAML.Node)> {
+public class NodeMappingBuilder: ArrayBuilder<(String, YAML.Node)> {
     
     public static func buildFinalResult(_ pairs: [(String, YAML.Node)]) -> YAML.Map {
         YAML.Map(pairs.map { .init(key: $0, node: $1) })
@@ -84,7 +84,7 @@ public class NodeMappingBuilder: AbstractBuilder<(String, YAML.Node)> {
 }
 
 @resultBuilder
-public class NodeSequenceBuilder: AbstractBuilder<YAML.Node> {
+public class NodeSequenceBuilder: ArrayBuilder<YAML.Node> {
     public static func buildExpression(_ expression: String) -> [YAML.Node] {
         [.text(expression)]
     }
