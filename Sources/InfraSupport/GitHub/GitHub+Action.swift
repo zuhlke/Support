@@ -1,6 +1,10 @@
 import Foundation
 import YAMLBuilder
 
+protocol GitHubActionRunSpecification {
+    var yamlNode: YAML.Node { get }
+}
+
 extension GitHub {
     
     /// Represents a GitHub action.
@@ -19,7 +23,7 @@ extension GitHub {
 
         var name: String
         var description: String
-        var method: Method
+        var runs: GitHubActionRunSpecification
     }
     
 }
@@ -27,7 +31,7 @@ extension GitHub {
 extension GitHub.Action {
     
     init(_ name: String, description: () -> String, runs: () -> Method) {
-        self.init(name: name, description: description(), method: runs())
+        self.init(name: name, description: description(), runs: runs())
     }
     
 }
@@ -39,13 +43,13 @@ extension GitHub.Action {
             "name".is(.text(name))
             "description".is(.text(description))
             
-            "runs".is(method.yamlNode)
+            "runs".is(runs.yamlNode)
         }
     }
     
 }
 
-private extension GitHub.Action.Method {
+extension GitHub.Action.Method: GitHubActionRunSpecification {
     
     var yamlNode: YAML.Node {
         switch self {
