@@ -6,17 +6,17 @@ final class GitHubActionEncodingTests: XCTestCase {
     let encoder = GitHub.MetadataEncoder()
     
     func testEncodingAction() throws {
-        let action = GitHub.Action(
-            name: "Prepare Xcode",
-            description: "Select correct Xcode version and set up credentials.",
-            method: .composite(steps: [
+        let action = GitHub.Action("Prepare Xcode") {
+            "Select correct Xcode version and set up credentials."
+        } runs: {
+            .composite(steps: [
                 .init(name: "Select Xcode", shell: "bash", run: """
                 sudo xcode-select --switch /Applications/Xcode_13.0.app
                 xcodebuild -version
                 swift --version
                 """),
             ])
-        )
+        }
         let yaml = encoder.encode(action)
         TS.assert(yaml, equals: prepareXcode)
     }

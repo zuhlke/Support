@@ -26,6 +26,14 @@ extension GitHub {
 
 extension GitHub.Action {
     
+    init(_ name: String, description: () -> String, runs: () -> Method) {
+        self.init(name: name, description: description(), method: runs())
+    }
+    
+}
+
+extension GitHub.Action {
+    
     var yamlRepresentation: YAML {
         YAML {
             "name".is(.text(name))
