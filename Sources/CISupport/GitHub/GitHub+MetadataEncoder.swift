@@ -3,6 +3,11 @@ import YAMLBuilder
 
 extension GitHub {
     
+    /// A type to encode metadata used for GitHub.
+    ///
+    /// Output of `MetadataEncoder` for a given input is guaranteed to be stable across different invocations within a given version of the framework.
+    /// However, the output may change when the framework version changes. These will usually be cosmetic changes.
+    /// Therefore, it’s recommended to regenerate any output (specially those that are committed to the repository) after upgrading this package.
     public struct MetadataEncoder {
         
         private var encoder: YAMLEncoder
