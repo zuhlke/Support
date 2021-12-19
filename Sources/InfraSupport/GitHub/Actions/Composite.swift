@@ -10,10 +10,12 @@ extension GitHub.Action {
         
         public struct Step {
             var name: String?
+            var id: String?
+            
             var shell: String
             var run: String
             
-            var id: String?
+            var environment: [String: String] = [:]
         }
         
         var steps: [Step]
@@ -45,6 +47,14 @@ extension Composite: GitHub.Action.Run {
                     "run".is(.text(step.run))
                     "shell".is(.text(step.shell))
                     
+                    if !step.environment.isEmpty {
+                        "env".is {
+                            for (key, value) in step.environment.sorted(by: { $0.key < $1.key }) {
+                                key.is(.text(value))
+                            }
+                        }
+                    }
+                    
                 }
             }
         }
@@ -61,6 +71,12 @@ extension Composite.Step {
     public func id(_ id: String) -> Composite.Step {
         mutating(self) {
             $0.id = id
+        }
+    }
+    
+    public func environment(_ environment: [String: String]) -> Composite.Step {
+        mutating(self) {
+            $0.environment = environment
         }
     }
 

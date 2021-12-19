@@ -1,9 +1,12 @@
 import TestingSupport
 import XCTest
 import InfraSupport
+import Support
 
 final class GitHubActionEncodingTests: XCTestCase {
-    let encoder = GitHub.MetadataEncoder()
+    let encoder = GitHub.MetadataEncoder(encodingOptions: mutating(.default) {
+        $0.maximumGroupingDepth = 2
+    })
     
     func testEncodingAction() throws {
         let action = GitHub.Action("Prepare Xcode") {
@@ -21,6 +24,10 @@ final class GitHubActionEncodingTests: XCTestCase {
                     swift --version
                     """
                 }
+                .environment([
+                    "user": "me",
+                    "password": "secret",
+                ])
             }
         }
         let yaml = encoder.encode(action)
@@ -47,5 +54,8 @@ runs:
       xcodebuild -version
       swift --version
     shell: bash
+    env:
+      password: secret
+      user: me
 
 """
