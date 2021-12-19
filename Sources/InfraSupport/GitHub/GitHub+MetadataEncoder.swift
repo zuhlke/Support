@@ -10,9 +10,11 @@ extension GitHub {
     /// Therefore, it’s recommended to regenerate any output (specially those that are committed to the repository) after upgrading this package.
     public struct MetadataEncoder {
         
+        public typealias EncodingOptions = YAMLEncoder.Options
+        
         private var encoder: YAMLEncoder
         
-        public init(encodingOptions: YAMLEncoder.Options = .default) {
+        public init(encodingOptions: EncodingOptions = .default) {
             encoder = .init(options: encodingOptions)
         }
         
