@@ -27,9 +27,9 @@ public final class URLSessionHTTPClient: HTTPClient, AsyncHTTPClient {
     public func perform(_ request: HTTPRequest) async -> Result<HTTPResponse, HTTPRequestError> {
         await Result { try remote.urlRequest(from: request) }
             .mapError(HTTPRequestError.rejectedRequest)
-            .flatMap  { urlRequest in
+            .flatMap { urlRequest in
                 await Result { try await URLSession.shared.data(for: urlRequest, delegate: nil) }
-                .mapError(HTTPRequestError.fromUntypedNetworkError)
+                    .mapError(HTTPRequestError.fromUntypedNetworkError)
             }
             .map { HTTPResponse(httpUrlResponse: $1 as! HTTPURLResponse, bodyContent: $0) }
     }
