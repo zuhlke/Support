@@ -35,27 +35,7 @@ extension Composite: GitHub.Action.Run {
         
         "steps".is {
             for step in steps {
-                YAML.Node {
-                    if let name = step.name {
-                        "name".is(.text(name))
-                    }
-                    
-                    if let id = step.id {
-                        "id".is(.text(id))
-                    }
-                    
-                    "run".is(.text(step.run))
-                    "shell".is(.text(step.shell))
-                    
-                    if !step.environment.isEmpty {
-                        "env".is {
-                            for (key, value) in step.environment.sorted(by: { $0.key < $1.key }) {
-                                key.is(.text(value))
-                            }
-                        }
-                    }
-                    
-                }
+                .map(step.yamlDescription)
             }
         }
     }
@@ -77,6 +57,28 @@ extension Composite.Step {
     public func environment(_ environment: [String: String]) -> Composite.Step {
         mutating(self) {
             $0.environment = environment
+        }
+    }
+    
+    @NodeMappingBuilder
+    public var yamlDescription: YAML.Map {
+        if let name = name {
+            "name".is(.text(name))
+        }
+        
+        if let id = id {
+            "id".is(.text(id))
+        }
+        
+        "run".is(.text(run))
+        "shell".is(.text(shell))
+        
+        if !environment.isEmpty {
+            "env".is {
+                for (key, value) in environment.sorted(by: { $0.key < $1.key }) {
+                    key.is(.text(value))
+                }
+            }
         }
     }
 
