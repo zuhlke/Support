@@ -8,7 +8,7 @@ extension GitHub.Action {
     public struct Composite {
         
         public struct Step {
-            var name: String
+            var name: String?
             var shell: String
             var run: String
         }
@@ -29,9 +29,11 @@ extension Composite: GitHub.Action.Run {
         "using".is("composite")
         
         "steps".is {
-            YAML.Node {
-                for step in steps {
-                    "name".is(.text(step.name))
+            for step in steps {
+                YAML.Node {
+                    if let name = step.name {
+                        "name".is(.text(name))
+                    }
                     "run".is(.text(step.run))
                     "shell".is(.text(step.shell))
                 }
@@ -39,6 +41,14 @@ extension Composite: GitHub.Action.Run {
         }
     }
     
+}
+
+extension Composite.Step {
+
+    public init(_ name: String? = nil, shell: String, run: () -> String) {
+        self.init(name: name, shell: shell, run: run())
+    }
+
 }
 
 @resultBuilder

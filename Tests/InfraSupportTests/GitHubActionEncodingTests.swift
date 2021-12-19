@@ -1,6 +1,6 @@
 import TestingSupport
 import XCTest
-@testable import InfraSupport
+import InfraSupport
 
 final class GitHubActionEncodingTests: XCTestCase {
     let encoder = GitHub.MetadataEncoder()
@@ -10,11 +10,16 @@ final class GitHubActionEncodingTests: XCTestCase {
             "Select correct Xcode version and set up credentials."
         } runs: {
             Composite {
-                Composite.Step(name: "Select Xcode", shell: "bash", run: """
-                sudo xcode-select --switch /Applications/Xcode_13.0.app
-                xcodebuild -version
-                swift --version
-                """)
+                Composite.Step(shell: "sh") {
+                    "echo hi"
+                }
+                Composite.Step("Select Xcode", shell: "bash") {
+                    """
+                    sudo xcode-select --switch /Applications/Xcode_13.0.app
+                    xcodebuild -version
+                    swift --version
+                    """
+                }
             }
         }
         let yaml = encoder.encode(action)
@@ -31,6 +36,9 @@ runs:
   using: composite
 
   steps:
+  - run: echo hi
+    shell: sh
+
   - name: Select Xcode
     run: |
       sudo xcode-select --switch /Applications/Xcode_13.0.app
