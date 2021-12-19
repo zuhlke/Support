@@ -17,6 +17,7 @@ extension GitHub {
         
         var name: String
         var description: String
+        var inputs: [Input]
         var run: Run
     }
     
@@ -24,8 +25,13 @@ extension GitHub {
 
 extension GitHub.Action {
     
-    public init(_ name: String, description: () -> String, runs: () -> Run) {
-        self.init(name: name, description: description(), run: runs())
+    public init(
+        _ name: String,
+        description: () -> String,
+        @ActionInputsBuilder inputs: () -> [Input] = { [] },
+        runs: () -> Run
+    ) {
+        self.init(name: name, description: description(), inputs: inputs(), run: runs())
     }
     
 }
@@ -37,8 +43,24 @@ extension GitHub.Action {
             "name".is(.text(name))
             "description".is(.text(description))
             
+            if !inputs.isEmpty {
+                "inputs".is {
+                    for input in inputs {
+                        input.yamlDescription
+                    }
+                }
+            }
+            
             "runs".is(.map(run.yamlDescription))
         }
     }
     
+}
+
+@resultBuilder
+public class ActionInputsBuilder: ArrayBuilder<Input> {
+    
+    public static func buildFinalResult(_ steps: [Input]) -> [Input] {
+        steps
+    }
 }

@@ -1,7 +1,7 @@
-import TestingSupport
-import XCTest
 import InfraSupport
 import Support
+import TestingSupport
+import XCTest
 
 final class GitHubActionEncodingTests: XCTestCase {
     let encoder = GitHub.MetadataEncoder(encodingOptions: mutating(.default) {
@@ -11,6 +11,10 @@ final class GitHubActionEncodingTests: XCTestCase {
     func testEncodingAction() throws {
         let action = GitHub.Action("Prepare Xcode") {
             "Select correct Xcode version and set up credentials."
+        } inputs: {
+            Input("tool-version", isRequired: true) {
+                "Version of the tool to use."
+            }.default("14")
         } runs: {
             Composite {
                 Composite.Step(shell: "sh") {
@@ -39,6 +43,12 @@ final class GitHubActionEncodingTests: XCTestCase {
 private let prepareXcode = """
 name: Prepare Xcode
 description: Select correct Xcode version and set up credentials.
+
+inputs:
+  tool-version:
+    description: Version of the tool to use.
+    required: true
+    default: 14
 
 runs:
   using: composite

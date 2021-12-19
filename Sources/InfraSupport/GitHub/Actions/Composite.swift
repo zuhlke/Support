@@ -1,6 +1,6 @@
 import Foundation
-import YAMLBuilder
 import Support
+import YAMLBuilder
 
 public typealias Composite = GitHub.Action.Composite
 
