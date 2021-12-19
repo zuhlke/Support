@@ -1,5 +1,6 @@
 import Foundation
 import YAMLBuilder
+import Support
 
 public typealias Composite = GitHub.Action.Composite
 
@@ -11,6 +12,8 @@ extension GitHub.Action {
             var name: String?
             var shell: String
             var run: String
+            
+            var id: String?
         }
         
         var steps: [Step]
@@ -34,8 +37,14 @@ extension Composite: GitHub.Action.Run {
                     if let name = step.name {
                         "name".is(.text(name))
                     }
+                    
+                    if let id = step.id {
+                        "id".is(.text(id))
+                    }
+                    
                     "run".is(.text(step.run))
                     "shell".is(.text(step.shell))
+                    
                 }
             }
         }
@@ -47,6 +56,12 @@ extension Composite.Step {
 
     public init(_ name: String? = nil, shell: String, run: () -> String) {
         self.init(name: name, shell: shell, run: run())
+    }
+    
+    public func id(_ id: String) -> Composite.Step {
+        mutating(self) {
+            $0.id = id
+        }
     }
 
 }

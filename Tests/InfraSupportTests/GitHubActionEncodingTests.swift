@@ -13,6 +13,7 @@ final class GitHubActionEncodingTests: XCTestCase {
                 Composite.Step(shell: "sh") {
                     "echo hi"
                 }
+                .id("echo-step")
                 Composite.Step("Select Xcode", shell: "bash") {
                     """
                     sudo xcode-select --switch /Applications/Xcode_13.0.app
@@ -36,7 +37,8 @@ runs:
   using: composite
 
   steps:
-  - run: echo hi
+  - id: echo-step
+    run: echo hi
     shell: sh
 
   - name: Select Xcode
