@@ -15,17 +15,15 @@ extension GitHub.Action {
         
         var steps: [Step]
         
-        public var yamlNode: YAML.Node {
-            YAML.Node {
-                "using".is("composite")
-                
-                "steps".is {
-                    YAML.Node {
-                        for step in steps {
-                            "name".is(.text(step.name))
-                            "run".is(.text(step.run))
-                            "shell".is(.text(step.shell))
-                        }
+        public var yamlDescription: YAML.Map {
+            "using".is("composite")
+            
+            "steps".is {
+                YAML.Node {
+                    for step in steps {
+                        "name".is(.text(step.name))
+                        "run".is(.text(step.run))
+                        "shell".is(.text(step.shell))
                     }
                 }
             }

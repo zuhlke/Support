@@ -2,7 +2,9 @@ import Foundation
 import YAMLBuilder
 
 public protocol GitHubActionRun {
-    var yamlNode: YAML.Node { get }
+    
+    @NodeMappingBuilder
+    var yamlDescription: YAML.Map { get }
 }
 
 extension GitHub {
@@ -35,7 +37,7 @@ extension GitHub.Action {
             "name".is(.text(name))
             "description".is(.text(description))
             
-            "runs".is(run.yamlNode)
+            "runs".is(.map(run.yamlDescription))
         }
     }
     
