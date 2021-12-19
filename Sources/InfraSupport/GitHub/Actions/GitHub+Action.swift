@@ -18,6 +18,7 @@ extension GitHub {
         var name: String
         var description: String
         var inputs: [Input]
+        var outputs: [Output]
         var run: Run
     }
     
@@ -29,9 +30,16 @@ extension GitHub.Action {
         _ name: String,
         description: () -> String,
         @ActionInputsBuilder inputs: () -> [Input] = { [] },
+        @ActionOutputsBuilder outputs: () -> [Output] = { [] },
         runs: () -> Run
     ) {
-        self.init(name: name, description: description(), inputs: inputs(), run: runs())
+        self.init(
+            name: name,
+            description: description(),
+            inputs: inputs(),
+            outputs: outputs(),
+            run: runs()
+        )
     }
     
 }
@@ -51,6 +59,14 @@ extension GitHub.Action {
                 }
             }
             
+            if !outputs.isEmpty {
+                "outputs".is {
+                    for output in outputs {
+                        output.yamlDescription
+                    }
+                }
+            }
+            
             "runs".is(.map(run.yamlDescription))
         }
     }
@@ -61,6 +77,14 @@ extension GitHub.Action {
 public class ActionInputsBuilder: ArrayBuilder<Input> {
     
     public static func buildFinalResult(_ steps: [Input]) -> [Input] {
+        steps
+    }
+}
+
+@resultBuilder
+public class ActionOutputsBuilder: ArrayBuilder<Output> {
+    
+    public static func buildFinalResult(_ steps: [Output]) -> [Output] {
         steps
     }
 }

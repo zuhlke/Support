@@ -15,6 +15,10 @@ final class GitHubActionEncodingTests: XCTestCase {
             Input("tool-version", isRequired: true) {
                 "Version of the tool to use."
             }.default("14")
+        } outputs: {
+            Output("greeting-response") {
+                "The greeting from the tool."
+            }.value("${{ some-output }}")
         } runs: {
             Composite {
                 Composite.Step(shell: "sh") {
@@ -49,6 +53,11 @@ inputs:
     description: Version of the tool to use.
     required: true
     default: 14
+
+outputs:
+  greeting-response:
+    description: The greeting from the tool.
+    value: ${{ some-output }}
 
 runs:
   using: composite
