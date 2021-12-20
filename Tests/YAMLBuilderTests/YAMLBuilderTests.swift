@@ -28,6 +28,7 @@ private let prepareXcodeDocument = YAML {
                 swift --version
                 """)
                 "shell".is("bash")
+                    .comment("Could also be zsh")
             }
         }
     }
@@ -46,6 +47,8 @@ runs:
       sudo xcode-select --switch /Applications/Xcode_13.0.app
       xcodebuild -version
       swift --version
+
+    # Could also be zsh
     shell: bash
 
 """

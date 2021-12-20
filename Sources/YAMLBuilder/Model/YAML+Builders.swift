@@ -1,3 +1,4 @@
+import Support
 
 public extension YAML {
     init(@NodeMappingBuilder closure: () -> YAML.Map) {
@@ -36,6 +37,17 @@ public struct Builder {
 extension String {
     
     public var `is`: Builder { Builder(key: .init(self)) }
+    
+}
+
+extension YAML.Map.Element {
+    
+    
+    public func comment(_ comment: String) -> YAML.Map.Element {
+        mutating(self) {
+            $0.comment = comment
+        }
+    }
     
 }
 
