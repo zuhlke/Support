@@ -66,13 +66,13 @@ runs:
     shell: sh
 
   - name: Select Xcode
+    env:
+      password: secret
+      user: me
     run: |
       sudo xcode-select --switch /Applications/Xcode_13.0.app
       xcodebuild -version
       swift --version
     shell: bash
-    env:
-      password: secret
-      user: me
 
 """

@@ -70,9 +70,6 @@ extension Composite.Step {
             "id".is(.text(id))
         }
         
-        "run".is(.text(run))
-        "shell".is(.text(shell))
-        
         if !environment.isEmpty {
             "env".is {
                 for (key, value) in environment.sorted(by: { $0.key < $1.key }) {
@@ -80,6 +77,9 @@ extension Composite.Step {
                 }
             }
         }
+        
+        "run".is(.text(run))
+        "shell".is(.text(shell))
     }
 
 }
