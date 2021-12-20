@@ -1,6 +1,6 @@
 import Foundation
-import YAMLBuilder
 import Support
+import YAMLBuilder
 
 extension GitHub {
     
