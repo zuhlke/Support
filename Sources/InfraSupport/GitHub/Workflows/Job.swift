@@ -179,6 +179,9 @@ extension Job.Runner {
         }
     }
     
+    public static let macos11 = Job.Runner("macos-11")
+        .comment("Check pre-installed software on https://github.com/actions/virtual-environments/blob/main/images/macos/macos-11-Readme.md")
+    
 }
 
 @resultBuilder
