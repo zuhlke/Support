@@ -6,14 +6,14 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
     let encoder = GitHub.MetadataEncoder()
     
     func testEncodingWorkflow() throws {
-        let action = GitHub.Workflow(
-            name: "Test My App",
-            triggers: .init(
+        let action = GitHub.Workflow("Test My App") {
+            .init(
                 push: .init(tags: ["v1.*"]),
                 pullRequest: .init(branches: ["main"]),
                 schedule: .init(cron: "30 5,17 * * *")
-            ),
-            jobs: [
+            )
+        } jobs: {
+            [
                 .init(
                     id: "build-for-testing", name: "Build for Testing",
                     // Check pre-installed software on https://github.com/actions/virtual-environments/blob/main/images/macos/macos-11-Readme.md
@@ -151,7 +151,7 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
                     ]
                 ),
             ]
-        )
+        }
         let yaml = encoder.encode(action)
         TS.assert(yaml, equals: prepareXcode)
     }

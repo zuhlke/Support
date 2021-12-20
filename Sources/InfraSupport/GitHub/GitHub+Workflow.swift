@@ -58,6 +58,14 @@ extension GitHub {
 
 extension GitHub.Workflow {
     
+    init(_ name: String, triggers: () -> Triggers, jobs: () -> [Job]) {
+        self.init(name: name, triggers: triggers(), jobs: jobs())
+    }
+    
+}
+
+extension GitHub.Workflow {
+    
     var yamlRepresentation: YAML {
         YAML {
             "name".is(.text(name))
