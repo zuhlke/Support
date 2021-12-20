@@ -43,7 +43,7 @@ extension String {
 extension YAML.Map.Element {
     
     
-    public func comment(_ comment: String) -> YAML.Map.Element {
+    public func comment(_ comment: String?) -> YAML.Map.Element {
         mutating(self) {
             $0.comment = comment
         }

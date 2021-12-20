@@ -6,6 +6,8 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
     let encoder = GitHub.MetadataEncoder()
     
     func testEncodingWorkflow() throws {
+        let macos11 = Job.Runner("macos-11")
+            .comment("Check pre-installed software on https://github.com/actions/virtual-environments/blob/main/images/macos/macos-11-Readme.md")
         let action = GitHub.Workflow("Test My App") {
             .init(
                 push: .init(tags: ["v1.*"]),
@@ -13,11 +15,10 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
                 schedule: .init(cron: "30 5,17 * * *")
             )
         } jobs: {
-            // Check pre-installed software on https://github.com/actions/virtual-environments/blob/main/images/macos/macos-11-Readme.md
             Job(
                 id: "build-for-testing",
                 name: "Build for Testing",
-                runsOn: "macos-11"
+                runsOn: macos11
             ) {
                 Job.Step("Checkout") {
                     .action("actions/checkout@v2")
@@ -45,7 +46,7 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
             Job(
                 id: "test",
                 name: "Test",
-                runsOn: "macos-11",
+                runsOn: macos11,
                 needs: ["build-for-testing"]
             ) {
                 Job.Step("Checkout") {
@@ -75,7 +76,7 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
             }
             Job(
                 id: "archive", name: "Archive",
-                runsOn: "macos-11",
+                runsOn: macos11,
                 needs: ["build-for-testing"]
             ) {
                 Job.Step("Checkout") {
@@ -150,6 +151,8 @@ on:
 jobs:
   build-for-testing:
     name: Build for Testing
+
+    # Check pre-installed software on https://github.com/actions/virtual-environments/blob/main/images/macos/macos-11-Readme.md
     runs-on: macos-11
 
     steps:
@@ -181,6 +184,7 @@ jobs:
     needs:
     - build-for-testing
 
+    # Check pre-installed software on https://github.com/actions/virtual-environments/blob/main/images/macos/macos-11-Readme.md
     runs-on: macos-11
 
     steps:
@@ -213,6 +217,7 @@ jobs:
     needs:
     - build-for-testing
 
+    # Check pre-installed software on https://github.com/actions/virtual-environments/blob/main/images/macos/macos-11-Readme.md
     runs-on: macos-11
 
     steps:

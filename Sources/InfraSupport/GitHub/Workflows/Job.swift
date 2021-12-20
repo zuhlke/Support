@@ -29,6 +29,20 @@ extension JobStepMethod where Self == Job.Step.ScriptMethod {
 
 extension GitHub.Workflow {
     public struct Job {
+        
+        public struct Runner: ExpressibleByStringLiteral {
+            var label: String
+            var comment: String?
+            
+            public init(_ label: String) {
+                self.label = label
+            }
+            
+            public init(stringLiteral label: String) {
+                self.label = label
+            }
+        }
+        
         public struct Step {
             public struct ActionMethod {
                 var reference: String
@@ -47,7 +61,7 @@ extension GitHub.Workflow {
         
         var id: String
         var name: String
-        var runsOn: String
+        var runsOn: Runner
         var needs: [String] = []
         var steps: [Step]
     }
@@ -58,7 +72,7 @@ extension GitHub.Workflow.Job {
     public init(
         id: String,
         name: String,
-        runsOn: String,
+        runsOn: Runner,
         needs: [String] = [],
         @JobStepsBuilder steps: () -> [Step]
     ) {
@@ -81,7 +95,8 @@ extension GitHub.Workflow.Job {
                     }
                 }
             }
-            "runs-on".is(.text(runsOn))
+            "runs-on".is(.text(runsOn.label))
+                .comment(runsOn.comment)
             
             "steps".is {
                 for step in steps {
@@ -154,6 +169,16 @@ extension Job.Step.ScriptMethod: JobStepMethod {
     public var yamlRepresentation: [YAML.Map.Element] {
         "run".is(.text(script))
     }
+}
+
+extension Job.Runner {
+    
+    public func comment(_ comment: String) -> Job.Runner {
+        mutating(self) {
+            $0.comment = comment
+        }
+    }
+    
 }
 
 @resultBuilder
