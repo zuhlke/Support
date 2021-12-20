@@ -1,6 +1,6 @@
 import Foundation
-import YAMLBuilder
 import Support
+import YAMLBuilder
 
 public typealias Job = GitHub.Workflow.Job
 
@@ -34,6 +34,7 @@ extension GitHub.Workflow {
                 var reference: String
                 var inputs: [String: String]
             }
+
             public struct ScriptMethod {
                 var script: String
             }
@@ -92,10 +93,9 @@ extension GitHub.Workflow.Job {
     
 }
 
-
 extension Job.Step {
     
-    init<M: JobStepMethod>(_ name: String, method: () -> M) {
+    public init<M: JobStepMethod>(_ name: String, method: () -> M) {
         self.init(name: name, method: method())
     }
     
@@ -163,7 +163,6 @@ public class JobStepsBuilder: ArrayBuilder<Job.Step> {
         steps
     }
 }
-
 
 @resultBuilder
 public class NodeMappingEntryBuilder: ArrayBuilder<(String, YAML.Node)> {

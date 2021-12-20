@@ -1,6 +1,6 @@
+import InfraSupport
 import TestingSupport
 import XCTest
-@testable import InfraSupport
 
 final class GitHubWorkflowEncodingTests: XCTestCase {
     let encoder = GitHub.MetadataEncoder()
@@ -65,9 +65,9 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
                 }
                 Job.Step("Unpack Derived Data") {
                     .run("""
-                        unzip DerivedDataPack/DerivedData.zip
-                        rm -rf DerivedDataPack
-                        """)
+                    unzip DerivedDataPack/DerivedData.zip
+                    rm -rf DerivedDataPack
+                    """)
                 }
                 Job.Step("Run Tests") {
                     .run("xcodebuild test-without-building -workspace MyApp.xcworkspace -scheme MyAppInternal -destination \"name=iPhone 13 Pro\" -derivedDataPath DerivedData")
@@ -95,9 +95,9 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
                 }
                 Job.Step("Unpack Derived Data") {
                     .run("""
-                        unzip DerivedDataPack/DerivedData.zip
-                        rm -rf DerivedDataPack
-                        """)
+                    unzip DerivedDataPack/DerivedData.zip
+                    rm -rf DerivedDataPack
+                    """)
                 }
                 Job.Step("Set Up Developer Identity") {
                     .run("swift run ci setup-developer-identity --base64-encoded-identity $BASE64_ENCODED_IDENTITY --identity-password $IDENTITY_PASSWORD --base64-encoded-profile $BASE64_ENCODED_PROFILE")

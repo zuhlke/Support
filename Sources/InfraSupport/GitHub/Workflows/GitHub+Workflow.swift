@@ -8,20 +8,36 @@ extension GitHub {
     /// Workflow syntax is documented [here](https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions).
     public struct Workflow {
         
-        struct Triggers {
-            struct CodeChangeOptions {
+        public struct Triggers {
+            public struct CodeChangeOptions {
                 var branches: [String]?
                 var tags: [String]?
                 var paths: [String]?
+                
+                public init(branches: [String]? = nil, tags: [String]? = nil, paths: [String]? = nil) {
+                    self.branches = branches
+                    self.tags = tags
+                    self.paths = paths
+                }
             }
             
-            struct Schedule {
+            public struct Schedule {
                 var cron: String
+                
+                public init(cron: String) {
+                    self.cron = cron
+                }
             }
             
             var push: CodeChangeOptions?
             var pullRequest: CodeChangeOptions?
             var schedule: Schedule?
+            
+            public init(push: GitHub.Workflow.Triggers.CodeChangeOptions? = nil, pullRequest: GitHub.Workflow.Triggers.CodeChangeOptions? = nil, schedule: GitHub.Workflow.Triggers.Schedule? = nil) {
+                self.push = push
+                self.pullRequest = pullRequest
+                self.schedule = schedule
+            }
         }
         
         var name: String
@@ -33,7 +49,7 @@ extension GitHub {
 
 extension GitHub.Workflow {
     
-    init(_ name: String, triggers: () -> Triggers, @WorkflowJobsBuilder jobs: () -> [Job]) {
+    public init(_ name: String, triggers: () -> Triggers, @WorkflowJobsBuilder jobs: () -> [Job]) {
         self.init(name: name, triggers: triggers(), jobs: jobs())
     }
     
