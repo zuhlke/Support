@@ -31,7 +31,7 @@ extension Input {
         }
     }
     
-    public var yamlDescription: (String, YAML.Node) {
+    public var yamlDescription: YAML.Map.Element {
         id.is {
             "description".is(.text(description))
             "required".is(.text(isRequired ? "true" : "false"))

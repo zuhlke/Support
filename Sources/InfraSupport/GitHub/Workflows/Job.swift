@@ -6,8 +6,8 @@ public typealias Job = GitHub.Workflow.Job
 
 public protocol JobStepMethod {
     
-    @NodeMappingEntryBuilder
-    var yamlRepresentation: [(String, YAML.Node)] { get }
+    @NodeMapElementBuilder
+    var yamlRepresentation: [YAML.Map.Element] { get }
     
 }
 
@@ -135,8 +135,8 @@ extension Job.Step {
 
 extension Job.Step.ActionMethod: JobStepMethod {
     
-    @NodeMappingEntryBuilder
-    public var yamlRepresentation: [(String, YAML.Node)] {
+    @NodeMapElementBuilder
+    public var yamlRepresentation: [YAML.Map.Element] {
         "uses".is(.text(reference))
         if !inputs.isEmpty {
             "with".is {
@@ -150,8 +150,8 @@ extension Job.Step.ActionMethod: JobStepMethod {
 
 extension Job.Step.ScriptMethod: JobStepMethod {
     
-    @NodeMappingEntryBuilder
-    public var yamlRepresentation: [(String, YAML.Node)] {
+    @NodeMapElementBuilder
+    public var yamlRepresentation: [YAML.Map.Element] {
         "run".is(.text(script))
     }
 }
@@ -165,9 +165,9 @@ public class JobStepsBuilder: ArrayBuilder<Job.Step> {
 }
 
 @resultBuilder
-public class NodeMappingEntryBuilder: ArrayBuilder<(String, YAML.Node)> {
+public class NodeMapElementBuilder: ArrayBuilder<YAML.Map.Element> {
     
-    public static func buildFinalResult(_ pairs: [(String, YAML.Node)]) -> [(String, YAML.Node)] {
+    public static func buildFinalResult(_ pairs: [YAML.Map.Element]) -> [YAML.Map.Element] {
         pairs
     }
 }

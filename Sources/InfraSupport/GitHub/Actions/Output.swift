@@ -29,7 +29,7 @@ extension Output {
         }
     }
     
-    public var yamlDescription: (String, YAML.Node) {
+    public var yamlDescription: YAML.Map.Element {
         id.is {
             "description".is(.text(description))
             if let value = value {

@@ -20,16 +20,16 @@ private extension YAML.Map {
 public struct Builder {
     var key: String
     
-    public func callAsFunction(_ value: YAML.Node) -> (String, YAML.Node) {
-        (key, value)
+    public func callAsFunction(_ value: YAML.Node) -> YAML.Map.Element {
+        .init(key: key, node: value)
     }
     
-    public func callAsFunction(@NodeMappingBuilder _ closure: () -> YAML.Map) -> (String, YAML.Node) {
-        (key, .map(closure()))
+    public func callAsFunction(@NodeMappingBuilder _ closure: () -> YAML.Map) -> YAML.Map.Element {
+        .init(key: key, node: .map(closure()))
     }
     
-    public func callAsFunction(@NodeSequenceBuilder _ closure: () -> [YAML.Node]) -> (String, YAML.Node) {
-        (key, .list(closure()))
+    public func callAsFunction(@NodeSequenceBuilder _ closure: () -> [YAML.Node]) -> YAML.Map.Element {
+        .init(key: key, node: .list(closure()))
     }
 }
 
@@ -76,10 +76,10 @@ open class ArrayBuilder<Element> {
 }
 
 @resultBuilder
-public class NodeMappingBuilder: ArrayBuilder<(String, YAML.Node)> {
+public class NodeMappingBuilder: ArrayBuilder<YAML.Map.Element> {
     
-    public static func buildFinalResult(_ pairs: [(String, YAML.Node)]) -> YAML.Map {
-        YAML.Map(pairs.map { .init(key: $0, node: $1) })
+    public static func buildFinalResult(_ pairs: [YAML.Map.Element]) -> YAML.Map {
+        YAML.Map(pairs)
     }
 }
 
