@@ -87,13 +87,12 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
                         "github-access-token": "${{ secrets.access_token }}",
                     ])
                 }
-                Job.Step(
-                    name: "Download Derived Data",
-                    method: .action("actions/download-artifact@v2", inputs: [
+                Job.Step("Download Derived Data") {
+                    .action("actions/download-artifact@v2", inputs: [
                         "name": "DerivedData.zip",
                         "path": "DerivedDataPack",
                     ])
-                )
+                }
                 Job.Step("Unpack Derived Data") {
                     .run("""
                         unzip DerivedDataPack/DerivedData.zip
@@ -101,9 +100,7 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
                         """)
                 }
                 Job.Step("Set Up Developer Identity") {
-                    .run("""
-                        swift run ci setup-developer-identity --base64-encoded-identity $BASE64_ENCODED_IDENTITY --identity-password $IDENTITY_PASSWORD --base64-encoded-profile $BASE64_ENCODED_PROFILE
-                        """)
+                    .run("swift run ci setup-developer-identity --base64-encoded-identity $BASE64_ENCODED_IDENTITY --identity-password $IDENTITY_PASSWORD --base64-encoded-profile $BASE64_ENCODED_PROFILE")
                 }
                 .workingDirectory("CI")
                 .environment([
@@ -112,9 +109,7 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
                     "IDENTITY_PASSWORD": "${{ secrets.developer_identity_password }}",
                 ])
                 Job.Step("Archive MyAppInternal") {
-                    .run("""
-                        xcodebuild archive -workspace MyApp.xcworkspace -scheme MyAppInternal -archivePath Archives/MyAppInternal -derivedDataPath DerivedData
-                        """)
+                    .run("xcodebuild archive -workspace MyApp.xcworkspace -scheme MyAppInternal -archivePath Archives/MyAppInternal -derivedDataPath DerivedData")
                 }
                 Job.Step("Archive MyApp") {
                     .run("xcodebuild archive -workspace MyApp.xcworkspace -scheme MyApp -archivePath Archives/MyApp -derivedDataPath DerivedData")
