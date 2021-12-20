@@ -1,11 +1,12 @@
 import Foundation
 import YAMLBuilder
+import Support
 
 public typealias Job = GitHub.Workflow.Job
 
 extension GitHub.Workflow {
     public struct Job {
-        struct Step {
+        public struct Step {
             enum Method {
                 case none
                 case action(String, inputs: [String: String])
@@ -24,13 +25,29 @@ extension GitHub.Workflow {
         
         var id: String
         var name: String
-        var needs: [String] = []
         var runsOn: String
+        var needs: [String] = []
         var steps: [Step]
     }
 }
 
 extension GitHub.Workflow.Job {
+    
+    public init(
+        id: String,
+        name: String,
+        runsOn: String,
+        needs: [String] = [],
+        @JobStepsBuilder steps: () -> [Step]
+    ) {
+        self.init(
+            id: id,
+            name: name,
+            runsOn: runsOn,
+            needs: needs,
+            steps: steps()
+        )
+    }
     
     var content: YAML.Node {
         YAML.Node {
@@ -54,7 +71,24 @@ extension GitHub.Workflow.Job {
     
 }
 
-private extension GitHub.Workflow.Job.Step {
+
+extension Job.Step {
+    
+    init(_ name: String, method: () -> Method) {
+        self.init(name: name, method: method())
+    }
+    
+    public func workingDirectory(_ workingDirectory: String) -> Job.Step {
+        mutating(self) {
+            $0.workingDirectory = workingDirectory
+        }
+    }
+    
+    public func environment(_ environment: [String: String]) -> Job.Step {
+        mutating(self) {
+            $0.environment = environment
+        }
+    }
     
     var content: YAML.Node {
         YAML.Node {
@@ -90,4 +124,12 @@ private extension GitHub.Workflow.Job.Step {
         }
     }
     
+}
+
+@resultBuilder
+public class JobStepsBuilder: ArrayBuilder<Job.Step> {
+    
+    public static func buildFinalResult(_ steps: [Job.Step]) -> [Job.Step] {
+        steps
+    }
 }
