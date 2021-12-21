@@ -29,6 +29,11 @@ extension GitHub {
 
 extension GitHub.MetadataEncoder {
     
+    public func projectFiles(for pipeline: GitHub.Pipeline) -> [ProjectFile] {
+        pipeline.actions.map { projectFile(for: $0) }
+        + pipeline.workflows.map { projectFile(for: $0) }
+    }
+    
     public func projectFile(for action: GitHub.Action) -> ProjectFile {
         .init(
             pathInRepository: action.projectFilePath,
