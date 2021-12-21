@@ -36,8 +36,10 @@ final class GitHubActionEncodingTests: XCTestCase {
                 ])
             }
         }
-        let yaml = encoder.encode(action)
-        TS.assert(yaml, equals: prepareXcode)
+        
+        let projectFile = encoder.projectFile(for: action)
+        TS.assert(projectFile.pathInRepository, equals: ".github/actions/prepare-xcode/action.yml")
+        TS.assert(projectFile.contents, equals: prepareXcode)
     }
     
 }

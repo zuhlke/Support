@@ -29,12 +29,18 @@ extension GitHub {
 
 extension GitHub.MetadataEncoder {
     
-    public func encode(_ action: GitHub.Action) -> String {
-        actionEncoder.encode(action.yamlRepresentation)
+    public func projectFile(for action: GitHub.Action) -> ProjectFile {
+        .init(
+            pathInRepository: action.projectFilePath,
+            contents: actionEncoder.encode(action.yamlRepresentation)
+        )
     }
     
-    public func encode(_ workflow: GitHub.Workflow) -> String {
-        workflowEncoder.encode(workflow.yamlRepresentation)
+    public func projectFile(for workflow: GitHub.Workflow) -> ProjectFile {
+        .init(
+            pathInRepository: workflow.projectFilePath,
+            contents: workflowEncoder.encode(workflow.yamlRepresentation)
+        )
     }
     
 }

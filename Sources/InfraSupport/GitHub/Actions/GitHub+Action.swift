@@ -49,6 +49,10 @@ extension GitHub.Action {
 
 extension GitHub.Action {
     
+    var projectFilePath: String {
+        ".github/actions/\(id)/action.yml"
+    }
+    
     var yamlRepresentation: YAML {
         YAML {
             "name".is(.text(name))

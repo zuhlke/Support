@@ -58,6 +58,10 @@ extension GitHub.Workflow {
 
 extension GitHub.Workflow {
     
+    var projectFilePath: String {
+        ".github/workflows/\(id).yml"
+    }
+    
     var yamlRepresentation: YAML {
         YAML {
             "name".is(.text(name))

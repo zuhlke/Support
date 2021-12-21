@@ -6,7 +6,7 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
     let encoder = GitHub.MetadataEncoder()
     
     func testEncodingWorkflow() throws {
-        let action = GitHub.Workflow(id: "test", name: "Test My App") {
+        let workflow = GitHub.Workflow(id: "test", name: "Test My App") {
             .init(
                 push: .init(tags: ["v1.*"]),
                 pullRequest: .init(branches: ["main"]),
@@ -125,13 +125,14 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
                 }
             }
         }
-        let yaml = encoder.encode(action)
-        TS.assert(yaml, equals: prepareXcode)
+        let projectFile = encoder.projectFile(for: workflow)
+        TS.assert(projectFile.pathInRepository, equals: ".github/workflows/test.yml")
+        TS.assert(projectFile.contents, equals: testWorkflowContents)
     }
     
 }
 
-private let prepareXcode = """
+private let testWorkflowContents = """
 name: Test My App
 
 on:
