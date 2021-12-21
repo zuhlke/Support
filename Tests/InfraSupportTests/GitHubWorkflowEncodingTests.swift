@@ -6,7 +6,7 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
     let encoder = GitHub.MetadataEncoder()
     
     func testEncodingWorkflow() throws {
-        let action = GitHub.Workflow("Test My App") {
+        let action = GitHub.Workflow(id: "test", name: "Test My App") {
             .init(
                 push: .init(tags: ["v1.*"]),
                 pullRequest: .init(branches: ["main"]),

@@ -7,7 +7,7 @@ final class GitHubActionEncodingTests: XCTestCase {
     let encoder = GitHub.MetadataEncoder()
     
     func testEncodingAction() throws {
-        let action = GitHub.Action("Prepare Xcode") {
+        let action = GitHub.Action(id: "prepare-xcode", name: "Prepare Xcode") {
             "Select correct Xcode version and set up credentials."
         } inputs: {
             Input("tool-version", isRequired: true) {

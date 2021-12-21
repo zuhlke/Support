@@ -15,6 +15,7 @@ extension GitHub {
     public struct Action {
         public typealias Run = GitHubActionRun
         
+        var id: String
         var name: String
         var description: String
         var inputs: [Input]
@@ -27,13 +28,15 @@ extension GitHub {
 extension GitHub.Action {
     
     public init(
-        _ name: String,
+        id: String,
+        name: String,
         description: () -> String,
         @ActionInputsBuilder inputs: () -> [Input] = { [] },
         @ActionOutputsBuilder outputs: () -> [Output] = { [] },
         runs: () -> Run
     ) {
         self.init(
+            id: id,
             name: name,
             description: description(),
             inputs: inputs(),

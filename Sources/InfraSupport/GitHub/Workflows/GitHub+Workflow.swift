@@ -40,6 +40,7 @@ extension GitHub {
             }
         }
         
+        var id: String
         var name: String
         var triggers: Triggers
         var jobs: [Job]
@@ -49,8 +50,8 @@ extension GitHub {
 
 extension GitHub.Workflow {
     
-    public init(_ name: String, triggers: () -> Triggers, @WorkflowJobsBuilder jobs: () -> [Job]) {
-        self.init(name: name, triggers: triggers(), jobs: jobs())
+    public init(id: String, name: String, triggers: () -> Triggers, @WorkflowJobsBuilder jobs: () -> [Job]) {
+        self.init(id: id, name: name, triggers: triggers(), jobs: jobs())
     }
     
 }
