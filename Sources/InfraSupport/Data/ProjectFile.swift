@@ -1,7 +1,7 @@
 import Foundation
 
 /// Represents a file in the repository.
-public struct ProjectFile {
+public struct ProjectFile: Equatable {
     
     /// Path of the file, relative to the repository’s root folder.
     public var pathInRepository: String
