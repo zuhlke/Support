@@ -30,6 +30,7 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
                 Job.Step("Build for Testing") {
                     .run("xcodebuild build-for-testing -workspace MyApp.xcworkspace -scheme MyAppInternal -destination \"name=iPhone 13 Pro\" -derivedDataPath DerivedData")
                 }
+                .condition("failure()")
                 Job.Step("Pack DerivedData") {
                     .run("zip -r DerivedData DerivedData")
                 }
@@ -165,6 +166,7 @@ jobs:
         github-actor: ${{ github.actor }}
 
     - name: Build for Testing
+      if: failure()
       run: xcodebuild build-for-testing -workspace MyApp.xcworkspace -scheme MyAppInternal -destination "name=iPhone 13 Pro" -derivedDataPath DerivedData
 
     - name: Pack DerivedData

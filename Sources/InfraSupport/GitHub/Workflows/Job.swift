@@ -55,6 +55,7 @@ extension GitHub.Workflow {
             
             var name: String
             var workingDirectory: String?
+            var condition: String?
             var environment: [String: String] = [:]
             var method: JobStepMethod
         }
@@ -114,9 +115,15 @@ extension Job.Step {
         self.init(name: name, method: method())
     }
     
-    public func workingDirectory(_ workingDirectory: String) -> Job.Step {
+    public func workingDirectory(_ workingDirectory: String?) -> Job.Step {
         mutating(self) {
             $0.workingDirectory = workingDirectory
+        }
+    }
+    
+    public func condition(_ condition: String?) -> Job.Step {
+        mutating(self) {
+            $0.condition = condition
         }
     }
     
@@ -129,6 +136,10 @@ extension Job.Step {
     var content: YAML.Node {
         YAML.Node {
             "name".is(.text(name))
+            
+            if let condition = condition {
+                "if".is(.text(condition))
+            }
             
             if let workingDirectory = workingDirectory {
                 "working-directory".is(.text(workingDirectory))
