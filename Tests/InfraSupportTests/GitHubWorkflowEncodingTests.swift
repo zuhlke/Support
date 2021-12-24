@@ -1,6 +1,6 @@
-import InfraSupport
 import TestingSupport
 import XCTest
+@testable import InfraSupport
 
 final class GitHubWorkflowEncodingTests: XCTestCase {
     let encoder = GitHub.MetadataEncoder()

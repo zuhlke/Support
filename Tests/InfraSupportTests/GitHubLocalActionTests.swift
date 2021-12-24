@@ -1,7 +1,7 @@
-import InfraSupport
 import Support
 import TestingSupport
 import XCTest
+@testable import InfraSupport
 
 class GitHubLocalActionTests: XCTestCase {
     
