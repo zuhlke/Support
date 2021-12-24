@@ -140,6 +140,12 @@ extension Job.Step {
     public init<Action>(action: Action, with inputs: (inout InputProvider<Action.Inputs>) -> ()) where Action: GitHubLocalAction {
         var provider = InputProvider<Action.Inputs>()
         inputs(&provider)
+        let missingInputs = Action.Inputs.allInputs.lazy
+            .filter { $0.isRequired }
+            .filter { provider.inputValues[$0.id] == nil }
+            .map { $0.id }
+            .sorted(by: <)
+        Thread.precondition(missingInputs.isEmpty, "Missing value for required action input: \(missingInputs)")
         self.init(action.name) {
             .action(".github/actions/\(action.id)", inputs: provider.inputValues)
         }

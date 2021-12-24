@@ -18,6 +18,7 @@ class JobStepTests: XCTestCase {
     func testCreatingStepFromALocalActionWithInputs() {
         let step = Job.Step(action: MockActionWithInputs()) { inputs in
             inputs.$someInput = "some-value"
+            inputs.$someOptionalInput = "some-other-value"
         }
         
         let expected = YAML.Node {
@@ -25,10 +26,22 @@ class JobStepTests: XCTestCase {
             "uses".is(.text(".github/actions/local-action-id"))
             "with".is {
                 "some-input".is(.text("some-value"))
+                "some-optional-input".is(.text("some-other-value"))
             }
         }
         
         TS.assert(step.content, equals: expected)
+    }
+    
+    func testCreatingStepFromALocalActionWithInputsButInputNotSet() {
+        let exitManner = Thread.detachSyncSupervised {
+            _ = Job.Step(action: MockActionWithInputs()) { inputs in
+                // We “forget” to set a required input
+                inputs.$someOptionalInput = "some-other-value"
+            }
+        }
+        
+        TS.assert(exitManner, equals: .fatalError)
     }
     
 }
@@ -52,6 +65,9 @@ private struct MockActionWithInputs: GitHubLocalAction {
         
         @ActionInput("some-input", description: .random())
         var someInput: String
+        
+        @ActionInput("some-optional-input", description: .random())
+        var someOptionalInput: String?
     }
     
     func run(inputs: InputAccessor<Inputs>, outputs: OutputAccessor<Outputs>) -> GitHub.Action.Run {

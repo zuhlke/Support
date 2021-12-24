@@ -1,7 +1,7 @@
 import Foundation
 import Support
 
-public typealias GitHubLocalActionParameterSet = Encodable & EmptyInitializable
+public protocol GitHubLocalActionParameterSet: Encodable, EmptyInitializable {}
 
 public struct EmptyGitHubLocalActionParameterSet: GitHubLocalActionParameterSet {
     public init() {}
@@ -107,14 +107,12 @@ extension ActionOutput {
 extension GitHub.Action {
     
     public init<LocalAction>(_ localAction: LocalAction) where LocalAction: GitHubLocalAction {
-        let inputRegistry = try! Registery<Input>(extractingValuesFrom: LocalAction.Inputs())
-        let outputRegistry = try! Registery<Output>(extractingValuesFrom: LocalAction.Outputs())
         self.init(
             id: localAction.id,
             name: localAction.name,
             description: localAction.description,
-            inputs: inputRegistry.values,
-            outputs: outputRegistry.values,
+            inputs: LocalAction.Inputs.allInputs,
+            outputs: LocalAction.Outputs.allOutputs,
             run: localAction.run(inputs: InputAccessor(), outputs: OutputAccessor())
         )
     }
@@ -124,6 +122,18 @@ extension GitHub.Action {
 private extension CodingUserInfoKey {
     
     static let registery = CodingUserInfoKey(rawValue: "registery")!
+    
+}
+
+extension GitHubLocalActionParameterSet {
+    
+    static var allInputs: [Input] {
+        try! Registery(extractingValuesFrom: Self.init()).values
+    }
+    
+    static var allOutputs: [Output] {
+        try! Registery(extractingValuesFrom: Self.init()).values
+    }
     
 }
 
