@@ -11,7 +11,7 @@ public struct EmptyGitHubLocalActionParameterSet: GitHubLocalActionParameterSet 
 public struct InputAccessor<Inputs: GitHubLocalActionParameterSet> {
     var inputs = Inputs()
     
-    public subscript<Wrapped>(dynamicMember keyPath: KeyPath<Inputs, ActionInput<Wrapped>>) -> String {
+    public subscript(dynamicMember keyPath: KeyPath<Inputs, ActionInput<String>>) -> String {
         "${{ inputs.\(inputs[keyPath: keyPath].id) }}"
     }
 }

@@ -109,10 +109,40 @@ extension GitHub.Workflow.Job {
     
 }
 
+@dynamicMemberLookup
+public struct InputProvider<Inputs: GitHubLocalActionParameterSet> {
+    var inputs = Inputs()
+    
+    fileprivate var inputValues: [String: String] = [:]
+    
+    public subscript<Wrapped>(dynamicMember keyPath: KeyPath<Inputs, ActionInput<Wrapped>>) -> String? {
+        get {
+            inputValues[inputs[keyPath: keyPath].id]
+        }
+        set {
+            inputValues[inputs[keyPath: keyPath].id] = newValue
+        }
+    }
+}
+
 extension Job.Step {
     
     public init<M: JobStepMethod>(_ name: String, method: () -> M) {
         self.init(name: name, method: method())
+    }
+    
+    public init<Action>(action: Action) where Action: GitHubLocalAction, Action.Inputs == EmptyGitHubLocalActionParameterSet {
+        self.init(action.name) {
+            .action(".github/actions/\(action.id)")
+        }
+    }
+    
+    public init<Action>(action: Action, with inputs: (inout InputProvider<Action.Inputs>) -> ()) where Action: GitHubLocalAction {
+        var provider = InputProvider<Action.Inputs>()
+        inputs(&provider)
+        self.init(action.name) {
+            .action(".github/actions/\(action.id)", inputs: provider.inputValues)
+        }
     }
     
     public func workingDirectory(_ workingDirectory: String?) -> Job.Step {

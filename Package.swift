@@ -56,7 +56,7 @@ let package = Package(
         ),
         .testTarget(
             name: "InfraSupportTests",
-            dependencies: ["InfraSupport", "Support", "TestingSupport"]
+            dependencies: ["YAMLBuilder", "InfraSupport", "Support", "TestingSupport"]
         ),
     ]
 )
