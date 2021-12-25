@@ -2,11 +2,11 @@ import Foundation
 import Support
 import YAMLBuilder
 
-public typealias Output = GitHub.Action.Output
+typealias Output = GitHub.Action.Output
 
 extension GitHub.Action {
     
-    public struct Output {
+    struct Output {
         
         var id: String
         var description: String
@@ -19,17 +19,17 @@ extension GitHub.Action {
 
 extension Output {
     
-    public init(_ id: String, description: () -> String) {
+    init(_ id: String, description: () -> String) {
         self.init(id: id, description: description())
     }
     
-    public func value(_ value: String) -> Output {
+    func value(_ value: String) -> Output {
         mutating(self) {
             $0.value = value
         }
     }
     
-    public var yamlDescription: YAML.Map.Element {
+    var yamlDescription: YAML.Map.Element {
         id.is {
             "description".is(.text(description))
             if let value = value {

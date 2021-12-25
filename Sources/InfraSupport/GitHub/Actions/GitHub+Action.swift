@@ -27,7 +27,7 @@ extension GitHub {
 
 extension GitHub.Action {
     
-    public init(
+    init(
         id: String,
         name: String,
         description: () -> String,
@@ -81,17 +81,17 @@ extension GitHub.Action {
 }
 
 @resultBuilder
-public class ActionInputsBuilder: ArrayBuilder<Input> {
+class ActionInputsBuilder: ArrayBuilder<Input> {
     
-    public static func buildFinalResult(_ steps: [Input]) -> [Input] {
+    static func buildFinalResult(_ steps: [Input]) -> [Input] {
         steps
     }
 }
 
 @resultBuilder
-public class ActionOutputsBuilder: ArrayBuilder<Output> {
+class ActionOutputsBuilder: ArrayBuilder<Output> {
     
-    public static func buildFinalResult(_ steps: [Output]) -> [Output] {
+    static func buildFinalResult(_ steps: [Output]) -> [Output] {
         steps
     }
 }
