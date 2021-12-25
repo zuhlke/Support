@@ -58,6 +58,11 @@ extension GitHub.Workflow {
             var condition: String?
             var environment: [String: String] = [:]
             var method: JobStepMethod
+            
+            /// The action defined used as part of this step.
+            ///
+            /// This is not encoded as part of the step itself. Rather, it’s a reference used when building up the whole `Pipeline`.
+            var actionDefinition: GitHub.Action?
         }
         
         var id: String
@@ -147,6 +152,7 @@ extension Job.Step {
         self.init(action.name) {
             .action("./.github/actions/\(action.id)", inputs: provider.inputValues)
         }
+        actionDefinition = .init(action)
     }
     
     public func workingDirectory(_ workingDirectory: String?) -> Job.Step {

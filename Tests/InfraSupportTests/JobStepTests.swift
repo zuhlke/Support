@@ -7,16 +7,19 @@ import YAMLBuilder
 class JobStepTests: XCTestCase {
     
     func testCreatingStepFromALocalActionWithoutInputs() {
-        let step = Job.Step(action: MockActionWithoutInputs())
+        let action = MockActionWithoutInputs()
+        let step = Job.Step(action: action)
         let expected = YAML.Node {
             "name".is(.text("Local Action Name"))
             "uses".is(.text("./.github/actions/local-action-id"))
         }
         TS.assert(step.content, equals: expected)
+        TS.assert(step.actionDefinition?.yamlRepresentation, equals: GitHub.Action(action).yamlRepresentation)
     }
     
     func testCreatingStepFromALocalActionWithInputs() {
-        let step = Job.Step(action: MockActionWithInputs()) { inputs in
+        let action = MockActionWithInputs()
+        let step = Job.Step(action: action) { inputs in
             inputs.$someInput = "some-value"
             inputs.$someOptionalInput = "some-other-value"
         }
@@ -31,6 +34,8 @@ class JobStepTests: XCTestCase {
         }
         
         TS.assert(step.content, equals: expected)
+        TS.assert(step.actionDefinition?.yamlRepresentation, equals: GitHub.Action(action).yamlRepresentation)
+
     }
     
     func testCreatingStepFromALocalActionWithInputsButInputNotSet() {
@@ -63,10 +68,10 @@ private struct MockActionWithInputs: GitHubLocalAction {
     
     struct Inputs: ParameterSet {
         
-        @ActionInput("some-input", description: .random())
+        @ActionInput("some-input", description: "Some desc")
         var someInput: String
         
-        @ActionInput("some-optional-input", description: .random())
+        @ActionInput("some-optional-input", description: "Some desc")
         var someOptionalInput: String?
     }
     
