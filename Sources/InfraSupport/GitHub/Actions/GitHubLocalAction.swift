@@ -14,13 +14,11 @@ public struct OutputAccessor<Outputs: GitHubActionParameterSet> {
     var outputs = Outputs()
 }
 
-public protocol GitHubLocalAction {
+public protocol GitHubLocalAction: GitHubAction {
     typealias ParameterSet = GitHubActionParameterSet
-    associatedtype Inputs: ParameterSet = EmptyGitHubLocalActionParameterSet
     associatedtype Outputs: ParameterSet = EmptyGitHubLocalActionParameterSet
     
     var id: String { get }
-    var name: String { get }
     var description: String { get }
     
     func run(inputs: InputAccessor<Inputs>, outputs: OutputAccessor<Outputs>) -> GitHub.Action.Run
