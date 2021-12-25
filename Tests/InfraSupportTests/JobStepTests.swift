@@ -10,7 +10,7 @@ class JobStepTests: XCTestCase {
         let step = Job.Step(action: MockActionWithoutInputs())
         let expected = YAML.Node {
             "name".is(.text("Local Action Name"))
-            "uses".is(.text(".github/actions/local-action-id"))
+            "uses".is(.text("./.github/actions/local-action-id"))
         }
         TS.assert(step.content, equals: expected)
     }
@@ -23,7 +23,7 @@ class JobStepTests: XCTestCase {
         
         let expected = YAML.Node {
             "name".is(.text("Local Action Name"))
-            "uses".is(.text(".github/actions/local-action-id"))
+            "uses".is(.text("./.github/actions/local-action-id"))
             "with".is {
                 "some-input".is(.text("some-value"))
                 "some-optional-input".is(.text("some-other-value"))
@@ -52,7 +52,7 @@ private struct MockActionWithoutInputs: GitHubLocalAction {
     var description = String.random()
     
     func run(inputs: InputAccessor<Inputs>, outputs: OutputAccessor<Outputs>) -> GitHub.Action.Run {
-        fatalError("We should not need to run the action.")
+        Composite {}
     }
 }
 
@@ -71,6 +71,6 @@ private struct MockActionWithInputs: GitHubLocalAction {
     }
     
     func run(inputs: InputAccessor<Inputs>, outputs: OutputAccessor<Outputs>) -> GitHub.Action.Run {
-        fatalError("We should not need to run the action.")
+        Composite {}
     }
 }

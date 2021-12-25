@@ -29,6 +29,7 @@ extension GitHub {
 
 extension GitHub.MetadataEncoder {
     
+    /// Encode the files to represent the provided pipeline.
     public func projectFiles(for pipeline: GitHub.Pipeline) -> [ProjectFile] {
         pipeline.actions.map { projectFile(for: $0) }
             + pipeline.workflows.map { projectFile(for: $0) }

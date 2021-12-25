@@ -132,9 +132,7 @@ extension Job.Step {
     }
     
     public init<Action>(action: Action) where Action: GitHubLocalAction, Action.Inputs == EmptyGitHubLocalActionParameterSet {
-        self.init(action.name) {
-            .action(".github/actions/\(action.id)")
-        }
+        self.init(action: action) { _ in }
     }
     
     public init<Action>(action: Action, with inputs: (inout InputProvider<Action.Inputs>) -> ()) where Action: GitHubLocalAction {
@@ -147,7 +145,7 @@ extension Job.Step {
             .sorted(by: <)
         Thread.precondition(missingInputs.isEmpty, "Missing value for required action input: \(missingInputs)")
         self.init(action.name) {
-            .action(".github/actions/\(action.id)", inputs: provider.inputValues)
+            .action("./.github/actions/\(action.id)", inputs: provider.inputValues)
         }
     }
     
