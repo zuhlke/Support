@@ -115,7 +115,7 @@ extension GitHub.Workflow.Job {
 }
 
 @dynamicMemberLookup
-public struct InputProvider<Inputs: GitHubLocalActionParameterSet> {
+public struct InputProvider<Inputs: GitHubActionParameterSet> {
     var inputs = Inputs()
     
     fileprivate var inputValues: [String: String] = [:]
@@ -140,13 +140,13 @@ extension Job.Step {
         self.init(action: action) { _ in }
     }
     
-    public init<Action>(action: Action, with inputs: (inout InputProvider<Action.Inputs>) -> ()) where Action: GitHubLocalAction {
+    public init<Action>(action: Action, with inputs: (inout InputProvider<Action.Inputs>) -> Void) where Action: GitHubLocalAction {
         var provider = InputProvider<Action.Inputs>()
         inputs(&provider)
         let missingInputs = Action.Inputs.allInputs.lazy
-            .filter { $0.isRequired }
+            .filter(\.isRequired)
             .filter { provider.inputValues[$0.id] == nil }
-            .map { $0.id }
+            .map(\.id)
             .sorted(by: <)
         Thread.precondition(missingInputs.isEmpty, "Missing value for required action input: \(missingInputs)")
         self.init(action.name) {

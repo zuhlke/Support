@@ -1,14 +1,8 @@
 import Foundation
 import Support
 
-public protocol GitHubLocalActionParameterSet: Encodable, EmptyInitializable {}
-
-public struct EmptyGitHubLocalActionParameterSet: GitHubLocalActionParameterSet {
-    public init() {}
-}
-
 @dynamicMemberLookup
-public struct InputAccessor<Inputs: GitHubLocalActionParameterSet> {
+public struct InputAccessor<Inputs: GitHubActionParameterSet> {
     var inputs = Inputs()
     
     public subscript(dynamicMember keyPath: KeyPath<Inputs, ActionInput<String>>) -> String {
@@ -16,12 +10,12 @@ public struct InputAccessor<Inputs: GitHubLocalActionParameterSet> {
     }
 }
 
-public struct OutputAccessor<Outputs: GitHubLocalActionParameterSet> {
+public struct OutputAccessor<Outputs: GitHubActionParameterSet> {
     var outputs = Outputs()
 }
 
 public protocol GitHubLocalAction {
-    typealias ParameterSet = GitHubLocalActionParameterSet
+    typealias ParameterSet = GitHubActionParameterSet
     associatedtype Inputs: ParameterSet = EmptyGitHubLocalActionParameterSet
     associatedtype Outputs: ParameterSet = EmptyGitHubLocalActionParameterSet
     
@@ -125,14 +119,14 @@ private extension CodingUserInfoKey {
     
 }
 
-extension GitHubLocalActionParameterSet {
+extension GitHubActionParameterSet {
     
     static var allInputs: [Input] {
-        try! Registery(extractingValuesFrom: Self.init()).values
+        try! Registery(extractingValuesFrom: Self()).values
     }
     
     static var allOutputs: [Output] {
-        try! Registery(extractingValuesFrom: Self.init()).values
+        try! Registery(extractingValuesFrom: Self()).values
     }
     
 }
