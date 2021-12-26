@@ -38,7 +38,7 @@ public extension GitHubLocalAction {
 
 extension GitHub.Action {
     
-    public init<LocalAction>(_ localAction: LocalAction) where LocalAction: GitHubLocalAction {
+    init<LocalAction>(_ localAction: LocalAction) where LocalAction: GitHubLocalAction {
         self.init(
             id: localAction.id,
             name: localAction.name,
