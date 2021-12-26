@@ -3,9 +3,9 @@ import YAMLBuilder
 
 extension GitHub {
     
+    // Workflow syntax is documented at https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions
+    
     /// Represents a GitHub workflow.
-    ///
-    /// Workflow syntax is documented [here](https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions).
     public struct Workflow {
         
         public struct Triggers {
