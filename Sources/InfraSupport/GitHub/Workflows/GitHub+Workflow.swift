@@ -130,9 +130,9 @@ private extension GitHub.Workflow.Triggers.Schedule {
 }
 
 @resultBuilder
-public class WorkflowJobsBuilder: ArrayBuilder<Job> {
+public class WorkflowJobsBuilder: ArrayBuilder<GitHub.Workflow.Job> {
     
-    public static func buildFinalResult(_ jobs: [Job]) -> [Job] {
+    public static func buildFinalResult(_ jobs: [GitHub.Workflow.Job]) -> [GitHub.Workflow.Job] {
         jobs
     }
 }

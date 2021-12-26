@@ -2,10 +2,20 @@ import Foundation
 import Support
 import YAMLBuilder
 
+/// A type defining an entire GitHub pipeline, including all workflow and the local action files they depend on.
+public protocol GitHubPipeline {
+    typealias Workflow = GitHub.Workflow
+    typealias Job = GitHub.Workflow.Job
+    
+    /// The workflows of this pipeline.
+    @WorkflowsBuilder
+    var workflows: [Workflow] { get }
+}
+
 extension GitHub {
     
     /// This type defines the entire infrastructure needed for a GitHub Actions pipeline.
-    public struct Pipeline {
+    struct Pipeline {
         var actions: [Action]
         var workflows: [Workflow]
     }
@@ -21,8 +31,8 @@ extension GitHub.Pipeline {
     /// The initialiser performs some validation on the workflow files, and may throw errors if it finds issues.
     /// The exact validations performed may evolve in each version of the package.
     /// Therefore, it’s highly recommended to re-run this pipeline after a version upgrade to ensure the definitions are still valid.
-    public init(@WorkflowsBuilder workflows: () -> [GitHub.Workflow]) throws {
-        let workflows = workflows()
+    init<PipelineDefinition>(pipeline: PipelineDefinition) throws where PipelineDefinition: GitHubPipeline {
+        let workflows = pipeline.workflows
         let actions = workflows.lazy
             .flatMap(\.jobs)
             .flatMap(\.steps)

@@ -2,8 +2,6 @@ import Foundation
 import Support
 import YAMLBuilder
 
-public typealias Job = GitHub.Workflow.Job
-
 public protocol JobStepMethod {
     
     @NodeMapElementBuilder
@@ -11,18 +9,18 @@ public protocol JobStepMethod {
     
 }
 
-extension JobStepMethod where Self == Job.Step.ActionMethod {
+extension JobStepMethod where Self == GitHub.Workflow.Job.Step.ActionMethod {
     
     public static func action(_ reference: String, inputs: [String: String] = [:]) -> Self {
-        Job.Step.ActionMethod(reference: reference, inputs: inputs)
+        GitHub.Workflow.Job.Step.ActionMethod(reference: reference, inputs: inputs)
     }
     
 }
 
-extension JobStepMethod where Self == Job.Step.ScriptMethod {
+extension JobStepMethod where Self == GitHub.Workflow.Job.Step.ScriptMethod {
     
     public static func run(_ script: String) -> Self {
-        Job.Step.ScriptMethod(script: script)
+        GitHub.Workflow.Job.Step.ScriptMethod(script: script)
     }
     
 }
@@ -130,7 +128,7 @@ public struct InputProvider<Inputs: GitHubActionParameterSet> {
     }
 }
 
-extension Job.Step {
+extension GitHub.Workflow.Job.Step {
     
     public init<M: JobStepMethod>(_ name: String, method: () -> M) {
         self.init(name: name, method: method())
@@ -155,19 +153,19 @@ extension Job.Step {
         actionDefinition = .init(action)
     }
     
-    public func workingDirectory(_ workingDirectory: String?) -> Job.Step {
+    public func workingDirectory(_ workingDirectory: String?) -> GitHub.Workflow.Job.Step {
         mutating(self) {
             $0.workingDirectory = workingDirectory
         }
     }
     
-    public func condition(_ condition: String?) -> Job.Step {
+    public func condition(_ condition: String?) -> GitHub.Workflow.Job.Step {
         mutating(self) {
             $0.condition = condition
         }
     }
     
-    public func environment(_ environment: [String: String]) -> Job.Step {
+    public func environment(_ environment: [String: String]) -> GitHub.Workflow.Job.Step {
         mutating(self) {
             $0.environment = environment
         }
@@ -199,7 +197,7 @@ extension Job.Step {
     
 }
 
-extension Job.Step.ActionMethod: JobStepMethod {
+extension GitHub.Workflow.Job.Step.ActionMethod: JobStepMethod {
     
     @NodeMapElementBuilder
     public var yamlRepresentation: [YAML.Map.Element] {
@@ -214,7 +212,7 @@ extension Job.Step.ActionMethod: JobStepMethod {
     }
 }
 
-extension Job.Step.ScriptMethod: JobStepMethod {
+extension GitHub.Workflow.Job.Step.ScriptMethod: JobStepMethod {
     
     @NodeMapElementBuilder
     public var yamlRepresentation: [YAML.Map.Element] {
@@ -222,23 +220,23 @@ extension Job.Step.ScriptMethod: JobStepMethod {
     }
 }
 
-extension Job.Runner {
+extension GitHub.Workflow.Job.Runner {
     
-    public func comment(_ comment: String) -> Job.Runner {
+    public func comment(_ comment: String) -> GitHub.Workflow.Job.Runner {
         mutating(self) {
             $0.comment = comment
         }
     }
     
-    public static let macos11 = Job.Runner("macos-11")
+    public static let macos11 = GitHub.Workflow.Job.Runner("macos-11")
         .comment("Check pre-installed software on https://github.com/actions/virtual-environments/blob/main/images/macos/macos-11-Readme.md")
     
 }
 
 @resultBuilder
-public class JobStepsBuilder: ArrayBuilder<Job.Step> {
+public class JobStepsBuilder: ArrayBuilder<GitHub.Workflow.Job.Step> {
     
-    public static func buildFinalResult(_ steps: [Job.Step]) -> [Job.Step] {
+    public static func buildFinalResult(_ steps: [GitHub.Workflow.Job.Step]) -> [GitHub.Workflow.Job.Step] {
         steps
     }
 }
