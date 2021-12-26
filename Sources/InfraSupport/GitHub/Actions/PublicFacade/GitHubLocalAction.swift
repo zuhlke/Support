@@ -1,6 +1,6 @@
+import AppKit
 import Foundation
 import Support
-import AppKit
 
 @dynamicMemberLookup
 public struct InputAccessor<Inputs: GitHubActionParameterSet> {

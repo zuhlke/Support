@@ -30,7 +30,7 @@ private class ParameterSetEncoder<Value> {
     
     func extractValues<ParameterSet: GitHubActionParameterSet>(from type: ParameterSet.Type) -> [Value] {
         values = []
-        try! ParameterSet.init().encode(to: self)
+        try! ParameterSet().encode(to: self)
         return values
     }
     
@@ -41,11 +41,11 @@ extension ParameterSetEncoder: Encoder {
         fatalError()
     }
     
-    var userInfo: [CodingUserInfoKey : Any] {
+    var userInfo: [CodingUserInfoKey: Any] {
         fatalError()
     }
     
-    func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
+    func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key: CodingKey {
         .init(Container(base: self))
     }
     
@@ -56,7 +56,6 @@ extension ParameterSetEncoder: Encoder {
     func singleValueContainer() -> SingleValueEncodingContainer {
         fatalError()
     }
-    
     
 }
 
@@ -132,14 +131,14 @@ private class Container<Value, Key: CodingKey>: KeyedEncodingContainerProtocol {
         fatalError()
     }
     
-    func encode<T>(_ value: T, forKey key: Key) throws where T : Encodable {
+    func encode<T>(_ value: T, forKey key: Key) throws where T: Encodable {
         guard let value = value as? Value else {
             fatalError()
         }
         base.values.append(value)
     }
     
-    func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
+    func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> where NestedKey: CodingKey {
         fatalError()
     }
     
