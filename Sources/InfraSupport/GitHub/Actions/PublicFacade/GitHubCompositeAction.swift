@@ -15,20 +15,49 @@ public struct OutputAccessor<Outputs: GitHubActionParameterSet> {
     var outputs = Outputs()
 }
 
-public protocol GitHubLocalAction: GitHubAction {
+/// A “composite” GitHub action.
+public protocol GitHubCompositeAction: GitHubAction {
+    typealias Step = CompositeActionStep
     
     /// The type describing outputs of the action.
     ///
     /// The type **must** only contains properties wrapped by `ActionOutput`.
     associatedtype Outputs: ParameterSet = EmptyGitHubLocalActionParameterSet
     
+    /// The action’s identifier.
+    ///
+    /// This is used to determine, for example, where the action file should be stored,
+    /// and how it should be referenced in workflow files.
     var id: String { get }
+    
+    /// User-friendly description for this action.
     var description: String { get }
     
-    func run(inputs: InputAccessor<Inputs>, outputs: OutputAccessor<Outputs>) -> GitHub.Action.Run
+    #warning("Make it possible to create `Step`s externally.")
+    // Currently, all initialisers of `Step` are internal, so actually there’s no way someone outside this module can
+    // conform to this protocol.
+    //
+    // This is only so we can create a minimal, reasonably stable, public API for now. We can then extend the API in the
+    // future. With our immediate needs, it’s possible to keep all action definitions internal to the module and ask
+    // consumers to just use them. But this is not very scalable, so we should consider making the API public over time.
+    
+    /// Steps within this action.
+    @CompositeStepsBuilder
+    func compositeActionSteps(inputs: InputAccessor<Inputs>, outputs: OutputAccessor<Outputs>) -> [Step]
+    
 }
 
-public extension GitHubLocalAction {
+extension GitHubCompositeAction {
+    
+    func run(inputs: InputAccessor<Inputs>, outputs: OutputAccessor<Outputs>) -> GitHub.Action.Run {
+        Composite {
+            compositeActionSteps(inputs: inputs, outputs: outputs)
+        }
+    }
+
+}
+
+public extension GitHubCompositeAction {
     
     var reference: String {
         "./.github/actions/\(id)"
@@ -38,7 +67,7 @@ public extension GitHubLocalAction {
 
 extension GitHub.Action {
     
-    init<LocalAction>(_ localAction: LocalAction) where LocalAction: GitHubLocalAction {
+    init<LocalAction>(_ localAction: LocalAction) where LocalAction: GitHubCompositeAction {
         self.init(
             id: localAction.id,
             name: localAction.name,

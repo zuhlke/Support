@@ -51,17 +51,17 @@ class JobStepTests: XCTestCase {
     
 }
 
-private struct MockActionWithoutInputs: GitHubLocalAction {
+private struct MockActionWithoutInputs: GitHubCompositeAction {
     var id = "local-action-id"
     var name = "Local Action Name"
     var description = String.random()
     
-    func run(inputs: InputAccessor<Inputs>, outputs: OutputAccessor<Outputs>) -> GitHub.Action.Run {
-        Composite {}
+    func compositeActionSteps(inputs: InputAccessor<Inputs>, outputs: OutputAccessor<Outputs>) -> [Step] {
+        // We have no steps
     }
 }
 
-private struct MockActionWithInputs: GitHubLocalAction {
+private struct MockActionWithInputs: GitHubCompositeAction {
     var id = "local-action-id"
     var name = "Local Action Name"
     var description = String.random()
@@ -75,7 +75,7 @@ private struct MockActionWithInputs: GitHubLocalAction {
         var someOptionalInput: String
     }
     
-    func run(inputs: InputAccessor<Inputs>, outputs: OutputAccessor<Outputs>) -> GitHub.Action.Run {
-        Composite {}
+    func compositeActionSteps(inputs: InputAccessor<Inputs>, outputs: OutputAccessor<Outputs>) -> [Step] {
+        // We have no steps
     }
 }

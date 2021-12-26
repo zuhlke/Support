@@ -1,6 +1,6 @@
 import Foundation
 
-public struct SetGitCredentialsAction: GitHubLocalAction {
+public struct SetGitCredentialsAction: GitHubCompositeAction {
     public var id = "set-git-credentials"
     public var name = "Set git credentials"
     public var description = "Set git credentials with the provided actor and token."
@@ -16,20 +16,18 @@ public struct SetGitCredentialsAction: GitHubLocalAction {
         public var githubAccessToken: String
     }
     
-    public func run(inputs: InputAccessor<Inputs>, outputs: OutputAccessor<Outputs>) -> GitHub.Action.Run {
-        Composite {
-            Composite.Step("Set Up Git Credentials", shell: "bash") {
-                """
-                echo "https://\(inputs.$githubActor):\(inputs.$githubAccessToken)@github.com" > ~/.git-credentials
-                git config --global credential.helper store
-                """
-            }
+    public func compositeActionSteps(inputs: InputAccessor<Inputs>, outputs: OutputAccessor<EmptyGitHubLocalActionParameterSet>) -> [Step] {
+        Step("Set Up Git Credentials", shell: "bash") {
+            """
+            echo "https://\(inputs.$githubActor):\(inputs.$githubAccessToken)@github.com" > ~/.git-credentials
+            git config --global credential.helper store
+            """
         }
     }
     
 }
 
-extension GitHubLocalAction where Self == SetGitCredentialsAction {
+extension GitHubCompositeAction where Self == SetGitCredentialsAction {
     
     public static func setGitCredentials() -> Self {
         SetGitCredentialsAction()

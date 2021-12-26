@@ -38,7 +38,7 @@ class GitHubLocalActionTests: XCTestCase {
     
 }
 
-private struct SelectXcodeVersionAction: GitHubLocalAction {
+private struct SelectXcodeVersionAction: GitHubCompositeAction {
     var id = "select-xcode-version"
     var name = "Select Xcode Version"
     var description = "Set version of Xcode used for subsequent steps."
@@ -55,15 +55,13 @@ private struct SelectXcodeVersionAction: GitHubLocalAction {
         var swiftVersion: String
     }
     
-    func run(inputs: InputAccessor<Inputs>, outputs: OutputAccessor<Outputs>) -> GitHub.Action.Run {
-        Composite {
-            Composite.Step("Select Xcode", shell: "bash") {
-                """
-                sudo xcode-select --switch /Applications/Xcode_\(inputs.$xcodeVersion).app
-                xcodebuild -version
-                swift --version
-                """
-            }
+    func compositeActionSteps(inputs: InputAccessor<Inputs>, outputs: OutputAccessor<Outputs>) -> [Step] {
+        Composite.Step("Select Xcode", shell: "bash") {
+            """
+            sudo xcode-select --switch /Applications/Xcode_\(inputs.$xcodeVersion).app
+            xcodebuild -version
+            swift --version
+            """
         }
     }
 }

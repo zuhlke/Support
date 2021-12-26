@@ -136,11 +136,11 @@ extension Job.Step {
         self.init(name: name, method: method())
     }
     
-    public init<Action>(action: Action) where Action: GitHubLocalAction, Action.Inputs == EmptyGitHubLocalActionParameterSet {
+    public init<Action>(action: Action) where Action: GitHubCompositeAction, Action.Inputs == EmptyGitHubLocalActionParameterSet {
         self.init(action: action) { _ in }
     }
     
-    public init<Action>(action: Action, with inputs: (inout InputProvider<Action.Inputs>) -> Void) where Action: GitHubLocalAction {
+    public init<Action>(action: Action, with inputs: (inout InputProvider<Action.Inputs>) -> Void) where Action: GitHubCompositeAction {
         var provider = InputProvider<Action.Inputs>()
         inputs(&provider)
         let missingInputs = Action.Inputs.allInputs.lazy

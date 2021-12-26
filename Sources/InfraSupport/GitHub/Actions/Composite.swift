@@ -2,21 +2,22 @@ import Foundation
 import Support
 import YAMLBuilder
 
-public typealias Composite = GitHub.Action.Composite
+typealias Composite = GitHub.Action.Composite
+
+public struct CompositeActionStep {
+    var name: String?
+    var id: String?
+    
+    var shell: String
+    var run: String
+    
+    var environment: [String: String] = [:]
+}
 
 extension GitHub.Action {
     
-    public struct Composite {
-        
-        public struct Step {
-            var name: String?
-            var id: String?
-            
-            var shell: String
-            var run: String
-            
-            var environment: [String: String] = [:]
-        }
+    struct Composite {
+        typealias Step = CompositeActionStep
         
         var steps: [Step]
         
@@ -26,11 +27,11 @@ extension GitHub.Action {
 
 extension Composite: GitHub.Action.Run {
     
-    public init(@CompositeStepsBuilder steps: () -> [Step]) {
+    init(@CompositeStepsBuilder steps: () -> [Step]) {
         self.init(steps: steps())
     }
     
-    public var yamlDescription: YAML.Map {
+    var yamlDescription: YAML.Map {
         "using".is("composite")
         
         "steps".is {
@@ -44,24 +45,24 @@ extension Composite: GitHub.Action.Run {
 
 extension Composite.Step {
 
-    public init(_ name: String? = nil, shell: String, run: () -> String) {
+    init(_ name: String? = nil, shell: String, run: () -> String) {
         self.init(name: name, shell: shell, run: run())
     }
     
-    public func id(_ id: String) -> Composite.Step {
+    func id(_ id: String) -> Composite.Step {
         mutating(self) {
             $0.id = id
         }
     }
     
-    public func environment(_ environment: [String: String]) -> Composite.Step {
+    func environment(_ environment: [String: String]) -> Composite.Step {
         mutating(self) {
             $0.environment = environment
         }
     }
     
     @NodeMappingBuilder
-    public var yamlDescription: YAML.Map {
+    var yamlDescription: YAML.Map {
         if let name = name {
             "name".is(.text(name))
         }
@@ -85,9 +86,9 @@ extension Composite.Step {
 }
 
 @resultBuilder
-public class CompositeStepsBuilder: ArrayBuilder<Composite.Step> {
+class CompositeStepsBuilder: ArrayBuilder<Composite.Step> {
     
-    public static func buildFinalResult(_ steps: [Composite.Step]) -> [Composite.Step] {
+    static func buildFinalResult(_ steps: [Composite.Step]) -> [Composite.Step] {
         steps
     }
 }

@@ -27,12 +27,12 @@ class GitHubPipelineTests: XCTestCase {
     
 }
 
-private struct MockActionWithoutInputs: GitHubLocalAction {
+private struct MockActionWithoutInputs: GitHubCompositeAction {
     var id = "local-action-id"
     var name = "Local Action Name"
     var description = String.random()
     
-    func run(inputs: InputAccessor<Inputs>, outputs: OutputAccessor<Outputs>) -> GitHub.Action.Run {
-        Composite {}
+    func compositeActionSteps(inputs: InputAccessor<EmptyGitHubLocalActionParameterSet>, outputs: OutputAccessor<EmptyGitHubLocalActionParameterSet>) -> [Step] {
+        // We have no steps
     }
 }

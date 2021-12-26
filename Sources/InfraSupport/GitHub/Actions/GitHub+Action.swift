@@ -1,7 +1,7 @@
 import Foundation
 import YAMLBuilder
 
-public protocol GitHubActionRun {
+protocol GitHubActionRun {
     
     @NodeMappingBuilder
     var yamlDescription: YAML.Map { get }
@@ -12,8 +12,8 @@ extension GitHub {
     /// Represents a GitHub action.
     ///
     /// Action syntax is documented [here](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions).
-    public struct Action {
-        public typealias Run = GitHubActionRun
+    struct Action {
+        typealias Run = GitHubActionRun
         
         var id: String
         var name: String
