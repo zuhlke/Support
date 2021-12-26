@@ -120,7 +120,7 @@ public struct InputProvider<Inputs: GitHubActionParameterSet> {
     
     fileprivate var inputValues: [String: String] = [:]
     
-    public subscript<Wrapped>(dynamicMember keyPath: KeyPath<Inputs, ActionInput<Wrapped>>) -> String? {
+    public subscript(dynamicMember keyPath: KeyPath<Inputs, ActionInput>) -> String? {
         get {
             inputValues[inputs[keyPath: keyPath].id]
         }

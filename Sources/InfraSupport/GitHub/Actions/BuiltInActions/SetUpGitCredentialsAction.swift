@@ -9,10 +9,10 @@ public struct SetGitCredentialsAction: GitHubLocalAction {
         
         public init() {}
         
-        @ActionInput("github-actor", description: "GitHub actor used for fetching dependencies.")
+        @ActionInput("github-actor", description: "GitHub actor used for fetching dependencies.", optionality: .required)
         public var githubActor: String
         
-        @ActionInput("github-access-token", description: "GitHub access token used for fetching dependencies.")
+        @ActionInput("github-access-token", description: "GitHub access token used for fetching dependencies.", optionality: .required)
         public var githubAccessToken: String
     }
     

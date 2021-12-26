@@ -10,7 +10,7 @@ class GitHubLocalActionTests: XCTestCase {
         let expected = GitHub.Action(id: "select-xcode-version", name: "Select Xcode Version") {
             "Set version of Xcode used for subsequent steps."
         } inputs: {
-            Input("xcode-version", isRequired: true) {
+            Input("xcode-version", isRequired: false) {
                 "The version of Xcode to use."
             }.default("13.0")
         } outputs: {
@@ -45,7 +45,7 @@ private struct SelectXcodeVersionAction: GitHubLocalAction {
     
     struct Inputs: ParameterSet {
         
-        @ActionInput("xcode-version", description: "The version of Xcode to use.", default: "13.0")
+        @ActionInput("xcode-version", description: "The version of Xcode to use.", optionality: .optional(defaultValue: "13.0"))
         var xcodeVersion: String
     }
     

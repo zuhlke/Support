@@ -68,11 +68,11 @@ private struct MockActionWithInputs: GitHubLocalAction {
     
     struct Inputs: ParameterSet {
         
-        @ActionInput("some-input", description: "Some desc")
+        @ActionInput("some-input", description: "Some desc", optionality: .required)
         var someInput: String
         
-        @ActionInput("some-optional-input", description: "Some desc")
-        var someOptionalInput: String?
+        @ActionInput("some-optional-input", description: "Some desc", optionality: .optional(defaultValue: ""))
+        var someOptionalInput: String
     }
     
     func run(inputs: InputAccessor<Inputs>, outputs: OutputAccessor<Outputs>) -> GitHub.Action.Run {
