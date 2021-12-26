@@ -40,9 +40,7 @@ public struct ActionInput: Encodable {
     }
     
     public func encode(to encoder: Encoder) throws {
-        guard let registry = encoder.userInfo[.registery] as? Registery<Input> else { return }
-        let input = Input(id: id, description: description, isRequired: isRequired, defaultValue: defaultValue)
-        registry.values.append(input)
+        fatalError("This should never be called.")
     }
     
 }

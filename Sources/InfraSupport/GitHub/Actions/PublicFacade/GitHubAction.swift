@@ -9,6 +9,10 @@ public protocol GitHubAction {
     #warning("Provide an example `Inputs` conformance as part of docs after refining the types.")
     // Upload artefact action is a good example: https://github.com/actions/upload-artifact/blob/main/action.yml
     typealias ParameterSet = GitHubActionParameterSet
+    
+    /// The type describing inputs to the action.
+    ///
+    /// The type **must** only contains properties wrapped by `ActionInput`.
     associatedtype Inputs: ParameterSet = EmptyGitHubLocalActionParameterSet
     
     /// User-friendly name for the action.

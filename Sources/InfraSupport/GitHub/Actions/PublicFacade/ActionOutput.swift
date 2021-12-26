@@ -1,6 +1,6 @@
 import Foundation
 
-/// /// Describes an action’s output value.
+/// Describes an action’s output value.
 @propertyWrapper
 public struct ActionOutput: Encodable {
     
@@ -17,9 +17,7 @@ public struct ActionOutput: Encodable {
     }
     
     public func encode(to encoder: Encoder) throws {
-        guard let registry = encoder.userInfo[.registery] as? Registery<Output> else { return }
-        let output = Output(id: id, description: description, value: value)
-        registry.values.append(output)
+        fatalError("This should never be called.")
     }
     
 }

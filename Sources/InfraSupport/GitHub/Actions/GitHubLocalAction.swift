@@ -1,5 +1,6 @@
 import Foundation
 import Support
+import AppKit
 
 @dynamicMemberLookup
 public struct InputAccessor<Inputs: GitHubActionParameterSet> {
@@ -15,7 +16,10 @@ public struct OutputAccessor<Outputs: GitHubActionParameterSet> {
 }
 
 public protocol GitHubLocalAction: GitHubAction {
-    typealias ParameterSet = GitHubActionParameterSet
+    
+    /// The type describing outputs of the action.
+    ///
+    /// The type **must** only contains properties wrapped by `ActionOutput`.
     associatedtype Outputs: ParameterSet = EmptyGitHubLocalActionParameterSet
     
     var id: String { get }
@@ -47,32 +51,26 @@ extension GitHub.Action {
     
 }
 
-extension CodingUserInfoKey {
-    
-    static let registery = CodingUserInfoKey(rawValue: "registery")!
-    
-}
-
 extension GitHubActionParameterSet {
     
     static var allInputs: [Input] {
-        try! Registery(extractingValuesFrom: Self()).values
+        allFields(ofType: ActionInput.self).map(\.input)
     }
     
     static var allOutputs: [Output] {
-        try! Registery(extractingValuesFrom: Self()).values
+        allFields(ofType: ActionOutput.self).map(\.output)
     }
     
 }
 
-class Registery<Value> {
-    
-    var values: [Value] = []
-    
-    init<T: Encodable>(extractingValuesFrom encodable: T) throws {
-        let encoder = JSONEncoder()
-        encoder.userInfo = [.registery: self]
-        _ = try encoder.encode(encodable)
+extension ActionInput {
+    var input: Input {
+        Input(id: id, description: description, isRequired: isRequired, defaultValue: defaultValue)
     }
-    
+}
+
+extension ActionOutput {
+    var output: Output {
+        Output(id: id, description: description, value: value)
+    }
 }
