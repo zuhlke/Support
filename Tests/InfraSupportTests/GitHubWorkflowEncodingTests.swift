@@ -3,6 +3,7 @@ import XCTest
 @testable import InfraSupport
 
 final class GitHubWorkflowEncodingTests: XCTestCase {
+    typealias Job = GitHub.Workflow.Job
     let encoder = GitHub.MetadataEncoder()
     
     func testEncodingWorkflow() throws {

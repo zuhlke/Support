@@ -1,6 +1,5 @@
 import Foundation
 import Support
-import TestingSupport
 
 /// A type representing parameters (inputs or outputs) of a GitHub action.
 ///

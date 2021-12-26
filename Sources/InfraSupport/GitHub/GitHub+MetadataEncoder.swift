@@ -40,14 +40,19 @@ extension GitHub.MetadataEncoder {
             + pipeline.workflows.map { projectFile(for: $0) }
     }
     
-    internal func projectFile(for action: GitHub.Action) -> ProjectFile {
+    func projectFiles(for pipeline: GitHub.Pipeline) -> [ProjectFile] {
+        pipeline.actions.map { projectFile(for: $0) }
+            + pipeline.workflows.map { projectFile(for: $0) }
+    }
+    
+    func projectFile(for action: GitHub.Action) -> ProjectFile {
         .init(
             pathInRepository: action.projectFilePath,
             contents: actionEncoder.encode(action.yamlRepresentation)
         )
     }
     
-    internal func projectFile(for workflow: GitHub.Workflow) -> ProjectFile {
+    func projectFile(for workflow: GitHub.Workflow) -> ProjectFile {
         .init(
             pathInRepository: workflow.projectFilePath,
             contents: workflowEncoder.encode(workflow.yamlRepresentation)

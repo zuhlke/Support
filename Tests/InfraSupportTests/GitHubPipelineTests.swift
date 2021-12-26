@@ -6,25 +6,30 @@ import XCTest
 class GitHubPipelineTests: XCTestCase {
     
     func testCreatingPipelineExtractsActionsFromWorkflow() throws {
-        let action = MockActionWithoutInputs()
-        let workflow = GitHub.Workflow(id: .random(), name: .random()) {
-            .init()
-        } jobs: {
-            Job(id: .random(), name: .random(), runsOn: .macos11) {
-                Job.Step(action: action)
-            }
-        }
-        let actual = try GitHub.Pipeline {
-            workflow
-        }
+        let pipeline = MockPipeline()
         let expected = GitHub.Pipeline(
-            actions: [.init(action)],
-            workflows: [workflow]
+            actions: [.init(pipeline.action)],
+            workflows: [pipeline.workflow]
         )
         let encoder = GitHub.MetadataEncoder()
-        TS.assert(encoder.projectFiles(for: actual), equals: encoder.projectFiles(for: expected))
+        TS.assert(try encoder.projectFiles(for: pipeline), equals: encoder.projectFiles(for: expected))
     }
     
+}
+
+private class MockPipeline: GitHubPipeline {
+    let action = MockActionWithoutInputs()
+    lazy var workflow = GitHub.Workflow(id: .random(), name: .random()) {
+        .init()
+    } jobs: {
+        Job(id: .random(), name: .random(), runsOn: .macos11) {
+            Job.Step(action: self.action)
+        }
+    }
+    
+    var workflows: [Workflow] {
+        workflow
+    }
 }
 
 private struct MockActionWithoutInputs: GitHubCompositeAction {

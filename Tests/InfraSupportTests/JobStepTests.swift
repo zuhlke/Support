@@ -5,7 +5,8 @@ import YAMLBuilder
 @testable import InfraSupport
 
 class JobStepTests: XCTestCase {
-    
+    typealias Job = GitHub.Workflow.Job
+
     func testCreatingStepFromALocalActionWithoutInputs() {
         let action = MockActionWithoutInputs()
         let step = Job.Step(action: action)
