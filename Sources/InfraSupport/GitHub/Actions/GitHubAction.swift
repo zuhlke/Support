@@ -11,5 +11,11 @@ public protocol GitHubAction {
     typealias ParameterSet = GitHubActionParameterSet
     associatedtype Inputs: ParameterSet = EmptyGitHubLocalActionParameterSet
     
+    /// User-friendly name for the action.
     var name: String { get }
+    
+    /// Reference of the action.
+    ///
+    /// This should be a valid value for a `job.step.uses` entry in a workflow file.
+    var reference: String { get }
 }

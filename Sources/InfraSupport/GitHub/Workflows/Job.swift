@@ -150,7 +150,7 @@ extension Job.Step {
             .sorted(by: <)
         Thread.precondition(missingInputs.isEmpty, "Missing value for required action input: \(missingInputs)")
         self.init(action.name) {
-            .action("./.github/actions/\(action.id)", inputs: provider.inputValues)
+            .action(action.reference, inputs: provider.inputValues)
         }
         actionDefinition = .init(action)
     }

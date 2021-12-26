@@ -24,6 +24,14 @@ public protocol GitHubLocalAction: GitHubAction {
     func run(inputs: InputAccessor<Inputs>, outputs: OutputAccessor<Outputs>) -> GitHub.Action.Run
 }
 
+public extension GitHubLocalAction {
+    
+    var reference: String {
+        "./.github/actions/\(id)"
+    }
+    
+}
+
 @propertyWrapper
 public struct ActionInput<Wrapped: Encodable>: Encodable {
     
