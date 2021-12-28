@@ -7,6 +7,7 @@ public protocol GitHubPipeline {
     typealias Workflow = GitHub.Workflow
     typealias Job = GitHub.Workflow.Job
     typealias Use = GitHub.Workflow.Job.Step.Use
+    typealias Run = GitHub.Workflow.Job.Step.Run
 
     /// The workflows of this pipeline.
     @WorkflowsBuilder
