@@ -7,7 +7,7 @@ public struct SetXcodeVersionAction: GitHubCompositeAction {
     
     var xcodeVersion: String
     
-    public func compositeActionSteps(inputs: InputAccessor<EmptyGitHubLocalActionParameterSet>, outputs: OutputAccessor<EmptyGitHubLocalActionParameterSet>) -> [Step] {
+    public func compositeActionSteps(inputs: InputAccessor<EmptyParameterSet>, outputs: OutputAccessor<EmptyParameterSet>) -> [Step] {
         Step("Set Xcode Version", shell: "bash") {
             """
             sudo xcode-select --switch /Applications/Xcode_\(xcodeVersion).app

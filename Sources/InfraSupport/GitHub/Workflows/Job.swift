@@ -113,7 +113,7 @@ extension GitHub.Workflow.Job {
 }
 
 @dynamicMemberLookup
-public struct InputProvider<Inputs: GitHubActionParameterSet> {
+public struct InputProvider<Inputs: ParameterSet> {
     var inputs = Inputs()
     
     fileprivate var inputValues: [String: String] = [:]
@@ -134,7 +134,7 @@ extension GitHub.Workflow.Job.Step {
         self.init(name: name, method: method())
     }
     
-    public init<Action>(action: Action) where Action: GitHubCompositeAction, Action.Inputs == EmptyGitHubLocalActionParameterSet {
+    public init<Action>(action: Action) where Action: GitHubCompositeAction, Action.Inputs == EmptyParameterSet {
         self.init(action: action) { _ in }
     }
     

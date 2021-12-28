@@ -1,21 +1,21 @@
 import Foundation
 import Support
 
-/// A type representing parameters (inputs or outputs) of a GitHub action.
+/// A type representing to contain parameters set, such as inputs to a GitHub action.
 ///
 /// This type is usually used in conjuction wth other API, which may require use of a type that conforms
 /// to this protocol and has additional requirements on how it should  be constructed.
 ///
 /// Note that even though this type conforms to `Encodable`, you must never attempt to encode it.
 /// This action will immediately throw a `fatalError`.
-public protocol GitHubActionParameterSet: Encodable, EmptyInitializable {}
+public protocol ParameterSet: Encodable, EmptyInitializable {}
 
-/// An empty parameter set for GitHub actions.
-public struct EmptyGitHubLocalActionParameterSet: GitHubActionParameterSet {
+/// An parameter set which defines no parameters.
+public struct EmptyParameterSet: ParameterSet {
     public init() {}
 }
 
-extension GitHubActionParameterSet {
+extension ParameterSet {
     
     static func allFields<Input>(ofType: Input.Type) -> [Input] {
         ParameterSetEncoder().extractValues(from: Self.self)
@@ -27,9 +27,9 @@ private class ParameterSetEncoder<Value> {
     
     var values: [Value] = []
     
-    func extractValues<ParameterSet: GitHubActionParameterSet>(from type: ParameterSet.Type) -> [Value] {
+    func extractValues<P: ParameterSet>(from type: P.Type) -> [Value] {
         values = []
-        try! ParameterSet().encode(to: self)
+        try! P().encode(to: self)
         return values
     }
     

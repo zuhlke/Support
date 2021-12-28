@@ -2,7 +2,7 @@ import Foundation
 import Support
 
 @dynamicMemberLookup
-public struct InputAccessor<Inputs: GitHubActionParameterSet> {
+public struct InputAccessor<Inputs: ParameterSet> {
     var inputs = Inputs()
     
     public subscript(dynamicMember keyPath: KeyPath<Inputs, ActionInput>) -> String {
@@ -10,7 +10,7 @@ public struct InputAccessor<Inputs: GitHubActionParameterSet> {
     }
 }
 
-public struct OutputAccessor<Outputs: GitHubActionParameterSet> {
+public struct OutputAccessor<Outputs: ParameterSet> {
     var outputs = Outputs()
 }
 
@@ -21,7 +21,7 @@ public protocol GitHubCompositeAction: GitHubAction {
     /// The type describing outputs of the action.
     ///
     /// The type **must** only contains properties wrapped by `ActionOutput`.
-    associatedtype Outputs: ParameterSet = EmptyGitHubLocalActionParameterSet
+    associatedtype Outputs: ParameterSet = EmptyParameterSet
     
     /// The action’s identifier.
     ///
@@ -79,7 +79,7 @@ extension GitHub.Action {
     
 }
 
-extension GitHubActionParameterSet {
+extension ParameterSet {
     
     static var allInputs: [Input] {
         allFields(ofType: ActionInput.self).map(\.input)

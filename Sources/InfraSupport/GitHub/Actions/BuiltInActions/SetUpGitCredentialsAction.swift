@@ -16,7 +16,7 @@ public struct SetGitCredentialsAction: GitHubCompositeAction {
         public var githubAccessToken: String
     }
     
-    public func compositeActionSteps(inputs: InputAccessor<Inputs>, outputs: OutputAccessor<EmptyGitHubLocalActionParameterSet>) -> [Step] {
+    public func compositeActionSteps(inputs: InputAccessor<Inputs>, outputs: OutputAccessor<EmptyParameterSet>) -> [Step] {
         Step("Set Up Git Credentials", shell: "bash") {
             """
             echo "https://\(inputs.$githubActor):\(inputs.$githubAccessToken)@github.com" > ~/.git-credentials

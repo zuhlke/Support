@@ -37,7 +37,7 @@ private struct MockActionWithoutInputs: GitHubCompositeAction {
     var name = "Local Action Name"
     var description = String.random()
     
-    func compositeActionSteps(inputs: InputAccessor<EmptyGitHubLocalActionParameterSet>, outputs: OutputAccessor<EmptyGitHubLocalActionParameterSet>) -> [Step] {
+    func compositeActionSteps(inputs: InputAccessor<EmptyParameterSet>, outputs: OutputAccessor<EmptyParameterSet>) -> [Step] {
         // We have no steps
     }
 }
