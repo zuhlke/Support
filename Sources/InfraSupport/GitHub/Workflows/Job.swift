@@ -2,7 +2,7 @@ import Foundation
 import Support
 import YAMLBuilder
 
-public protocol JobStepMethod {
+protocol JobStepMethod {
     
     @NodeMapElementBuilder
     var yamlRepresentation: [YAML.Map.Element] { get }
@@ -11,7 +11,7 @@ public protocol JobStepMethod {
 
 extension JobStepMethod where Self == GitHub.Workflow.Job.Step.ActionMethod {
     
-    public static func action(_ reference: String, inputs: [String: String] = [:]) -> Self {
+    static func action(_ reference: String, inputs: [String: String] = [:]) -> Self {
         GitHub.Workflow.Job.Step.ActionMethod(reference: reference, inputs: inputs)
     }
     
@@ -19,7 +19,7 @@ extension JobStepMethod where Self == GitHub.Workflow.Job.Step.ActionMethod {
 
 extension JobStepMethod where Self == GitHub.Workflow.Job.Step.ScriptMethod {
     
-    public static func run(_ script: String) -> Self {
+    static func run(_ script: String) -> Self {
         GitHub.Workflow.Job.Step.ScriptMethod(script: script)
     }
     
@@ -45,13 +45,17 @@ extension GitHub.Workflow {
             public struct Use {
                 var step: Step
             }
+
+            public struct Run {
+                var step: Step
+            }
             
-            public struct ActionMethod {
+            struct ActionMethod {
                 var reference: String
                 var inputs: [String: String]
             }
 
-            public struct ScriptMethod {
+            struct ScriptMethod {
                 var script: String
             }
             
@@ -134,25 +138,16 @@ public struct InputProvider<Inputs: ParameterSet> {
 
 extension GitHub.Workflow.Job.Step.Use {
     
-    public init<Action>(_ action: Action) where Action: GitHubAction, Action.Inputs == EmptyParameterSet {
-        self.init(action: action) { _ in }
+    public init<Action>(_ action: Action, name: String? = nil, with inputs: (inout InputProvider<Action.Inputs>) -> Void = { _ in }) where Action: GitHubAction {
+        self.init(action: action, name: name, with: inputs)
     }
     
-    public init<Action>(_ action: Action) where Action: GitHubCompositeAction, Action.Inputs == EmptyParameterSet {
-        self.init(action: action) { _ in }
-        didInitialize(with: action)
+    public init<Action>(_ action: Action, name: String? = nil, with inputs: (inout InputProvider<Action.Inputs>) -> Void = { _ in }) where Action: GitHubCompositeAction {
+        self.init(action: action, name: name, with: inputs)
+        step.actionDefinition = .init(action)
     }
     
-    public init<Action>(_ action: Action, with inputs: (inout InputProvider<Action.Inputs>) -> Void) where Action: GitHubAction {
-        self.init(action: action, with: inputs)
-    }
-    
-    public init<Action>(_ action: Action, with inputs: (inout InputProvider<Action.Inputs>) -> Void) where Action: GitHubCompositeAction {
-        self.init(action: action, with: inputs)
-        didInitialize(with: action)
-    }
-    
-    private init<Action>(action: Action, with inputs: (inout InputProvider<Action.Inputs>) -> Void) where Action: GitHubAction {
+    private init<Action>(action: Action, name: String?, with inputs: (inout InputProvider<Action.Inputs>) -> Void) where Action: GitHubAction {
         var provider = InputProvider<Action.Inputs>()
         inputs(&provider)
         let missingInputs = Action.Inputs.allInputs.lazy
@@ -162,9 +157,7 @@ extension GitHub.Workflow.Job.Step.Use {
             .sorted(by: <)
         Thread.precondition(missingInputs.isEmpty, "Missing value for required action input: \(missingInputs)")
         self.init(
-            step: .init(action.name) {
-                .action(action.reference.value, inputs: provider.inputValues)
-            }
+            step: .init(name: name ?? action.name, method: .action(action.reference.value, inputs: provider.inputValues))
         )
     }
     
@@ -174,35 +167,37 @@ extension GitHub.Workflow.Job.Step.Use {
         }
     }
     
-    private mutating func didInitialize<Action>(with action: Action) where Action: GitHubCompositeAction {
-        step.actionDefinition = .init(action)
+}
+
+extension GitHub.Workflow.Job.Step.Run {
+    
+    public init(_ name: String, script: () -> String) {
+        self.init(
+            step: .init(name: name, method: .run(script()))
+        )
+    }
+    
+    public func workingDirectory(_ workingDirectory: String?) -> GitHub.Workflow.Job.Step.Run {
+        mutating(self) {
+            $0.step.workingDirectory = workingDirectory
+        }
+    }
+    
+    public func condition(_ condition: String?) -> GitHub.Workflow.Job.Step.Run {
+        mutating(self) {
+            $0.step.condition = condition
+        }
+    }
+    
+    public func environment(_ environment: [String: String]) -> GitHub.Workflow.Job.Step.Run {
+        mutating(self) {
+            $0.step.environment = environment
+        }
     }
     
 }
 
 extension GitHub.Workflow.Job.Step {
-    
-    public init<M: JobStepMethod>(_ name: String, method: () -> M) {
-        self.init(name: name, method: method())
-    }
-    
-    public func workingDirectory(_ workingDirectory: String?) -> GitHub.Workflow.Job.Step {
-        mutating(self) {
-            $0.workingDirectory = workingDirectory
-        }
-    }
-    
-    public func condition(_ condition: String?) -> GitHub.Workflow.Job.Step {
-        mutating(self) {
-            $0.condition = condition
-        }
-    }
-    
-    public func environment(_ environment: [String: String]) -> GitHub.Workflow.Job.Step {
-        mutating(self) {
-            $0.environment = environment
-        }
-    }
     
     var content: YAML.Node {
         YAML.Node {
@@ -233,7 +228,7 @@ extension GitHub.Workflow.Job.Step {
 extension GitHub.Workflow.Job.Step.ActionMethod: JobStepMethod {
     
     @NodeMapElementBuilder
-    public var yamlRepresentation: [YAML.Map.Element] {
+    var yamlRepresentation: [YAML.Map.Element] {
         "uses".is(.text(reference))
         if !inputs.isEmpty {
             "with".is {
@@ -248,7 +243,7 @@ extension GitHub.Workflow.Job.Step.ActionMethod: JobStepMethod {
 extension GitHub.Workflow.Job.Step.ScriptMethod: JobStepMethod {
     
     @NodeMapElementBuilder
-    public var yamlRepresentation: [YAML.Map.Element] {
+    var yamlRepresentation: [YAML.Map.Element] {
         "run".is(.text(script))
     }
 }
@@ -269,7 +264,11 @@ extension GitHub.Workflow.Job.Runner {
 @resultBuilder
 public class JobStepsBuilder: ArrayBuilder<GitHub.Workflow.Job.Step> {
     
-    public static func buildExpression(_ run: GitHub.Workflow.Job.Step.Use) -> [GitHub.Workflow.Job.Step] {
+    public static func buildExpression(_ use: GitHub.Workflow.Job.Step.Use) -> [GitHub.Workflow.Job.Step] {
+        [use.step]
+    }
+    
+    public static func buildExpression(_ run: GitHub.Workflow.Job.Step.Run) -> [GitHub.Workflow.Job.Step] {
         [run.step]
     }
     
@@ -279,7 +278,7 @@ public class JobStepsBuilder: ArrayBuilder<GitHub.Workflow.Job.Step> {
 }
 
 @resultBuilder
-public class NodeMapElementBuilder: ArrayBuilder<YAML.Map.Element> {
+class NodeMapElementBuilder: ArrayBuilder<YAML.Map.Element> {
     
     public static func buildFinalResult(_ pairs: [YAML.Map.Element]) -> [YAML.Map.Element] {
         pairs

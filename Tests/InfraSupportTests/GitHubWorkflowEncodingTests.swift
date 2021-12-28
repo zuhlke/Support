@@ -4,6 +4,8 @@ import XCTest
 
 final class GitHubWorkflowEncodingTests: XCTestCase {
     typealias Job = GitHub.Workflow.Job
+    typealias Run = GitHub.Workflow.Job.Step.Run
+    typealias Use = GitHub.Workflow.Job.Step.Use
     let encoder = GitHub.MetadataEncoder()
     
     func testEncodingWorkflow() throws {
@@ -19,28 +21,22 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
                 name: "Build for Testing",
                 runsOn: .macos11
             ) {
-                Job.Step("Checkout") {
-                    .action("actions/checkout@v2")
+                Use(.checkout())
+                Use(PrepareXcode()) {
+                    $0.$actor = "${{ github.actor }}"
+                    $0.$accessToken = "${{ secrets.access_token }}"
                 }
-                Job.Step("Prepare Xcode") {
-                    .action("./.github/actions/prepare-xcode", inputs: [
-                        "github-actor": "${{ github.actor }}",
-                        "github-access-token": "${{ secrets.access_token }}",
-                    ])
-                }
-                Job.Step("Build for Testing") {
-                    .run("xcodebuild build-for-testing -workspace MyApp.xcworkspace -scheme MyAppInternal -destination \"name=iPhone 13 Pro\" -derivedDataPath DerivedData")
+                Run("Build for Testing") {
+                    "xcodebuild build-for-testing -workspace MyApp.xcworkspace -scheme MyAppInternal -destination \"name=iPhone 13 Pro\" -derivedDataPath DerivedData"
                 }
                 .condition("failure()")
-                Job.Step("Pack DerivedData") {
-                    .run("zip -r DerivedData DerivedData")
+                Run("Pack DerivedData") {
+                    "zip -r DerivedData DerivedData"
                 }
-                Job.Step("Upload DerivedData") {
-                    .action("actions/upload-artifact@v2", inputs: [
-                        "name": "DerivedData.zip",
-                        "path": "DerivedData.zip",
-                        "retention-days": "1",
-                    ])
+                Use(.uploadArtifact(), name: "Upload DerivedData") {
+                    $0.$name = "DerivedData.zip"
+                    $0.$path = "DerivedData.zip"
+                    $0.$retentionDays = "1"
                 }
             }
             Job(
@@ -49,29 +45,23 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
                 runsOn: .macos11,
                 needs: ["build-for-testing"]
             ) {
-                Job.Step("Checkout") {
-                    .action("actions/checkout@v2")
+                Use(.checkout())
+                Use(PrepareXcode()) {
+                    $0.$actor = "${{ github.actor }}"
+                    $0.$accessToken = "${{ secrets.access_token }}"
                 }
-                Job.Step("Prepare Xcode") {
-                    .action("./.github/actions/prepare-xcode", inputs: [
-                        "github-actor": "${{ github.actor }}",
-                        "github-access-token": "${{ secrets.access_token }}",
-                    ])
+                Use(.downloadArtifact(), name: "Download Derived Data") {
+                    $0.$name = "DerivedData.zip"
+                    $0.$path = "DerivedDataPack"
                 }
-                Job.Step("Download Derived Data") {
-                    .action("actions/download-artifact@v2", inputs: [
-                        "name": "DerivedData.zip",
-                        "path": "DerivedDataPack",
-                    ])
-                }
-                Job.Step("Unpack Derived Data") {
-                    .run("""
+                Run("Unpack Derived Data") {
+                    """
                     unzip DerivedDataPack/DerivedData.zip
                     rm -rf DerivedDataPack
-                    """)
+                    """
                 }
-                Job.Step("Run Tests") {
-                    .run("xcodebuild test-without-building -workspace MyApp.xcworkspace -scheme MyAppInternal -destination \"name=iPhone 13 Pro\" -derivedDataPath DerivedData")
+                Run("Run Tests") {
+                    "xcodebuild test-without-building -workspace MyApp.xcworkspace -scheme MyAppInternal -destination \"name=iPhone 13 Pro\" -derivedDataPath DerivedData"
                 }
             }
             Job(
@@ -79,29 +69,23 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
                 runsOn: .macos11,
                 needs: ["build-for-testing"]
             ) {
-                Job.Step("Checkout") {
-                    .action("actions/checkout@v2")
+                Use(.checkout())
+                Use(PrepareXcode()) {
+                    $0.$actor = "${{ github.actor }}"
+                    $0.$accessToken = "${{ secrets.access_token }}"
                 }
-                Job.Step("Prepare Xcode") {
-                    .action("./.github/actions/prepare-xcode", inputs: [
-                        "github-actor": "${{ github.actor }}",
-                        "github-access-token": "${{ secrets.access_token }}",
-                    ])
+                Use(.downloadArtifact(), name: "Download Derived Data") {
+                    $0.$name = "DerivedData.zip"
+                    $0.$path = "DerivedDataPack"
                 }
-                Job.Step("Download Derived Data") {
-                    .action("actions/download-artifact@v2", inputs: [
-                        "name": "DerivedData.zip",
-                        "path": "DerivedDataPack",
-                    ])
-                }
-                Job.Step("Unpack Derived Data") {
-                    .run("""
+                Run("Unpack Derived Data") {
+                    """
                     unzip DerivedDataPack/DerivedData.zip
                     rm -rf DerivedDataPack
-                    """)
+                    """
                 }
-                Job.Step("Set Up Developer Identity") {
-                    .run("swift run ci setup-developer-identity --base64-encoded-identity $BASE64_ENCODED_IDENTITY --identity-password $IDENTITY_PASSWORD --base64-encoded-profile $BASE64_ENCODED_PROFILE")
+                Run("Set Up Developer Identity") {
+                    "swift run ci setup-developer-identity --base64-encoded-identity $BASE64_ENCODED_IDENTITY --identity-password $IDENTITY_PASSWORD --base64-encoded-profile $BASE64_ENCODED_PROFILE"
                 }
                 .workingDirectory("CI")
                 .environment([
@@ -109,21 +93,19 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
                     "BASE64_ENCODED_IDENTITY": "${{ secrets.base64_encoded_developer_identity }}",
                     "IDENTITY_PASSWORD": "${{ secrets.developer_identity_password }}",
                 ])
-                Job.Step("Archive MyAppInternal") {
-                    .run("xcodebuild archive -workspace MyApp.xcworkspace -scheme MyAppInternal -archivePath Archives/MyAppInternal -derivedDataPath DerivedData")
+                Run("Archive MyAppInternal") {
+                    "xcodebuild archive -workspace MyApp.xcworkspace -scheme MyAppInternal -archivePath Archives/MyAppInternal -derivedDataPath DerivedData"
                 }
-                Job.Step("Archive MyApp") {
-                    .run("xcodebuild archive -workspace MyApp.xcworkspace -scheme MyApp -archivePath Archives/MyApp -derivedDataPath DerivedData")
+                Run("Archive MyApp") {
+                    "xcodebuild archive -workspace MyApp.xcworkspace -scheme MyApp -archivePath Archives/MyApp -derivedDataPath DerivedData"
                 }
-                Job.Step("Pack Archives") {
-                    .run("zip -r Archives Archives")
+                Run("Pack Archives") {
+                    "zip -r Archives Archives"
                 }
-                Job.Step("Upload Archives") {
-                    .action("actions/upload-artifact@v2", inputs: [
-                        "name": "Archives.zip",
-                        "path": "Archives.zip",
-                        "retention-days": "7",
-                    ])
+                Use(.uploadArtifact(), name: "Upload Archives") {
+                    $0.$name = "Archives.zip"
+                    $0.$path = "Archives.zip"
+                    $0.$retentionDays = "7"
                 }
             }
         }
@@ -132,6 +114,22 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
         TS.assert(projectFile.contents, equals: testWorkflowContents)
     }
     
+}
+
+private struct PrepareXcode: GitHubAction {
+    var name = "Prepare Xcode"
+    
+    var reference: Reference = "./.github/actions/prepare-xcode"
+    
+    struct Inputs: ParameterSet {
+        
+        @ActionInput("github-actor", description: "", optionality: .required)
+        var actor: String
+        
+        @ActionInput("github-access-token", description: "", optionality: .required)
+        var accessToken: String
+        
+    }
 }
 
 private let testWorkflowContents = """
