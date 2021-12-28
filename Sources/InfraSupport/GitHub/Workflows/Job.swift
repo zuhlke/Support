@@ -42,6 +42,10 @@ extension GitHub.Workflow {
         }
         
         public struct Step {
+            public struct Use {
+                var step: Step
+            }
+            
             public struct ActionMethod {
                 var reference: String
                 var inputs: [String: String]
@@ -128,17 +132,27 @@ public struct InputProvider<Inputs: ParameterSet> {
     }
 }
 
-extension GitHub.Workflow.Job.Step {
+extension GitHub.Workflow.Job.Step.Use {
     
-    public init<M: JobStepMethod>(_ name: String, method: () -> M) {
-        self.init(name: name, method: method())
-    }
-    
-    public init<Action>(action: Action) where Action: GitHubCompositeAction, Action.Inputs == EmptyParameterSet {
+    public init<Action>(_ action: Action) where Action: GitHubAction, Action.Inputs == EmptyParameterSet {
         self.init(action: action) { _ in }
     }
     
-    public init<Action>(action: Action, with inputs: (inout InputProvider<Action.Inputs>) -> Void) where Action: GitHubCompositeAction {
+    public init<Action>(_ action: Action) where Action: GitHubCompositeAction, Action.Inputs == EmptyParameterSet {
+        self.init(action: action) { _ in }
+        didInitialize(with: action)
+    }
+    
+    public init<Action>(_ action: Action, with inputs: (inout InputProvider<Action.Inputs>) -> Void) where Action: GitHubAction {
+        self.init(action: action, with: inputs)
+    }
+    
+    public init<Action>(_ action: Action, with inputs: (inout InputProvider<Action.Inputs>) -> Void) where Action: GitHubCompositeAction {
+        self.init(action: action, with: inputs)
+        didInitialize(with: action)
+    }
+    
+    private init<Action>(action: Action, with inputs: (inout InputProvider<Action.Inputs>) -> Void) where Action: GitHubAction {
         var provider = InputProvider<Action.Inputs>()
         inputs(&provider)
         let missingInputs = Action.Inputs.allInputs.lazy
@@ -147,10 +161,29 @@ extension GitHub.Workflow.Job.Step {
             .map(\.id)
             .sorted(by: <)
         Thread.precondition(missingInputs.isEmpty, "Missing value for required action input: \(missingInputs)")
-        self.init(action.name) {
-            .action(action.reference.value, inputs: provider.inputValues)
+        self.init(
+            step: .init(action.name) {
+                .action(action.reference.value, inputs: provider.inputValues)
+            }
+        )
+    }
+    
+    public func condition(_ condition: String?) -> GitHub.Workflow.Job.Step.Use {
+        mutating(self) {
+            $0.step.condition = condition
         }
-        actionDefinition = .init(action)
+    }
+    
+    private mutating func didInitialize<Action>(with action: Action) where Action: GitHubCompositeAction {
+        step.actionDefinition = .init(action)
+    }
+    
+}
+
+extension GitHub.Workflow.Job.Step {
+    
+    public init<M: JobStepMethod>(_ name: String, method: () -> M) {
+        self.init(name: name, method: method())
     }
     
     public func workingDirectory(_ workingDirectory: String?) -> GitHub.Workflow.Job.Step {
@@ -235,6 +268,10 @@ extension GitHub.Workflow.Job.Runner {
 
 @resultBuilder
 public class JobStepsBuilder: ArrayBuilder<GitHub.Workflow.Job.Step> {
+    
+    public static func buildExpression(_ run: GitHub.Workflow.Job.Step.Use) -> [GitHub.Workflow.Job.Step] {
+        [run.step]
+    }
     
     public static func buildFinalResult(_ steps: [GitHub.Workflow.Job.Step]) -> [GitHub.Workflow.Job.Step] {
         steps

@@ -23,7 +23,7 @@ private class MockPipeline: GitHubPipeline {
         .init()
     } jobs: {
         Job(id: .random(), name: .random(), runsOn: .macos11) {
-            Job.Step(action: self.action)
+            Use(self.action)
         }
     }
     

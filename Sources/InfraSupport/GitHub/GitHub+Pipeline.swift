@@ -6,7 +6,8 @@ import YAMLBuilder
 public protocol GitHubPipeline {
     typealias Workflow = GitHub.Workflow
     typealias Job = GitHub.Workflow.Job
-    
+    typealias Use = GitHub.Workflow.Job.Step.Use
+
     /// The workflows of this pipeline.
     @WorkflowsBuilder
     var workflows: [Workflow] { get }
