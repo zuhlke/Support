@@ -21,14 +21,13 @@ public struct GitHubActionReference: ExpressibleByStringLiteral {
 /// and should only consist of properties wrapped by `ActionInput` type.
 /// These property wrappers must be visited when the parameter set is being encoded.
 public protocol GitHubAction {
-    #warning("Provide an example `Inputs` conformance as part of docs after refining the types.")
-    // Upload artefact action is a good example: https://github.com/actions/upload-artifact/blob/main/action.yml
     
     typealias Reference = GitHubActionReference
     
     /// The type describing inputs to the action.
     ///
     /// The type **must** only contains properties wrapped by `ActionInput`.
+    /// See ``CheckoutAction.Inputs`` for an example of how this type is used.
     associatedtype Inputs: ParameterSet = EmptyParameterSet
     
     /// User-friendly name for the action.
