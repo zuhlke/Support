@@ -148,7 +148,7 @@ extension GitHub.Workflow.Job.Step {
             .sorted(by: <)
         Thread.precondition(missingInputs.isEmpty, "Missing value for required action input: \(missingInputs)")
         self.init(action.name) {
-            .action(action.reference, inputs: provider.inputValues)
+            .action(action.reference.value, inputs: provider.inputValues)
         }
         actionDefinition = .init(action)
     }

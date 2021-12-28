@@ -58,8 +58,8 @@ extension GitHubCompositeAction {
 
 public extension GitHubCompositeAction {
     
-    var reference: String {
-        "./.github/actions/\(id)"
+    var reference: Reference {
+        .init("./.github/actions/\(id)")
     }
     
 }
