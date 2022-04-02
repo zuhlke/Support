@@ -10,7 +10,6 @@ public final class URLSessionHTTPClient: AsyncHTTPClient {
         self.session = session
     }
     
-    @available(macOS 12.0.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
     public func perform(_ request: HTTPRequest) async -> Result<HTTPResponse, HTTPRequestError> {
         await Result { try remote.urlRequest(from: request) }
             .mapError(HTTPRequestError.rejectedRequest)

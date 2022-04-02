@@ -3,7 +3,6 @@ import Support
 import TestingSupport
 import XCTest
 
-@available(macOS 12.0.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
 class AsyncHTTPClientEndpointTests: XCTestCase {
     
     private var client: MockClient!
@@ -75,7 +74,6 @@ class AsyncHTTPClientEndpointTests: XCTestCase {
     
 }
 
-@available(macOS 12.0.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
 private class MockClient: AsyncHTTPClient {
     
     var shouldRejectRequest = false
