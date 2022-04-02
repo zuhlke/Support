@@ -74,9 +74,15 @@ public final class HTTPService<Endpoints> {
 /// An endpoint bound to an HTTP service.
 ///
 /// Normally, you use this as part of a member lookup on `HTTPService` to immediately call the endpoint. See ``HTTPService``.
-public struct HTTPCallableEndpoint<Endpoint: HTTPEndpoint> {
-    fileprivate var client: HTTPClient
-    fileprivate var endpoint: Endpoint
+public final class HTTPCallableEndpoint<Endpoint: HTTPEndpoint> {
+    
+    private let client: HTTPClient
+    private let endpoint: Endpoint
+    
+    fileprivate init(client: HTTPClient, endpoint: Endpoint) {
+        self.client = client
+        self.endpoint = endpoint
+    }
     
     /// Calls the endpoint asynchronously and returns the result.
     /// - Parameter input: Input for the `Endpoint`.
