@@ -1,4 +1,3 @@
-import Combine
 import Foundation
 
 public protocol HTTPEndpoint {
@@ -35,36 +34,4 @@ extension NetworkRequestError {
             self = .networkFailure(underlyingError: underlyingError)
         }
     }
-}
-
-extension HTTPClient {
-    
-    public func fetch<E: HTTPEndpoint>(_ endpoint: E, with input: E.Input) -> AnyPublisher<E.Output, NetworkRequestError> {
-        do {
-            let request = try endpoint.request(for: input)
-            return perform(request)
-                .mapError(NetworkRequestError.init)
-                .flatMap { response -> AnyPublisher<HTTPResponse, NetworkRequestError> in
-                    switch response.statusCode {
-                    case 200 ..< 300:
-                        return Just(response)
-                            .setFailureType(to: NetworkRequestError.self)
-                            .eraseToAnyPublisher()
-                    default:
-                        return Fail(error: NetworkRequestError.httpError(response: response))
-                            .eraseToAnyPublisher()
-                    }
-                }
-                .flatMap { response in
-                    Result { try endpoint.parse(response) }
-                        .mapError { NetworkRequestError.badResponse(underlyingError: $0) }
-                        .publisher
-                }
-                .eraseToAnyPublisher()
-        } catch {
-            return Fail(error: .badInput(underlyingError: error))
-                .eraseToAnyPublisher()
-        }
-    }
-    
 }
