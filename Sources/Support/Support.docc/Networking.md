@@ -25,6 +25,7 @@ Use ``HTTPService`` to provide a consistent API for accessing HTTP endpoints for
 - ``URLRequestProviding``
 - ``URLSessionProtocol``
 - ``URLScheme``
+- ``HTTPCallableEndpoint``
 
 ### Deprecated
 
