@@ -4,12 +4,13 @@ Decouple networking app logic from transport concerns.
 
 ## Overview
 
-Use ``HTTPClient`` to decouple connectivity details from the business logic that uses networking.
+Use ``HTTPService`` to provide a consistent API for accessing HTTP endpoints for a given service. 
 
 ## Topics
 
 ### Networking
 
+- ``HTTPService``
 - ``HTTPClient``
 - ``URLSessionHTTPClient``
 - ``HTTPEndpoint``
