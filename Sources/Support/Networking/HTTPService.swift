@@ -15,15 +15,6 @@ public struct HTTPService<Endpoints> {
         self.client = client
         self.endpoints = endpoints
     }
-    
-    /// Creates a new service that uses the passed in `client` for networking. The service can be used to access any endpoint defined as a property on `Endpoints`.
-    ///
-    /// The initialiser will create a default instance of `Endpoints` to by calling its init method as part of ``EmptyInitializable``.
-    /// - Parameters:
-    ///   - client: The HTTP client to use for networking.
-    public init(client: HTTPClient) where Endpoints: EmptyInitializable {
-        self.init(client: client, endpoints: .init())
-    }
         
     subscript<Endpoint>(dynamicMember endpointPath: KeyPath<Endpoints, Endpoint>) -> HTTPFetcher<Endpoint> where Endpoint: HTTPEndpoint {
         HTTPFetcher(client: client, endpoint: endpoints[keyPath: endpointPath])
