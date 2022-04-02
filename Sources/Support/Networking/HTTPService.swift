@@ -40,7 +40,8 @@ import Foundation
 /// ```
 @dynamicMemberLookup
 public final class HTTPService<Endpoints> {
-    
+    #warning("Test this type. The tests should cover the semantics of `HTTPClient.fetch`.")
+
     private let client: HTTPClient
     private let endpoints: Endpoints
     

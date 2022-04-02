@@ -10,7 +10,7 @@ public typealias AsyncHTTPClient = HTTPClient
 
 extension HTTPClient {
     
-    public func fetch<E: HTTPEndpoint>(_ endpoint: E, with input: E.Input) async -> Result<E.Output, NetworkRequestError> {
+    func fetch<E: HTTPEndpoint>(_ endpoint: E, with input: E.Input) async -> Result<E.Output, NetworkRequestError> {
         await Result { try endpoint.request(for: input) }
             .mapError(NetworkRequestError.badInput)
             .flatMap { request in
