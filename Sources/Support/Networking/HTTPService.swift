@@ -2,10 +2,10 @@ import Foundation
 
 /// `HTTPService` provides a type-safe API for accessing any endpoint defined as part of its `Endpoints` generic type.
 @dynamicMemberLookup
-public struct HTTPService<Endpoints> {
+public final class HTTPService<Endpoints> {
     
-    private var client: HTTPClient
-    private var endpoints: Endpoints
+    private let client: HTTPClient
+    private let endpoints: Endpoints
     
     /// Creates a new service that uses the passed in `client` for networking. The service can be used to access any endpoint defined as a property on `Endpoints`.
     /// - Parameters:
@@ -15,7 +15,7 @@ public struct HTTPService<Endpoints> {
         self.client = client
         self.endpoints = endpoints
     }
-        
+    
     subscript<Endpoint>(dynamicMember endpointPath: KeyPath<Endpoints, Endpoint>) -> HTTPFetcher<Endpoint> where Endpoint: HTTPEndpoint {
         HTTPFetcher(client: client, endpoint: endpoints[keyPath: endpointPath])
     }
