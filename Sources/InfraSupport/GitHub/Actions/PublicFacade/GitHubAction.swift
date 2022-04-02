@@ -27,7 +27,7 @@ public protocol GitHubAction {
     /// The type describing inputs to the action.
     ///
     /// The type **must** only contains properties wrapped by `ActionInput`.
-    /// See ``CheckoutAction.Inputs`` for an example of how this type is used.
+    /// See ``CheckoutAction/Inputs`` for an example of how this type is used.
     associatedtype Inputs: ParameterSet = EmptyParameterSet
     
     /// User-friendly name for the action.
