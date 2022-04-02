@@ -1,6 +1,6 @@
 import Foundation
 
-public final class URLSessionHTTPClient: AsyncHTTPClient {
+public final class URLSessionHTTPClient: HTTPClient {
     
     private let remote: URLRequestProviding
     private let session: URLSessionProtocol

@@ -1,10 +1,14 @@
 import Foundation
 
-public protocol AsyncHTTPClient {
+public protocol HTTPClient {
     func perform(_ request: HTTPRequest) async -> Result<HTTPResponse, HTTPRequestError>
 }
 
-extension AsyncHTTPClient {
+/// Use ``HTTPClient`` instead.
+@available(*, deprecated, renamed: "HTTPClient")
+public typealias AsyncHTTPClient = HTTPClient
+
+extension HTTPClient {
     
     public func fetch<E: HTTPEndpoint>(_ endpoint: E, with input: E.Input) async -> Result<E.Output, NetworkRequestError> {
         await Result { try endpoint.request(for: input) }

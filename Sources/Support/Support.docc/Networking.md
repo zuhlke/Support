@@ -4,13 +4,13 @@ Decouple networking app logic from transport concerns.
 
 ## Overview
 
-Use ``AsyncHTTPClient`` to decouple connectivity details from the business logic that uses networking.
+Use ``HTTPClient`` to decouple connectivity details from the business logic that uses networking.
 
 ## Topics
 
 ### Networking
 
-- ``AsyncHTTPClient``
+- ``HTTPClient``
 - ``URLSessionHTTPClient``
 - ``HTTPEndpoint``
 - ``HTTPRemote``
@@ -23,6 +23,8 @@ Use ``AsyncHTTPClient`` to decouple connectivity details from the business logic
 - ``NetworkRequestError``
 - ``URLRequestProviding``
 - ``URLSessionProtocol``
-- ``HTTPInterceptProtocol``
-- ``HTTPClient``
 - ``URLScheme``
+
+### Deprecated
+
+- ``AsyncHTTPClient``

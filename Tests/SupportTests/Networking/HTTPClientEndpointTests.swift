@@ -3,7 +3,7 @@ import Support
 import TestingSupport
 import XCTest
 
-class AsyncHTTPClientEndpointTests: XCTestCase {
+class HTTPClientEndpointTests: XCTestCase {
     
     private var client: MockClient!
     
@@ -74,7 +74,7 @@ class AsyncHTTPClientEndpointTests: XCTestCase {
     
 }
 
-private class MockClient: AsyncHTTPClient {
+private class MockClient: HTTPClient {
     
     var shouldRejectRequest = false
     var urlError: URLError?
