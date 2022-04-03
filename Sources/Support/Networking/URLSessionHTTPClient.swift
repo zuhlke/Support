@@ -1,10 +1,20 @@
 import Foundation
 
+/// A concrete implementation of `HTTPClient` that uses `URLSession` to make the HTTP calls.
 public final class URLSessionHTTPClient: HTTPClient {
     
     private let remote: URLRequestProviding
     private let session: URLSessionProtocol
     
+    /// Creates a new HTTP client for the specified `remote`. The client will use `session` to perform network calls.
+    ///
+    /// When performing a request.
+    /// * If `remote` throws an error when creating a `URLRequest`, the client forwards the error as ``HTTPRequestError/rejectedRequest(underlyingError:)``.
+    /// * Any error returned by `session` is forwarded as ``HTTPRequestError/networkFailure(underlyingError:)``.
+    /// 
+    /// - Parameters:
+    ///   - remote: The specification for a remote service.
+    ///   - session: The underlying session that the client should use.
     public init(remote: URLRequestProviding, session: URLSessionProtocol = URLSession.shared) {
         self.remote = remote
         self.session = session
