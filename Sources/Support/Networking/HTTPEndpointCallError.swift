@@ -7,15 +7,15 @@ public enum HTTPEndpointCallError: Error {
     /// Normally, this error signifies a programmer error.
     case badInput(underlyingError: Error)
     
-    /// The client rejected the `HTTPRequest`.
+    /// The HTTP request was rejected by the network stack before actually making a call.
     ///
     /// Normally, this error signifies a programmer error.
-    /// This error corresponds to ``HTTPRequestError/rejectedRequest(underlyingError:)``.
+    /// This error corresponds to ``HTTPRequestPerformingError/rejectedRequest(underlyingError:)``.
     case rejectedRequest(underlyingError: Error)
     
     /// Encountered an error making the requests.
     ///
-    /// This error corresponds to ``HTTPRequestError/networkFailure(underlyingError:)``.
+    /// This error corresponds to ``HTTPRequestPerformingError/networkFailure(underlyingError:)``.
     case networkFailure(underlyingError: URLError)
     
     /// The services returned an HTTP error (Status code is not 2xx).
@@ -30,7 +30,7 @@ public enum HTTPEndpointCallError: Error {
 public typealias NetworkRequestError = HTTPEndpointCallError
 
 extension HTTPEndpointCallError {
-    init(error: HTTPRequestError) {
+    init(error: HTTPRequestPerformingError) {
         switch error {
         case .rejectedRequest(let underlyingError):
             self = .rejectedRequest(underlyingError: underlyingError)

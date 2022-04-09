@@ -9,8 +9,8 @@ public final class URLSessionHTTPClient: HTTPClient {
     /// Creates a new HTTP client for the specified `remote`. The client will use `session` to perform network calls.
     ///
     /// When performing a request.
-    /// * If `remote` throws an error when creating a `URLRequest`, the client forwards the error as ``HTTPRequestError/rejectedRequest(underlyingError:)``.
-    /// * Any error returned by `session` is forwarded as ``HTTPRequestError/networkFailure(underlyingError:)``.
+    /// * If `remote` throws an error when creating a `URLRequest`, the client forwards the error as ``HTTPRequestPerformingError/rejectedRequest(underlyingError:)``.
+    /// * Any error returned by `session` is forwarded as ``HTTPRequestPerformingError/networkFailure(underlyingError:)``.
     ///
     /// - Parameters:
     ///   - remote: The specification for a remote service.
@@ -20,26 +20,26 @@ public final class URLSessionHTTPClient: HTTPClient {
         self.session = session
     }
     
-    public func perform(_ request: HTTPRequest) async -> Result<HTTPResponse, HTTPRequestError> {
+    public func perform(_ request: HTTPRequest) async -> Result<HTTPResponse, HTTPRequestPerformingError> {
         await Result { try remote.urlRequest(from: request) }
-            .mapError(HTTPRequestError.rejectedRequest)
+            .mapError(HTTPRequestPerformingError.rejectedRequest)
             .flatMap { urlRequest in
                 await Result { try await URLSession.shared.data(for: urlRequest, delegate: nil) }
-                    .mapError(HTTPRequestError.fromUntypedNetworkError)
+                    .mapError(HTTPRequestPerformingError.fromUntypedNetworkError)
             }
             .map { HTTPResponse(httpUrlResponse: $1 as! HTTPURLResponse, bodyContent: $0) }
     }
     
 }
 
-private extension HTTPRequestError {
+private extension HTTPRequestPerformingError {
     
     /// Create an `HTTPRequestError` from the networking error provided.
     ///
     /// We assume is `URLSession.data` always returns a `URLError`; but the API is untyped, so it’s not possible to be entirely sure. Review this over time
     /// to see if a better solution becomes available.
     @available(iOS, deprecated: 16.0)
-    static func fromUntypedNetworkError(_ error: Error) -> HTTPRequestError {
+    static func fromUntypedNetworkError(_ error: Error) -> HTTPRequestPerformingError {
         if let error = error as? URLError {
             return .networkFailure(underlyingError: error)
         } else {

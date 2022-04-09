@@ -100,7 +100,7 @@ private class MockClient: HTTPClient {
     var urlError: URLError?
     var response = HTTPResponse.ok(with: .empty)
 
-    func perform(_ request: HTTPRequest) async -> Result<HTTPResponse, HTTPRequestError> {
+    func perform(_ request: HTTPRequest) async -> Result<HTTPResponse, HTTPRequestPerformingError> {
         if shouldRejectRequest {
             return .failure(.rejectedRequest(underlyingError: RejectedRequestError()))
         }
