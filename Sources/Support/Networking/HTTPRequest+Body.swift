@@ -18,7 +18,7 @@ extension HTTPRequest.Body {
     
     /// Creates a body with the specified data and `text/plain` content type.
     public static func plain(_ data: Data) -> HTTPRequest.Body {
-        HTTPRequest.Body(
+        .init(
             content: data,
             type: "text/plain"
         )
@@ -31,7 +31,7 @@ extension HTTPRequest.Body {
     
     /// Creates a body with the specified data and `application/json` content type.
     public static func json(_ data: Data) -> HTTPRequest.Body {
-        HTTPRequest.Body(
+        .init(
             content: data,
             type: "application/json"
         )
@@ -39,7 +39,7 @@ extension HTTPRequest.Body {
     
     /// Creates a body by encoding `content` and using `application/json` content type.
     public static func json<Content: Encodable>(_ content: Content, encoder: JSONEncoder = JSONEncoder()) throws -> HTTPRequest.Body {
-        return .json(try encoder.encode(content))
+        .json(try encoder.encode(content))
     }
     
 }

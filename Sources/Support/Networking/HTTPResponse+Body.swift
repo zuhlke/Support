@@ -1,6 +1,9 @@
 import Foundation
 
 extension HTTPResponse {
+    /// An HTTP response’s payload.
+    ///
+    /// In addition to payload’s data, this type specifies the content-type if it’s known.
     public struct Body: Equatable {
         public let content: Data
         public let type: String?
@@ -40,7 +43,11 @@ extension HTTPResponse.Body {
     }
     
     public static func json(_ string: String) -> HTTPResponse.Body {
-        json(string.data(using: .utf8)!)
+        json(Data(string.utf8))
+    }
+    
+    public static func json<Content: Encodable>(_ content: Content, encoder: JSONEncoder = JSONEncoder()) throws -> HTTPRequest.Body {
+        .json(try encoder.encode(content))
     }
     
 }
