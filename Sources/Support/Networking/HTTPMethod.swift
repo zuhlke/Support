@@ -1,5 +1,6 @@
 import Foundation
 
+/// An HTTP method.
 public enum HTTPMethod: String, Equatable {
     case get = "GET"
     case post = "POST"
@@ -13,12 +14,11 @@ public enum HTTPMethod: String, Equatable {
 }
 
 extension HTTPMethod {
-    // See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
+    // See: https://www.rfc-editor.org/rfc/rfc7231#section-4.3
     
     private enum BodyRequirment {
         case mustHave
         case mustNotHave
-        case mayHave
     }
     
     private var bodyRequirement: BodyRequirment {
@@ -26,7 +26,7 @@ extension HTTPMethod {
         case .get: return .mustNotHave
         case .post: return .mustHave
         case .put: return .mustHave
-        case .delete: return .mayHave
+        case .delete: return .mustNotHave
         case .options: return .mustNotHave
         case .connect: return .mustNotHave
         case .head: return .mustNotHave

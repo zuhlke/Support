@@ -1,5 +1,11 @@
 import Foundation
 
+/// An HTTP request against an unspecified remote.
+///
+/// `HTTPRequest` is used to capture the portion of a request that is specified to an endpoint, and not the service as a whole.
+///
+/// As an example, to call `https://example.com/service/v1/content`, you may create an `HTTPRequest` with `path` of `/content`.
+/// The rest of the URL information can be provided further down in the networking stack.
 public struct HTTPRequest: Equatable {
     
     public let method: HTTPMethod
@@ -9,6 +15,14 @@ public struct HTTPRequest: Equatable {
     public let queryParameters: [String: String]
     public let headers: HTTPHeaders
     
+    /// Creates an HTTP request
+    /// - Parameters:
+    ///   - method: The request’s HTTP method.
+    ///   - path: The request’s path. If the path is not empty, it must start with `/`.
+    ///   - body: The request’s body. Whether the body is required or not is determined by the `method` used. The init throws a fatal error if there is a mismatch.
+    ///   - fragment: The URL’s fragment (the part following a `#`).
+    ///   - queryParameters: Request specific query parameters.
+    ///   - headers: Request specific headers. Setting `content-type` and `content-length` is not allowed as these are determined from the `body` parameter.
     public init(
         method: HTTPMethod,
         path: String,
