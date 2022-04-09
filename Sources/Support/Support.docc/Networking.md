@@ -16,10 +16,11 @@ Use ``HTTPService`` to provide a consistent API for accessing HTTP endpoints for
 - ``URLSessionHTTPClient``
 - ``HTTPRequestPerformingError``
 
-### Preparing a type-safe API  
+### Type-safe HTTP networking  
 
 - ``HTTPService``
 - ``HTTPEndpoint``
+- ``HTTPEndpointCallError``
 
 ### HTTP data types 
 
