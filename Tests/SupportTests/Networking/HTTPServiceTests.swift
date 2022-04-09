@@ -1,8 +1,8 @@
-@testable import Support
+import Support
 import TestingSupport
 import XCTest
 
-class HTTPClientEndpointTests: XCTestCase {
+class HTTPServiceTests: XCTestCase {
     
     private var client: MockClient!
     
@@ -11,7 +11,10 @@ class HTTPClientEndpointTests: XCTestCase {
     }
     
     func testErrorOnBadInput() async {
-        let result = await client.fetch(MockEndpoint(shouldFailEncoding: true), with: UUID())
+        let service = HTTPService(client: client) {
+            $0.mock.shouldFailEncoding = true
+        }
+        let result = await service.mock(with: UUID())
         switch result {
         case .failure(.badInput(let underlyingError)) where underlyingError is EncodingError:
             break
@@ -22,7 +25,8 @@ class HTTPClientEndpointTests: XCTestCase {
     
     func testErrorOnRejectedRequest() async {
         client.shouldRejectRequest = true
-        let result = await client.fetch(MockEndpoint(), with: UUID())
+        let service = HTTPService(client: client)
+        let result = await service.mock(with: UUID())
         switch result {
         case .failure(.rejectedRequest(let underlyingError)) where underlyingError is RejectedRequestError:
             break
@@ -34,7 +38,8 @@ class HTTPClientEndpointTests: XCTestCase {
     func testErrorOnNetworkFailure() async {
         let error = URLError(.cannotConnectToHost)
         client.urlError = error
-        let result = await client.fetch(MockEndpoint(), with: UUID())
+        let service = HTTPService(client: client)
+        let result = await service.mock(with: UUID())
         switch result {
         case .failure(.networkFailure(underlyingError: error)):
             break
@@ -46,7 +51,8 @@ class HTTPClientEndpointTests: XCTestCase {
     func testErrorOnHTTPFailure() async {
         let response = HTTPResponse(statusCode: 401, body: .plain(UUID().uuidString))
         client.response = response
-        let result = await client.fetch(MockEndpoint(), with: UUID())
+        let service = HTTPService(client: client)
+        let result = await service.mock(with: UUID())
         switch result {
         case .failure(.httpError(response: response)):
             break
@@ -56,7 +62,10 @@ class HTTPClientEndpointTests: XCTestCase {
     }
     
     func testErrorParsingResponse() async {
-        let result = await client.fetch(MockEndpoint(shouldFailDecoding: true), with: UUID())
+        let service = HTTPService(client: client) {
+            $0.mock.shouldFailDecoding = true
+        }
+        let result = await service.mock(with: UUID())
         switch result {
         case .failure(.badResponse(let underlyingError)) where underlyingError is DecodingError:
             break
@@ -66,9 +75,21 @@ class HTTPClientEndpointTests: XCTestCase {
     }
     
     func testSucceeding() async {
-        let endpoint = MockEndpoint()
-        let result = await client.fetch(endpoint, with: UUID())
-        TS.assert(try result.get(), equals: endpoint.output)
+        let expected = UUID.random()
+        let service = HTTPService(client: client) {
+            $0.mock.output = expected
+        }
+        let result = await service.mock(with: UUID())
+        TS.assert(try result.get(), equals: expected)
+    }
+    
+    func testSucceedingWithNoInput() async {
+        let expected = UUID.random()
+        let service = HTTPService(client: client) {
+            $0.noInputMock.output = expected
+        }
+        let result = await service.noInputMock
+        TS.assert(try result.get(), equals: expected)
     }
     
 }
@@ -92,6 +113,21 @@ private class MockClient: HTTPClient {
 
 }
 
+private extension HTTPService where Endpoints == MockEndpoints {
+    
+    convenience init(client: HTTPClient, configure: (inout MockEndpoints) -> Void = { _ in }) {
+        var endpoints = MockEndpoints()
+        configure(&endpoints)
+        self.init(client: client, endpoints: endpoints)
+    }
+    
+}
+
+private struct MockEndpoints {
+    var mock = MockEndpoint()
+    var noInputMock = NoInputMockEndpoint()
+}
+
 private struct MockEndpoint: HTTPEndpoint {
     var shouldFailEncoding = false
     var shouldFailDecoding = false
@@ -110,6 +146,17 @@ private struct MockEndpoint: HTTPEndpoint {
         } else {
             return output
         }
+    }
+}
+
+private struct NoInputMockEndpoint: HTTPEndpoint {
+    var output = UUID()
+    func request(for input: Void) throws -> HTTPRequest {
+        .get("")
+    }
+
+    func parse(_ response: HTTPResponse) throws -> UUID {
+        output
     }
 }
 

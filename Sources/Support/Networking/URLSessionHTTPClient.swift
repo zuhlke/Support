@@ -11,7 +11,7 @@ public final class URLSessionHTTPClient: HTTPClient {
     /// When performing a request.
     /// * If `remote` throws an error when creating a `URLRequest`, the client forwards the error as ``HTTPRequestError/rejectedRequest(underlyingError:)``.
     /// * Any error returned by `session` is forwarded as ``HTTPRequestError/networkFailure(underlyingError:)``.
-    /// 
+    ///
     /// - Parameters:
     ///   - remote: The specification for a remote service.
     ///   - session: The underlying session that the client should use.

@@ -18,7 +18,7 @@ public protocol HTTPClient {
     ///
     /// Note that receiving an HTTP reponse with an error code (e.g. 500) does not normally cause a failure result on this API.
     /// Consumers of this API should check for any HTTP failures and process the response accordingly.
-    /// 
+    ///
     /// - Parameter request: The request to perform
     /// - Returns: The result of the operation
     func perform(_ request: HTTPRequest) async -> Result<HTTPResponse, HTTPRequestError>
