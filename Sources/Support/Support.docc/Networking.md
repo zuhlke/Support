@@ -26,8 +26,8 @@ Use ``HTTPService`` to provide a consistent API for accessing HTTP endpoints for
 
 ### Supporting types
 
-- ``HTTPRequestError``
-- ``NetworkRequestError``
+- ``HTTPRequestPerformingError``
+- ``HTTPCallableEndpoint``
 - ``URLRequestProviding``
 - ``URLScheme``
 - ``URLSessionProtocol``
@@ -36,3 +36,5 @@ Use ``HTTPService`` to provide a consistent API for accessing HTTP endpoints for
 ### Deprecated
 
 - ``AsyncHTTPClient``
+- ``HTTPRequestError``
+- ``NetworkRequestError``
