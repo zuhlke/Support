@@ -1,8 +1,6 @@
 import Foundation
 
 /// A URL scheme.
-///
-/// Use this in conjunction with the networking API.
 public struct URLScheme: Equatable {
     
     var canonicalValue: String
