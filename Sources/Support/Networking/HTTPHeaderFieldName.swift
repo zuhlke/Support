@@ -1,5 +1,10 @@
 import Foundation
 
+/// An HTTP header field’s name.
+///
+/// `HTTPHeaderFieldName` provides a type-safe way of referring to HTTP header fields.
+///
+/// `HTTPHeaderFieldName` is case-insensitive, so `HTTPHeaderFieldName("CUSTOM-FIELD") == HTTPHeaderFieldName("custom-field")` evaluates to true.
 public struct HTTPHeaderFieldName: Hashable {
     public var lowercaseName: String
     
