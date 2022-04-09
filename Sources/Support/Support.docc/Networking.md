@@ -8,23 +8,29 @@ Use ``HTTPService`` to provide a consistent API for accessing HTTP endpoints for
 
 ## Topics
 
-### Networking
+### Setting up an HTTP networking stack 
 
 - ``HTTPService``
 - ``HTTPClient``
-- ``URLSessionHTTPClient``
 - ``HTTPEndpoint``
+- ``URLSessionHTTPClient``
+
+### HTTP data types 
+
 - ``HTTPRemote``
 - ``HTTPRequest``
 - ``HTTPResponse``
 - ``HTTPHeaders``
 - ``HTTPHeaderFieldName``
 - ``HTTPMethod``
+
+### Supporting types
+
 - ``HTTPRequestError``
 - ``NetworkRequestError``
 - ``URLRequestProviding``
-- ``URLSessionProtocol``
 - ``URLScheme``
+- ``URLSessionProtocol``
 - ``HTTPCallableEndpoint``
 
 ### Deprecated
