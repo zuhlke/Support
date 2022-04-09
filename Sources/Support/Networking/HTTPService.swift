@@ -63,7 +63,7 @@ public final class HTTPService<Endpoints> {
     /// Calls the specified endpoint asynchronously.
     ///
     /// Normally, you use this as part of a member lookup to immediately call the endpoint. See ``HTTPService``.
-    public subscript<Endpoint>(dynamicMember endpointPath: KeyPath<Endpoints, Endpoint>) -> Result<Endpoint.Output, NetworkRequestError> where Endpoint: HTTPEndpoint, Endpoint.Input == Void {
+    public subscript<Endpoint>(dynamicMember endpointPath: KeyPath<Endpoints, Endpoint>) -> Result<Endpoint.Output, HTTPEndpointCallError> where Endpoint: HTTPEndpoint, Endpoint.Input == Void {
         get async {
             await self[dynamicMember: endpointPath](with: ())
         }
@@ -86,7 +86,7 @@ public final class HTTPCallableEndpoint<Endpoint: HTTPEndpoint> {
     /// Calls the endpoint asynchronously and returns the result.
     /// - Parameter input: Input for the `Endpoint`.
     /// - Returns: Result of calling the `Endpoint`.
-    public func callAsFunction(with input: Endpoint.Input) async -> Result<Endpoint.Output, NetworkRequestError> {
+    public func callAsFunction(with input: Endpoint.Input) async -> Result<Endpoint.Output, HTTPEndpointCallError> {
         await client.fetch(endpoint, with: input)
     }
     

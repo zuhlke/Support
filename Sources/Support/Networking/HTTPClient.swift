@@ -30,18 +30,18 @@ public typealias AsyncHTTPClient = HTTPClient
 
 extension HTTPClient {
     
-    func fetch<E: HTTPEndpoint>(_ endpoint: E, with input: E.Input) async -> Result<E.Output, NetworkRequestError> {
+    func fetch<E: HTTPEndpoint>(_ endpoint: E, with input: E.Input) async -> Result<E.Output, HTTPEndpointCallError> {
         await Result { try endpoint.request(for: input) }
-            .mapError(NetworkRequestError.badInput)
+            .mapError(HTTPEndpointCallError.badInput)
             .flatMap { request in
                 await perform(request)
-                    .mapError(NetworkRequestError.init)
+                    .mapError(HTTPEndpointCallError.init)
             }
             .flatMap { response in
                 switch response.statusCode {
                 case 200 ..< 300:
                     return Result { try endpoint.parse(response) }
-                        .mapError(NetworkRequestError.badResponse)
+                        .mapError(HTTPEndpointCallError.badResponse)
                 default:
                     return .failure(.httpError(response: response))
                 }
