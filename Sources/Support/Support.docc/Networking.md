@@ -10,10 +10,16 @@ Use ``HTTPService`` to provide a consistent API for accessing HTTP endpoints for
 
 ### Setting up an HTTP networking stack 
 
-- ``HTTPService``
 - ``HTTPClient``
-- ``HTTPEndpoint``
+- ``URLRequestProviding``
+- ``URLSessionProtocol``
 - ``URLSessionHTTPClient``
+- ``HTTPRequestPerformingError``
+
+### Preparing a type-safe API  
+
+- ``HTTPService``
+- ``HTTPEndpoint``
 
 ### HTTP data types 
 
@@ -23,14 +29,10 @@ Use ``HTTPService`` to provide a consistent API for accessing HTTP endpoints for
 - ``HTTPHeaders``
 - ``HTTPHeaderFieldName``
 - ``HTTPMethod``
+- ``URLScheme``
 
 ### Supporting types
 
-- ``HTTPRequestPerformingError``
-- ``HTTPCallableEndpoint``
-- ``URLRequestProviding``
-- ``URLScheme``
-- ``URLSessionProtocol``
 - ``HTTPCallableEndpoint``
 
 ### Deprecated
