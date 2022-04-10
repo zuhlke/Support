@@ -8,7 +8,9 @@ import Support
 ///
 /// Note that even though this type conforms to `Encodable`, you must never attempt to encode it.
 /// This action will immediately throw a `fatalError`.
-public protocol ParameterSet: Encodable, EmptyInitializable {}
+public protocol ParameterSet: Encodable {
+    init()
+}
 
 /// An parameter set which defines no parameters.
 public struct EmptyParameterSet: ParameterSet {
