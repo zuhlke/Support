@@ -1,6 +1,6 @@
 import Foundation
 
-public extension Result {
+extension Result {
     
     init(catching body: () async throws -> Success) async where Failure == Error {
         do {
