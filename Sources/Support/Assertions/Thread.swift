@@ -1,5 +1,9 @@
 import Foundation
 
+#warning("Define a new namespace for this type")
+// The fact that we’re using `Thread` is an implementation detail.
+// Using it as a namespace is particularly confusing in a world where you’re encouraged to think of tasks instead of
+// threads ands queues.
 public extension Thread {
     
     /// How a thread exitted.
