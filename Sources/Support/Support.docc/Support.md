@@ -17,3 +17,8 @@ The framework is effectively a collection of “micro frameworks”, each of whi
 ### Safe programming
 
 - <doc:Scoping-Mutation>
+- <doc:Asserting-API-Contracts>
+
+### Describing Values
+
+- <doc:Describing-Values>
