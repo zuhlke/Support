@@ -16,7 +16,3 @@
 
 - ``Supervisor/runSupervised(_:)``
 - ``Supervisor/ExitManner``
-
-### Deprecated
-
-- ``detachSyncSupervised(_:)``

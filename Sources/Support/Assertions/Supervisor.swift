@@ -73,11 +73,6 @@ public extension Supervisor {
         return reason
     }
     
-    @available(*, deprecated, renamed: "runSupervised")
-    static func detachSyncSupervised(_ work: @escaping () -> Void) -> ExitManner {
-        runSupervised(work)
-    }
-    
 }
 
 private extension Supervisor {
