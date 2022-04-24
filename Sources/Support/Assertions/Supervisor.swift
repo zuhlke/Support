@@ -31,7 +31,7 @@ public extension Supervisor {
     
     /// A thread specific variant of `fatalError`.
     ///
-    /// If this method was called as part of the `work` passed to `detachSyncSupervised()`, this exits the thread.
+    /// If this method was called as part of the `work` passed to `runSupervised()`, this exits the thread.
     /// Otherwise, the behaviour is the same as calling `Swift.fatalError()`.
     static func fatalError(_ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) -> Never {
         trap(message(), file: file, line: line)
@@ -44,7 +44,7 @@ public extension Supervisor {
     ///
     /// - Parameter work: The work to perform
     /// - Returns: `fatalError` if `work` terminated due to a trap (e.g. `Supervisor.fatalError` was called); `normal` otherwise.
-    static func detachSyncSupervised(_ work: @escaping () -> Void) -> ExitManner {
+    static func runSupervised(_ work: @escaping () -> Void) -> ExitManner {
         var reason = ExitManner.normal
         let sema = DispatchSemaphore(value: 0)
         let thread = Thread {
@@ -60,6 +60,11 @@ public extension Supervisor {
         thread.start()
         sema.wait()
         return reason
+    }
+    
+    @available(*, deprecated, renamed: "runSupervised")
+    static func detachSyncSupervised(_ work: @escaping () -> Void) -> ExitManner {
+        runSupervised(work)
     }
     
 }

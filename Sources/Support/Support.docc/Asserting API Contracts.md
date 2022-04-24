@@ -72,7 +72,7 @@ the precondition call instead of immediately crashing:
 ```swift
 func testRemoteURLIsNotAccepted() {
     let url = URL(string: "https://example.com")!
-    let exitManner = Supervisor.detachSyncSupervised {
+    let exitManner = Supervisor.runSupervised {
         _ = load(url)
     }
     XCTAssertEqual(exitManner, .fatalError)
