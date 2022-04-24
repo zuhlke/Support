@@ -1,10 +1,11 @@
 import Foundation
 
-#warning("Define a new namespace for this type")
-// The fact that we’re using `Thread` is an implementation detail.
-// Using it as a namespace is particularly confusing in a world where you’re encouraged to think of tasks instead of
-// threads ands queues.
-public extension Thread {
+public struct Supervisor {
+    private typealias TrapHandler = () -> Never
+    private var trapHandler: TrapHandler
+}
+
+public extension Supervisor {
     
     /// How a thread exitted.
     enum ExitManner {
@@ -14,7 +15,7 @@ public extension Thread {
     
     /// A thread specific variant of `precondition()`.
     ///
-    /// - SeeAlso: `Thread.fatalError`.
+    /// - SeeAlso: `Supervisor.fatalError`.
     static func precondition(_ condition: @autoclosure () -> Bool, _ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) {
         if !condition() {
             trap(message(), file: file, line: line)
@@ -23,7 +24,7 @@ public extension Thread {
     
     /// A thread specific variant of `preconditionFailure()`.
     ///
-    /// - SeeAlso: `Thread.fatalError`.
+    /// - SeeAlso: `Supervisor.fatalError`.
     static func preconditionFailure(_ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) -> Never {
         trap(message(), file: file, line: line)
     }
@@ -38,16 +39,16 @@ public extension Thread {
     
     /// Performs `work` one a new thread and waits for it to complete.
     ///
-    /// Calls to `Thread.fatalError()` inside `work` will not terminate the app and instead only exit the thread.
+    /// Calls to `Supervisor.fatalError()` inside `work` will not terminate the app and instead only exit the thread.
     /// This can be useful, for example, when testing that a method traps on invalid input.
     ///
     /// - Parameter work: The work to perform
-    /// - Returns: `fatalError` if `work` terminated due to a trap (e.g. `Thread.fatalError` was called); `normal` otherwise.
+    /// - Returns: `fatalError` if `work` terminated due to a trap (e.g. `Supervisor.fatalError` was called); `normal` otherwise.
     static func detachSyncSupervised(_ work: @escaping () -> Void) -> ExitManner {
         var reason = ExitManner.normal
         let sema = DispatchSemaphore(value: 0)
         let thread = Thread {
-            Thread.current.trapHandler = {
+            Thread.current.supervisor = Supervisor {
                 reason = .fatalError
                 sema.signal()
                 Thread.exit()
@@ -63,31 +64,29 @@ public extension Thread {
     
 }
 
-private extension Thread {
-    
-    typealias TrapHandler = () -> Never
-    
-    private struct Box {
-        var trapHandler: TrapHandler?
-    }
-    
-    private static let trapHandlerKey = UUID().uuidString
-    
-    var trapHandler: TrapHandler? {
-        get {
-            Thread.current.threadDictionary[type(of: self).trapHandlerKey] as? TrapHandler
-        }
-        set {
-            Thread.current.threadDictionary[type(of: self).trapHandlerKey] = newValue
-        }
-    }
+private extension Supervisor {
     
     static func trap(_ message: @autoclosure () -> String, file: StaticString, line: UInt) -> Never {
-        if let trapHandler = Thread.current.trapHandler {
-            trapHandler()
+        if let supervisor = Thread.current.supervisor {
+            supervisor.trapHandler()
         } else {
             Swift.fatalError(message(), file: file, line: line)
         }
     }
     
+}
+
+private extension Thread {
+    
+    private static let supervisorKey = UUID().uuidString
+    
+    var supervisor: Supervisor? {
+        get {
+            Thread.current.threadDictionary[Self.supervisorKey] as? Supervisor
+        }
+        set {
+            Thread.current.threadDictionary[Self.supervisorKey] = newValue
+        }
+    }
+        
 }

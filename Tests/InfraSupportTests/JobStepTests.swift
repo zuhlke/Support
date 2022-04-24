@@ -40,7 +40,7 @@ class JobStepTests: XCTestCase {
     }
     
     func testCreatingStepFromALocalActionWithInputsButInputNotSet() {
-        let exitManner = Thread.detachSyncSupervised {
+        let exitManner = Supervisor.detachSyncSupervised {
             _ = Job.Step.Use(MockActionWithInputs()) { inputs in
                 // We “forget” to set a required input
                 inputs.$someOptionalInput = "some-other-value"

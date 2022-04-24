@@ -155,7 +155,7 @@ extension GitHub.Workflow.Job.Step.Use {
             .filter { provider.inputValues[$0.id] == nil }
             .map(\.id)
             .sorted(by: <)
-        Thread.precondition(missingInputs.isEmpty, "Missing value for required action input: \(missingInputs)")
+        Supervisor.precondition(missingInputs.isEmpty, "Missing value for required action input: \(missingInputs)")
         self.init(
             step: .init(name: name ?? action.name, method: .action(action.reference.value, inputs: provider.inputValues))
         )

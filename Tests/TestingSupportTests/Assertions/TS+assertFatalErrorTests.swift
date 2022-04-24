@@ -6,19 +6,19 @@ class TSAssertFatalErrorTests: XCTestCase {
     
     func testThatFatalErrorsAreCaptured() {
         TS.assertFatalError {
-            Thread.fatalError()
+            Supervisor.fatalError()
         }
     }
     
     func testThatPreconditionsAreCaptured() {
         TS.assertFatalError {
-            Thread.precondition(false)
+            Supervisor.precondition(false)
         }
     }
     
     func testThatPreconditionFailuresAreCaptured() {
         TS.assertFatalError {
-            Thread.preconditionFailure()
+            Supervisor.preconditionFailure()
         }
     }
     

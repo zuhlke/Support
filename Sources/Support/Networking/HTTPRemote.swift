@@ -53,12 +53,12 @@ public struct HTTPRemote {
     ) {
         
         guard path.isEmpty || path.starts(with: "/") else {
-            Thread.fatalError("`path` must start with `/` if it’s not empty.")
+            Supervisor.fatalError("`path` must start with `/` if it’s not empty.")
         }
         
         for disallowedHeader in HTTPHeaderFieldName.bodyHeaders {
             guard !headers.hasValue(for: disallowedHeader) else {
-                Thread.fatalError("\(disallowedHeader.lowercaseName) header must not be set on a remote. Provide this value for each request.")
+                Supervisor.fatalError("\(disallowedHeader.lowercaseName) header must not be set on a remote. Provide this value for each request.")
             }
         }
         

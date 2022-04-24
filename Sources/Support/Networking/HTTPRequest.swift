@@ -32,21 +32,21 @@ public struct HTTPRequest: Equatable {
         headers: HTTPHeaders = HTTPHeaders()
     ) {
         guard path.isEmpty || path.starts(with: "/") else {
-            Thread.fatalError("`path` must start with `/` if it’s not empty.")
+            Supervisor.fatalError("`path` must start with `/` if it’s not empty.")
         }
         
         let hasBody = (body != nil)
         if hasBody, method.mustNotHaveBody {
-            Thread.fatalError("Method \(method) does not support body.")
+            Supervisor.fatalError("Method \(method) does not support body.")
         }
         
         if !hasBody, method.mustHaveBody {
-            Thread.fatalError("Method \(method) requires a body.")
+            Supervisor.fatalError("Method \(method) requires a body.")
         }
         
         for bodyHeader in HTTPHeaderFieldName.bodyHeaders {
             guard !headers.hasValue(for: bodyHeader) else {
-                Thread.fatalError("\(bodyHeader.lowercaseName) header must not be set separately. Set the content type on the body.")
+                Supervisor.fatalError("\(bodyHeader.lowercaseName) header must not be set separately. Set the content type on the body.")
             }
         }
         

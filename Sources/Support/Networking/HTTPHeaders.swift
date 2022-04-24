@@ -23,7 +23,7 @@ extension HTTPHeaders {
     
     init(fields: [String: String]) {
         let fields = Dictionary(fields.map { (HTTPHeaderFieldName($0), $1) }) { _, _ -> String in
-            Thread.fatalError("Duplicate header fields: \(fields).")
+            Supervisor.fatalError("Duplicate header fields: \(fields).")
         }
         self.init(fields: fields)
     }
