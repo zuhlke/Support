@@ -259,6 +259,9 @@ extension GitHub.Workflow.Job.Runner {
     public static let macos11 = GitHub.Workflow.Job.Runner("macos-11")
         .comment("Check pre-installed software on https://github.com/actions/virtual-environments/blob/main/images/macos/macos-11-Readme.md")
     
+    public static let macos12 = GitHub.Workflow.Job.Runner("macos-12")
+        .comment("Check pre-installed software on https://github.com/actions/virtual-environments/blob/main/images/macos/macos-12-Readme.md")
+    
 }
 
 @resultBuilder
