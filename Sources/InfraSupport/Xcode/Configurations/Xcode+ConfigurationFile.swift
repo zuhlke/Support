@@ -146,11 +146,26 @@ extension Xcode {
             }
         }
         
+        /// Write a canonical representation of the configuration file to `url`.
+        ///
+        /// The format of the saved file for a given input is guaranteed to be stable across different invocations within a given version of the framework.
+        /// However, the format may change when the framework version changes. These will usually be cosmetic changes.
+        /// - Parameter url: The place to save the output.
+        /// - throws: If it can not write to `url`.
         public func write(to url: URL) throws {
             try lines
                 .map { $0.formatted() }
                 .joined(separator: "\n")
                 .write(to: url, atomically: true, encoding: .utf8)
+        }
+        
+        /// Visits each line of the configuration and allows it to be updated.
+        /// 
+        /// - Parameter update: A closure to run on each line of the configuration file to update it.
+        public mutating func visit(_ update: (inout Line) -> Void) {
+            for index in lines.indices {
+                update(&lines[index])
+            }
         }
         
     }
