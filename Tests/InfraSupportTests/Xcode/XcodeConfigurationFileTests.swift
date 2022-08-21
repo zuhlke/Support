@@ -13,7 +13,9 @@ final class XcodeConfigurationFileTests: XCTestCase {
     }
     
     func testLoadingEmptyFile() throws {
-        _ = try load("")
+        let file = try load("")
+        let expected = Xcode.ConfigurationFile(lines: [])
+        TS.assert(file, equals: expected)
     }
     
     func testLoadingARandomInvalidFile() throws {

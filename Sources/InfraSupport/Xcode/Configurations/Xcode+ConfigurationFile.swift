@@ -4,7 +4,7 @@ import Support
 extension Xcode {
     
     /// Represents an Xcode configuration (`xcconfig`) file.
-    public struct ConfigurationFile {
+    public struct ConfigurationFile: Equatable {
         
         public struct AssignmentSelector: Equatable {
             fileprivate static let supportedConditions = ["sdk", "arch", "config"]
@@ -36,9 +36,14 @@ extension Xcode {
             case include(path: String)
         }
         
-        public struct Line {
+        public struct Line: Equatable {
             public var kind: LineKind
             public var comment: String?
+            
+            public init(kind: Xcode.ConfigurationFile.LineKind, comment: String? = nil) {
+                self.kind = kind
+                self.comment = comment
+            }
         }
         
         
@@ -47,6 +52,10 @@ extension Xcode {
         }
                 
         public var lines: [Line]
+        
+        public init(lines: [Line]) {
+            self.lines = lines
+        }
         
         /// A configuration file.
         /// - Parameter url: URL of the file to load.
