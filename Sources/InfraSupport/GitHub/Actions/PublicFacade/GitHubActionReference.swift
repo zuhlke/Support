@@ -19,7 +19,6 @@ extension GitHubActionReference: ExpressibleByStringLiteral {
     
 }
 
-
 extension GitHubActionReference: ExpressibleByStringInterpolation {
     
     public typealias StringInterpolation = String.StringInterpolation
