@@ -146,6 +146,49 @@ extension Xcode {
             }
         }
         
+        public func write(to url: URL) throws {
+            try lines
+                .map { $0.formatted() }
+                .joined(separator: "\n")
+                .write(to: url, atomically: true, encoding: .utf8)
+        }
+        
+    }
+    
+}
+
+private extension Xcode.ConfigurationFile.Line {
+    
+    func formatted() -> String {
+        [
+            kind.formatted(),
+            comment.map { "// \($0)" } ?? "",
+        ]
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
+    }
+}
+
+private extension Xcode.ConfigurationFile.LineKind {
+    
+    func formatted() -> String {
+        switch self {
+        case .empty:
+            return ""
+        case .include(let path):
+            return #"#include "\#(path)""#
+        case .assignment(let selector, value: let value):
+            let conditional: String
+            if selector.conditions.isEmpty {
+                conditional = ""
+            } else {
+                conditional = selector.conditions
+                    .sorted(using: KeyPathComparator(\.key))
+                    .map { "[\($0)=\($1)]" }
+                    .joined()
+            }
+            return "\(selector.variable)\(conditional) = \(value)"
+        }
     }
     
 }
