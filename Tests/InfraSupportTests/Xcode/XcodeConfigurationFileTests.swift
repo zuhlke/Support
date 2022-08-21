@@ -55,28 +55,28 @@ final class XcodeConfigurationFileTests: XCTestCase {
     }
     
     func testLoadingAssignments() throws {
-        assert("a=b", is: .assignment(variable: "a", value: "b"))
-        assert("a= b", is: .assignment(variable: "a", value: "b"))
-        assert("a =b", is: .assignment(variable: "a", value: "b"))
-        assert("a =", is: .assignment(variable: "a", value: ""))
-        assert("a = b", is: .assignment(variable: "a", value: "b"))
-        assert("a = b;", is: .assignment(variable: "a", value: "b"))
-        assert("_underscored =", is: .assignment(variable: "_underscored", value: ""))
-        assert("lower =", is: .assignment(variable: "lower", value: ""))
-        assert("Upper =", is: .assignment(variable: "Upper", value: ""))
-        assert("a = b // comment", is: .assignment(variable: "a", value: "b"))
+        assert("a=b", is: .assignment(selector: .variable("a"), value: "b"))
+        assert("a= b", is: .assignment(selector: .variable("a"), value: "b"))
+        assert("a =b", is: .assignment(selector: .variable("a"), value: "b"))
+        assert("a =", is: .assignment(selector: .variable("a"), value: ""))
+        assert("a = b", is: .assignment(selector: .variable("a"), value: "b"))
+        assert("a = b;", is: .assignment(selector: .variable("a"), value: "b"))
+        assert("_underscored =", is: .assignment(selector: .variable("_underscored"), value: ""))
+        assert("lower =", is: .assignment(selector: .variable("lower"), value: ""))
+        assert("Upper =", is: .assignment(selector: .variable("Upper"), value: ""))
+        assert("a = b // comment", is: .assignment(selector: .variable("a"), value: "b"))
         assert("a = b // comment", hasComment: "comment")
         for key in ["sdk", "arch", "config"] {
-            assert("conditional[\(key)=value] = b", is: .assignment(variable: "conditional[\(key)=value]", value: "b"))
-            assert("conditional[\(key)=value*] = b", is: .assignment(variable: "conditional[\(key)=value*]", value: "b"))
-            assert("conditional[\(key)=*] = b", is: .assignment(variable: "conditional[\(key)=*]", value: "b"))
+            assert("conditional[\(key)=value] = b", is: .assignment(selector: .variable("conditional").conditions([key: "value"]), value: "b"))
+            assert("conditional[\(key)=value*] = b", is: .assignment(selector: .variable("conditional").conditions([key: "value*"]), value: "b"))
+            assert("conditional[\(key)=*] = b", is: .assignment(selector: .variable("conditional").conditions([key: "*"]), value: "b"))
         }
-        assert("conditional[sdk=*][arch=*] = b", is: .assignment(variable: "conditional[sdk=*][arch=*]", value: "b"))
-        assert("conditional[arch=*][sdk=*] = b", is: .assignment(variable: "conditional[arch=*][sdk=*]", value: "b"))
-        assert("conditional[sdk=*][arch=*][config=*] = b", is: .assignment(variable: "conditional[sdk=*][arch=*][config=*]", value: "b"))
-        assert("conditional[sdk=*,arch=*] = b", is: .assignment(variable: "conditional[sdk=*,arch=*]", value: "b"))
-        assert("conditional[arch=*,sdk=*] = b", is: .assignment(variable: "conditional[arch=*,sdk=*]", value: "b"))
-        assert("conditional[sdk=*,arch=*,config=*] = b", is: .assignment(variable: "conditional[sdk=*,arch=*,config=*]", value: "b"))
+        assert("conditional[sdk=s][arch=a] = b", is: .assignment(selector: .variable("conditional").conditions(["arch": "a", "sdk": "s"]), value: "b"))
+        assert("conditional[arch=a][sdk=s] = b", is: .assignment(selector: .variable("conditional").conditions(["arch": "a", "sdk": "s"]), value: "b"))
+        assert("conditional[sdk=s,arch=a] = b", is: .assignment(selector: .variable("conditional").conditions(["arch": "a", "sdk": "s"]), value: "b"))
+        assert("conditional[arch=a,sdk=s] = b", is: .assignment(selector: .variable("conditional").conditions(["arch": "a", "sdk": "s"]), value: "b"))
+        assert("conditional[sdk=s][arch=a][config=c] = b", is: .assignment(selector: .variable("conditional").conditions(["arch": "a", "sdk": "s", "config": "c"]), value: "b"))
+        assert("conditional[sdk=s,arch=a,config=c] = b", is: .assignment(selector: .variable("conditional").conditions(["arch": "a", "sdk": "s", "config": "c"]), value: "b"))
         XCTAssertThrowsError(try load(" =")) // No variable name
         XCTAssertThrowsError(try load(" =b")) // No variable name
         XCTAssertThrowsError(try load("0variable =b")) // Variable name starting with number

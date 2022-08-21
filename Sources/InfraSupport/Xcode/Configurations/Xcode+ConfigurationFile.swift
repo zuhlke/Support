@@ -1,13 +1,38 @@
 import Foundation
+import Support
 
 extension Xcode {
     
     /// Represents an Xcode configuration (`xcconfig`) file.
     public struct ConfigurationFile {
         
+        public struct AssignmentSelector: Equatable {
+            fileprivate static let supportedConditions = ["sdk", "arch", "config"]
+            
+            var variable: String
+            var conditions: [String: String]
+            
+            public static func variable(_ named: String) -> AssignmentSelector {
+                Supervisor.precondition(!named.isEmpty)
+                Supervisor.precondition(CharacterSet(charactersIn: named).isSubset(of: .variable))
+                return .init(variable: named, conditions: [:])
+            }
+            
+            public func conditions(_ conditions: [String: String]) -> AssignmentSelector {
+                for (key, value) in conditions {
+                    precondition(AssignmentSelector.supportedConditions.contains(key))
+                    precondition(!value.isEmpty)
+                    Supervisor.precondition(CharacterSet(charactersIn: value).isSubset(of: .conditionValue))
+                }
+                return mutating(self) {
+                    $0.conditions = conditions
+                }
+            }
+        }
+        
         public enum LineKind: Equatable {
             case empty
-            case assignment(variable: String, value: String)
+            case assignment(selector: AssignmentSelector, value: String)
             case include(path: String)
         }
         
@@ -16,10 +41,11 @@ extension Xcode {
             public var comment: String?
         }
         
+        
         private struct MalformedConfiguration: Error {
             var contents: String
         }
-        
+                
         public var lines: [Line]
         
         /// A configuration file.
@@ -51,13 +77,22 @@ extension Xcode {
                     _ = scanner.scanCharacters(from: .variable)
                     scanner.charactersToBeSkipped = .whitespaces
 
+                    let variableEndIndex = scanner.currentIndex
+                    
+                    var conditions: [String: String] = [:]
                     while scanner.scanString("[") != nil {
                         repeat {
-                            let keywords = ["sdk", "arch", "config"]
-                            let keyword = keywords.first { scanner.scanString($0) != nil }
-                            guard keyword != nil, scanner.scanString("=") != nil, scanner.scanCharacters(from: .conditionValue) != nil else {
+                            let keyword = AssignmentSelector.supportedConditions.first { scanner.scanString($0) != nil }
+                            guard let keyword = keyword, scanner.scanString("=") != nil else {
                                 throw MalformedConfiguration(contents: contents)
                             }
+                            scanner.charactersToBeSkipped = nil
+                            let value = scanner.scanCharacters(from: .conditionValue)
+                            scanner.charactersToBeSkipped = .whitespaces
+                            guard let value = value else {
+                                throw MalformedConfiguration(contents: contents)
+                            }
+                            conditions[keyword] = value
                         } while scanner.scanString(",") != nil
 
                         guard scanner.scanString("]") != nil else {
@@ -65,7 +100,6 @@ extension Xcode {
                         }
                     }
                     
-                    let lhsEndIndex = scanner.currentIndex
                     guard scanner.scanString("=") != nil else {
                         throw MalformedConfiguration(contents: contents)
                     }
@@ -80,7 +114,7 @@ extension Xcode {
                     scanner.currentIndex = min(endOfLineIndex, startOfCommentIndex)
                     
                     kind = .assignment(
-                        variable: contents[startIndex..<lhsEndIndex].trimmingCharacters(in: .whitespaces),
+                        selector: .init(variable: contents[startIndex..<variableEndIndex].trimmingCharacters(in: .whitespaces), conditions: conditions),
                         value: contents[rhsStartIndex..<scanner.currentIndex].trimmingCharacters(in: .whitespaces.union(CharacterSet(charactersIn: ";")))
                     )
                 } else {
