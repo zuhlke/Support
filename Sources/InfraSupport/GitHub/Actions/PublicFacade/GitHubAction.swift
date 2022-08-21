@@ -1,20 +1,5 @@
 import Foundation
 
-// This type currently doesn’t do much, but is useful for resiliency: in future versions of the framework, we can add
-// additional functionality without breaking the API.
-/// Reference to a github action, such as `actions/checkout@v2`
-public struct GitHubActionReference: ExpressibleByStringLiteral {
-    var value: String
-    
-    public init(stringLiteral value: String) {
-        self.value = value
-    }
-    
-    public init(_ value: String) {
-        self.value = value
-    }
-}
-
 /// A type representing a GitHub action.
 ///
 /// The action has an associate type, `Inputs`. This type should conform to `ParameterSet` protocol,
