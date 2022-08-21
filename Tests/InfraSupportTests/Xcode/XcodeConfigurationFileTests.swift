@@ -26,21 +26,26 @@ final class XcodeConfigurationFileTests: XCTestCase {
         XCTAssertThrowsError(try load(contents))
     }
     
-    func testLoadingComments() throws {
-        _ = try load("//")
-        _ = try load(" // content comes here")
-        _ = try load("  //  ")
+    func testLoadingEmptyLines() throws {
+        assert("//", is: .empty)
+        assert(" // content comes here", is: .empty)
+        assert("  //  ", is: .empty)
+        assert("//", hasComment: nil)
+        assert(" // content comes here   ", hasComment: "content comes here")
+        assert("  //  ", hasComment: nil)
         XCTAssertThrowsError(try load("not a comment // "))
     }
     
     func testLoadingImports() throws {
-        _ = try load(#"#include "a.xcconfig""#)
-        _ = try load(#"#include "../some/path.xcconfig""#)
-        _ = try load(#"#include     "a.xcconfig""#)
-        _ = try load(#"#include 'a.xcconfig'"#)
-        _ = try load(#" #include 'a.xcconfig'"#)
-        _ = try load(#" #include 'a.xcconfig';"#)
-        _ = try load(#" #include 'a.xcconfig' // comment"#)
+        assert(#"#include "a.xcconfig""#, is: .include(path: "a.xcconfig"))
+        assert(#"#include "../some/path.xcconfig""#, is: .include(path: "../some/path.xcconfig"))
+        assert(#"#include     "a.xcconfig""#, is: .include(path: "a.xcconfig"))
+        assert(#"#include "  a.xcconfig ""#, is: .include(path: "a.xcconfig"))
+        assert(#"#include 'a.xcconfig'"#, is: .include(path: "a.xcconfig"))
+        assert(#" #include 'a.xcconfig'"#, is: .include(path: "a.xcconfig"))
+        assert(#" #include 'a.xcconfig';"#, is: .include(path: "a.xcconfig"))
+        assert(#" #include 'a.xcconfig' // comment"#, is: .include(path: "a.xcconfig"))
+        assert(#" #include 'a.xcconfig' // comment"#, hasComment: "comment")
         XCTAssertThrowsError(try load(#"#include"#)) // no include
         XCTAssertThrowsError(try load(#"#include"a.xcconfig""#)) // no whitespace after `include`
         XCTAssertThrowsError(try load(#"#include "a.xcconfig"#)) // missing end quote
@@ -50,30 +55,52 @@ final class XcodeConfigurationFileTests: XCTestCase {
     }
     
     func testLoadingAssignments() throws {
-        _ = try load(#"a=b"#)
-        _ = try load(#"a= b"#)
-        _ = try load(#"a =b"#)
-        _ = try load(#"a ="#)
-        _ = try load(#"a = b"#)
-        _ = try load(#"a = b;"#)
-        _ = try load(#"_underscored ="#)
-        _ = try load(#"lower ="#)
-        _ = try load(#"Upper ="#)
+        assert("a=b", is: .assignment(variable: "a", value: "b"))
+        assert("a= b", is: .assignment(variable: "a", value: "b"))
+        assert("a =b", is: .assignment(variable: "a", value: "b"))
+        assert("a =", is: .assignment(variable: "a", value: ""))
+        assert("a = b", is: .assignment(variable: "a", value: "b"))
+        assert("a = b;", is: .assignment(variable: "a", value: "b"))
+        assert("_underscored =", is: .assignment(variable: "_underscored", value: ""))
+        assert("lower =", is: .assignment(variable: "lower", value: ""))
+        assert("Upper =", is: .assignment(variable: "Upper", value: ""))
+        assert("a = b // comment", is: .assignment(variable: "a", value: "b"))
+        assert("a = b // comment", hasComment: "comment")
         for key in ["sdk", "arch", "config"] {
-            _ = try load(#"conditional[\#(key)=value] = b"#)
-            _ = try load(#"conditional[\#(key)=value*] = b"#)
-            _ = try load(#"conditional[\#(key)=*] = b"#)
+            assert("conditional[\(key)=value] = b", is: .assignment(variable: "conditional[\(key)=value]", value: "b"))
+            assert("conditional[\(key)=value*] = b", is: .assignment(variable: "conditional[\(key)=value*]", value: "b"))
+            assert("conditional[\(key)=*] = b", is: .assignment(variable: "conditional[\(key)=*]", value: "b"))
         }
-        _ = try load(#"conditional[sdk=*][arch=*] = b"#)
-        _ = try load(#"conditional[arch=*][sdk=*] = b"#)
-        _ = try load(#"conditional[sdk=*][arch=*][config=*] = b"#)
-        _ = try load(#"conditional[sdk=*,arch=*] = b"#)
-        _ = try load(#"conditional[arch=*,sdk=*] = b"#)
-        _ = try load(#"conditional[sdk=*,arch=*,config=*] = b"#)
-        XCTAssertThrowsError(try load(#" ="#)) // No variable name
-        XCTAssertThrowsError(try load(#" =b"#)) // No variable name
-        XCTAssertThrowsError(try load(#"0variable =b"#)) // Variable name starting with number
-        XCTAssertThrowsError(try load(#"variable name =b"#)) // Variable name with a space
+        assert("conditional[sdk=*][arch=*] = b", is: .assignment(variable: "conditional[sdk=*][arch=*]", value: "b"))
+        assert("conditional[arch=*][sdk=*] = b", is: .assignment(variable: "conditional[arch=*][sdk=*]", value: "b"))
+        assert("conditional[sdk=*][arch=*][config=*] = b", is: .assignment(variable: "conditional[sdk=*][arch=*][config=*]", value: "b"))
+        assert("conditional[sdk=*,arch=*] = b", is: .assignment(variable: "conditional[sdk=*,arch=*]", value: "b"))
+        assert("conditional[arch=*,sdk=*] = b", is: .assignment(variable: "conditional[arch=*,sdk=*]", value: "b"))
+        assert("conditional[sdk=*,arch=*,config=*] = b", is: .assignment(variable: "conditional[sdk=*,arch=*,config=*]", value: "b"))
+        XCTAssertThrowsError(try load(" =")) // No variable name
+        XCTAssertThrowsError(try load(" =b")) // No variable name
+        XCTAssertThrowsError(try load("0variable =b")) // Variable name starting with number
+        XCTAssertThrowsError(try load("variable name =b")) // Variable name with a space
+    }
+    
+    private func assert(_ contents: String, is expected: Xcode.ConfigurationFile.LineKind, file: StaticString = #file, line: UInt = #line) {
+        XCTAssertNil(contents.range(of: "\n"), "This command only supports single lines", file: file, line: line)
+        do {
+            let actual = try XCTUnwrap(load(contents).lines.first).kind
+            TS.assert(actual, equals: expected, file: file, line: line)
+        } catch {
+            XCTFail("\(error)", file: file, line: line)
+        }
+    }
+    
+    private func assert(_ contents: String, hasComment expected: String?, file: StaticString = #file, line: UInt = #line) {
+        XCTAssertNil(contents.range(of: "\n"), "This command only supports single lines", file: file, line: line)
+        do {
+            let actual = try XCTUnwrap(load(contents).lines.first).comment
+            TS.assert(actual, equals: expected, file: file, line: line)
+        } catch {
+            XCTFail("\(error)", file: file, line: line)
+        }
     }
 
     private func load(_ contents: String) throws -> Xcode.ConfigurationFile {
