@@ -1,46 +1,39 @@
 import Foundation
 
 /// An HTTP method.
-public enum HTTPMethod: String, Equatable {
-    case get = "GET"
-    case post = "POST"
-    case put = "PUT"
-    case delete = "DELETE"
-    case options = "OPTIONS"
-    case connect = "CONNECT"
-    case head = "HEAD"
-    case patch = "PATCH"
-    case trace = "TRACE"
+public enum HTTPMethod: Equatable{
+    case get
+    case post(body: HTTPRequest.Body)
+    case put(body: HTTPRequest.Body)
+    case delete(body: HTTPRequest.Body?)
+    case options
+    case connect
+    case head
+    case patch
+    case trace
 }
 
+// See: https://www.rfc-editor.org/rfc/rfc7231#section-4.3
 extension HTTPMethod {
-    // See: https://www.rfc-editor.org/rfc/rfc7231#section-4.3
-    
-    private enum BodyRequirment {
-        case mustHave
-        case mustNotHave
-    }
-    
-    private var bodyRequirement: BodyRequirment {
+    public var rawValue: String {
         switch self {
-        case .get: return .mustNotHave
-        case .post: return .mustHave
-        case .put: return .mustHave
-        case .delete: return .mustNotHave
-        case .options: return .mustNotHave
-        case .connect: return .mustNotHave
-        case .head: return .mustNotHave
-        case .patch: return .mustHave
-        case .trace: return .mustNotHave
+        case .get: return "GET"
+        case .post: return  "POST"
+        case .put: return "PUT"
+        case .delete: return "DELETE"
+        case .options: return "OPTIONS"
+        case .connect: return "CONNECT"
+        case .head: return "HEAD"
+        case .patch: return "PATCH"
+        case .trace: return "TRACE"
         }
     }
     
-    var mustHaveBody: Bool {
-        bodyRequirement == .mustHave
+    var body: HTTPRequest.Body? {
+        switch self {
+        case .post(let body), .put(let body): return body
+        case .delete(let body): return body
+        default: return nil
+        }
     }
-    
-    var mustNotHaveBody: Bool {
-        bodyRequirement == .mustNotHave
-    }
-    
 }

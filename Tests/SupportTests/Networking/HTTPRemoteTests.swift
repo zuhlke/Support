@@ -57,9 +57,8 @@ class HTTPRemoteTests: XCTestCase {
         )
         
         let request = HTTPRequest(
-            method: .delete,
+            method: .delete(body: nil),
             path: "/destination",
-            body: nil,
             fragment: "subpage",
             queryParameters: ["query": "value"],
             headers: [HTTPHeaderFieldName("state"): "1234"]

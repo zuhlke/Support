@@ -109,7 +109,7 @@ extension HTTPRemote: URLRequestProviding {
             }
             
             urlRequest.httpMethod = request.method.rawValue
-            if let body = request.body {
+            if let body = request.method.body {
                 urlRequest.httpBody = body.content
                 urlRequest.addValue(body.type, forHTTPHeaderField: HTTPHeaderFieldName.contentType.lowercaseName)
                 urlRequest.addValue("\(body.content.count)", forHTTPHeaderField: HTTPHeaderFieldName.contentLength.lowercaseName)

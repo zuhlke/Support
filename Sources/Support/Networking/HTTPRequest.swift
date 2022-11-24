@@ -10,7 +10,6 @@ public struct HTTPRequest: Equatable {
     
     public let method: HTTPMethod
     public let path: String
-    public let body: Body?
     public let fragment: String?
     public let queryParameters: [String: String]
     public let headers: HTTPHeaders
@@ -19,29 +18,18 @@ public struct HTTPRequest: Equatable {
     /// - Parameters:
     ///   - method: The request’s HTTP method.
     ///   - path: The request’s path. If the path is not empty, it must start with `/`.
-    ///   - body: The request’s body. Whether the body is required or not is determined by the `method` used. The init throws a fatal error if there is a mismatch.
     ///   - fragment: The URL’s fragment (the part following a `#`).
     ///   - queryParameters: Request specific query parameters.
     ///   - headers: Request specific headers. Setting `content-type` and `content-length` is not allowed as these are determined from the `body` parameter.
     public init(
         method: HTTPMethod,
         path: String,
-        body: Body?,
         fragment: String? = nil,
         queryParameters: [String: String] = [:],
         headers: HTTPHeaders = HTTPHeaders()
     ) {
         guard path.isEmpty || path.starts(with: "/") else {
             Supervisor.fatalError("`path` must start with `/` if it’s not empty.")
-        }
-        
-        let hasBody = (body != nil)
-        if hasBody, method.mustNotHaveBody {
-            Supervisor.fatalError("Method \(method) does not support body.")
-        }
-        
-        if !hasBody, method.mustHaveBody {
-            Supervisor.fatalError("Method \(method) requires a body.")
         }
         
         for bodyHeader in HTTPHeaderFieldName.bodyHeaders {
@@ -52,7 +40,6 @@ public struct HTTPRequest: Equatable {
         
         self.method = method
         self.path = path
-        self.body = body
         self.fragment = fragment
         self.queryParameters = queryParameters
         self.headers = headers
@@ -71,7 +58,6 @@ extension HTTPRequest {
         HTTPRequest(
             method: .get,
             path: path,
-            body: nil,
             fragment: fragment,
             queryParameters: queryParameters,
             headers: headers
@@ -86,9 +72,8 @@ extension HTTPRequest {
         headers: HTTPHeaders = HTTPHeaders()
     ) -> HTTPRequest {
         HTTPRequest(
-            method: .post,
+            method: .post(body: body),
             path: path,
-            body: body,
             fragment: fragment,
             queryParameters: queryParameters,
             headers: headers
@@ -103,9 +88,8 @@ extension HTTPRequest {
         headers: HTTPHeaders = HTTPHeaders()
     ) -> HTTPRequest {
         HTTPRequest(
-            method: .put,
+            method: .put(body: body),
             path: path,
-            body: body,
             fragment: fragment,
             queryParameters: queryParameters,
             headers: headers
