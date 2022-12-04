@@ -12,7 +12,7 @@ public extension YAML.Node {
     }
 }
 
-private extension YAML.Map {
+public extension YAML.Map {
     init(@NodeMappingBuilder closure: () -> YAML.Map) {
         self = closure()
     }

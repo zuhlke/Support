@@ -48,4 +48,8 @@ public struct YAML: Equatable {
     }
 
     var root: Map
+    
+    public init(root: Map) {
+        self.root = root
+    }
 }

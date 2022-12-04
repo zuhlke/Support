@@ -32,7 +32,7 @@ let package = Package(
         ),
         .target(
             name: "TestingSupport",
-            dependencies: ["Support"]
+            dependencies: ["YAMLBuilder", "Support"]
         ),
         .target(
             name: "YAMLBuilder",
