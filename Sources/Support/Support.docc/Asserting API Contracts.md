@@ -8,7 +8,7 @@ Some API contract assumptions can’t be reasonably expressed in a way that can 
 In these situations it’s often better to assert that the preconditions are met at runtime instead of silently continuing
 and causing unexpected issues later down the line.
 
-``Supervisor`` provides API that makes it easier to writing testable assertions.
+``Supervisor`` provides API that makes it easier to write testable assertions.
 
 ### Enforcing API contracts
 
