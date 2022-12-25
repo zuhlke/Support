@@ -15,7 +15,13 @@ public struct HTTPRequest: Equatable {
     public let queryParameters: [String: String]
     public let headers: HTTPHeaders
     
-    /// Creates an HTTP request
+    /// Creates an HTTP request.
+    ///
+    /// This initialiser enforces that the following invaritants hold:
+    /// * `path` must be either empty or start with `/`.
+    /// * `body` must be provided in accordance to `method`’s ``HTTPMethod/bodyRequirement``.
+    /// * There’s no header value that would override those that would be provided by `body` (namely, `content-length` and `content-type`).
+    ///
     /// - Parameters:
     ///   - method: The request’s HTTP method.
     ///   - path: The request’s path. If the path is not empty, it must start with `/`.
@@ -36,12 +42,13 @@ public struct HTTPRequest: Equatable {
         }
         
         let hasBody = (body != nil)
-        if hasBody, method.mustNotHaveBody {
+        switch (method.bodyRequirement, hasBody) {
+        case (.mustNotHave, true):
             Supervisor.fatalError("Method \(method) does not support body.")
-        }
-        
-        if !hasBody, method.mustHaveBody {
+        case (.mustHave, false):
             Supervisor.fatalError("Method \(method) requires a body.")
+        default:
+            break
         }
         
         for bodyHeader in HTTPHeaderFieldName.bodyHeaders {
