@@ -14,33 +14,29 @@ public enum HTTPMethod: String, Equatable {
 }
 
 extension HTTPMethod {
-    // See: https://www.rfc-editor.org/rfc/rfc7231#section-4.3
     
-    private enum BodyRequirment {
+    /// An HTTP method’s body requirements.
+    public enum BodyRequirment {
         case mustHave
         case mustNotHave
     }
     
-    private var bodyRequirement: BodyRequirment {
+    /// The body requirement for this HTTP method.
+    ///
+    /// The body requirements are based on a strict interpretation of [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110#name-method-definitions) .
+    ///
+    public var bodyRequirement: BodyRequirment {
         switch self {
-        case .get: return .mustNotHave
-        case .post: return .mustHave
-        case .put: return .mustHave
-        case .delete: return .mustNotHave
-        case .options: return .mustNotHave
-        case .connect: return .mustNotHave
-        case .head: return .mustNotHave
-        case .patch: return .mustHave
-        case .trace: return .mustNotHave
+        case .get: return .mustNotHave // Spec says "SHOULD NOT generate content"
+        case .head: return .mustNotHave // Spec says "SHOULD NOT generate content"
+        case .post: return .mustHave // Implied by expectations on request content
+        case .put: return .mustHave // Implied by expectations on request content
+        case .delete: return .mustNotHave // Spec says "SHOULD NOT generate content"
+        case .connect: return .mustNotHave // Spec says "does not have content"
+        case .options: return .mustNotHave // Spec says "does not define any use for such content"
+        case .trace: return .mustNotHave // Spec says "MUST NOT send content"
+        case .patch: return .mustHave // Implied by expectations on request content
         }
-    }
-    
-    var mustHaveBody: Bool {
-        bodyRequirement == .mustHave
-    }
-    
-    var mustNotHaveBody: Bool {
-        bodyRequirement == .mustNotHave
     }
     
 }
