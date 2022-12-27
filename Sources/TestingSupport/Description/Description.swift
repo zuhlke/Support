@@ -1,6 +1,6 @@
 import Foundation
 
-public enum Description: Hashable {
+enum Description: Hashable {
     case string(String)
     case dictionary([String: Description])
     case array([Description])
@@ -9,14 +9,14 @@ public enum Description: Hashable {
 }
 
 extension Description: CustomDescriptionConvertible {
-    public var structuredDescription: Description {
+    var structuredDescription: Description {
         self
     }
 }
 
 extension Description {
     
-    public init(for value: Any) {
+    init(for value: Any) {
         if let value = value as? CustomDescriptionConvertible {
             self = value.structuredDescription
         } else {
@@ -94,11 +94,11 @@ extension Description {
     
 }
 
-public func describe(_ value: Any) {
+func describe(_ value: Any) {
     print(description(for: value))
 }
 
-private func description(for subject: Any) -> String {
+func description(for subject: Any) -> String {
     let object = Description(for: subject)
     switch object {
     case .dictionary, .array, .set:

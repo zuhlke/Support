@@ -84,18 +84,6 @@ extension TS {
         """
     }
     
-    private static func description(for subject: Any) -> String {
-        let object = Description(for: subject)
-        switch object {
-        case .dictionary, .array, .set:
-            let json = try! JSONSerialization.data(withJSONObject: object.jsonObject, options: [.prettyPrinted, .sortedKeys])
-            return String(data: json, encoding: .utf8)!
-        case .string(let string):
-            return string
-        case .null:
-            return "<Null>"
-        }
-    }
 }
 
 private extension CombinedDifference.Change {
@@ -108,23 +96,4 @@ private extension CombinedDifference.Change {
         }
     }
     
-}
-
-extension Description {
-    var jsonObject: Any {
-        switch self {
-        case .string(let value):
-            return value
-        case .dictionary(let value):
-            return value.mapValues { $0.jsonObject }
-        case .array(let value):
-            return value.map(\.jsonObject)
-        case .set(let value):
-            return value
-                .sorted { "\($0)" < "\($1)" } // doesn’t matter as long as it’s predictable
-                .map(\.jsonObject)
-        case .null:
-            return NSNull()
-        }
-    }
 }
