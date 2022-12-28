@@ -2,7 +2,7 @@ import Support
 import TestingSupport
 import XCTest
 
-class DataTests: XCTestCase {
+class DataNormalizationTests: XCTestCase {
     
     func testNormalizingMakesItPrettyPrinted() {
         let raw = Data("""
@@ -15,7 +15,7 @@ class DataTests: XCTestCase {
         }
         """.utf8)
         
-        TS.assert(raw.normalizingJSON(), equals: normalized)
+        TS.assert(Normalization.normalizingJSON.normalize(raw), equals: normalized)
     }
     
     func testNormalizingSortsKeys() {
@@ -33,7 +33,7 @@ class DataTests: XCTestCase {
         }
         """.utf8)
         
-        TS.assert(raw.normalizingJSON(), equals: normalized)
+        TS.assert(Normalization.normalizingJSON.normalize(raw), equals: normalized)
     }
     
 }

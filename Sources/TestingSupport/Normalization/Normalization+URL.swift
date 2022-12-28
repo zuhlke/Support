@@ -1,15 +1,16 @@
 import Foundation
 
-extension URL {
+extension Normalization<URL> {
     
-    public func normalizingForTesting() -> URL {
-        guard var components = URLComponents(url: self, resolvingAgainstBaseURL: false) else { return self }
+    /// Normalises the URL for the purpose of testing.
+    public static let normalizingForTesting = Normalization {
+        guard var components = URLComponents(url: $0, resolvingAgainstBaseURL: false) else { return $0 }
         
         components.queryItems = components.queryItems.map {
             $0.sorted { $0.sortingValue < $1.sortingValue }
         }
         
-        return components.url ?? self
+        return components.url!
     }
     
 }
