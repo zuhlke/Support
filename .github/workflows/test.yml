@@ -9,19 +9,19 @@ jobs:
   test:
     name: Build and Test
 
-    # See available software: https://github.com/actions/virtual-environments/blob/master/images/macos/macos-11-Readme.md
-    runs-on: macos-11
+    # See available software: https://github.com/actions/virtual-environments/blob/master/images/macos/macos-12-Readme.md
+    runs-on: macos-12
 
     steps:
     - uses: actions/checkout@v2
     - name: Prepare Xcode
       run: |
-        sudo xcode-select --switch /Applications/Xcode_13.2.app
+        sudo xcode-select --switch /Applications/Xcode_14.2.app
         xcodebuild -version
         swift --version
-    - name: Boot simulator
-      run: xcrun simctl boot "iPhone 13 Pro"
+
     - name: Build for testing
-      run: xcodebuild build-for-testing -workspace .swiftpm/xcode/package.xcworkspace -scheme Support-Package -destination "name=iPhone 13 Pro"
+      run: xcodebuild build-for-testing -workspace .swiftpm/xcode/package.xcworkspace -scheme Support-Package -destination "name=iPhone 14 Pro"
+
     - name: Run tests
-      run: xcodebuild test-without-building -workspace .swiftpm/xcode/package.xcworkspace -scheme Support-Package -destination "name=iPhone 13 Pro"
+      run: xcodebuild test-without-building -workspace .swiftpm/xcode/package.xcworkspace -scheme Support-Package -destination "name=iPhone 14 Pro"
