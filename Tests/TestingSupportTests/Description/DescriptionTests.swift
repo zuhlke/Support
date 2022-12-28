@@ -1,7 +1,7 @@
 import Foundation
 import Support
-@testable import TestingSupport
 import XCTest
+@testable import TestingSupport
 
 class DescriptionTests: XCTestCase {
     

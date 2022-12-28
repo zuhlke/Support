@@ -46,7 +46,6 @@ extension Xcode {
             }
         }
         
-        
         private struct MalformedConfiguration: Error {
             var contents: String
         }
@@ -69,7 +68,7 @@ extension Xcode {
                 let startIndex = scanner.currentIndex
                 let kind: LineKind
                 if scanner.scanString("#include ") != nil { // Include
-                    guard let quote = scanner.scanCharacter(), (quote == "\"" || quote == "'") else {
+                    guard let quote = scanner.scanCharacter(), quote == "\"" || quote == "'" else {
                         throw MalformedConfiguration(contents: contents)
                     }
                     
@@ -123,8 +122,8 @@ extension Xcode {
                     scanner.currentIndex = min(endOfLineIndex, startOfCommentIndex)
                     
                     kind = .assignment(
-                        selector: .init(variable: contents[startIndex..<variableEndIndex].trimmingCharacters(in: .whitespaces), conditions: conditions),
-                        value: contents[rhsStartIndex..<scanner.currentIndex].trimmingCharacters(in: .whitespaces.union(CharacterSet(charactersIn: ";")))
+                        selector: .init(variable: contents[startIndex ..< variableEndIndex].trimmingCharacters(in: .whitespaces), conditions: conditions),
+                        value: contents[rhsStartIndex ..< scanner.currentIndex].trimmingCharacters(in: .whitespaces.union(CharacterSet(charactersIn: ";")))
                     )
                 } else {
                     kind = .empty
@@ -160,7 +159,7 @@ extension Xcode {
         }
         
         /// Visits each line of the configuration and allows it to be updated.
-        /// 
+        ///
         /// - Parameter update: A closure to run on each line of the configuration file to update it.
         public mutating func visit(_ update: (inout Line) -> Void) {
             for index in lines.indices {
@@ -179,8 +178,8 @@ private extension Xcode.ConfigurationFile.Line {
             kind.formatted(),
             comment.map { "// \($0)" } ?? "",
         ]
-            .filter { !$0.isEmpty }
-            .joined(separator: " ")
+        .filter { !$0.isEmpty }
+        .joined(separator: " ")
     }
 }
 
