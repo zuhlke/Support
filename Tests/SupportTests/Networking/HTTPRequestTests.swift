@@ -6,32 +6,44 @@ import XCTest
 class HTTPRequestTests: XCTestCase {
     
     func testCanCreateRequestWithEmptyPath() {
-        _ = HTTPRequest(method: .get, path: "")
+        _ = HTTPRequest(method: .get, path: "", body: nil)
     }
     
     func testCanCreateRequestIfPathStartsWithSlash() {
-        _ = HTTPRequest(method: .get, path: "/somewhere")
+        _ = HTTPRequest(method: .get, path: "/somewhere", body: nil)
     }
     
     func testCanCreateRequestIfPathIsJustSlash() {
-        _ = HTTPRequest(method: .get, path: "/")
+        _ = HTTPRequest(method: .get, path: "/", body: nil)
     }
     
     func testCanNotCreateRequestIfPathDoesNotStartWithSlash() {
         TS.assertFatalError {
-            _ = HTTPRequest(method: .get, path: "somewhere")
+            _ = HTTPRequest(method: .get, path: "somewhere", body: nil)
         }
     }
     
     func testCanNotCreateRequestWithContentTypeHeader() {
         TS.assertFatalError {
-            _ = HTTPRequest(method: .get, path: "", headers: [.contentType: "a"])
+            _ = HTTPRequest(method: .get, path: "", body: nil, headers: [.contentType: "a"])
         }
     }
     
     func testCanNotCreateRequestWithContentTypeLength() {
         TS.assertFatalError {
-            _ = HTTPRequest(method: .get, path: "", headers: [.contentLength: "a"])
+            _ = HTTPRequest(method: .get, path: "", body: nil, headers: [.contentLength: "a"])
+        }
+    }
+    
+    func testCanNotCreatePostRequestWithoutBody() {
+        TS.assertFatalError {
+            _ = HTTPRequest(method: .post, path: "", body: nil)
+        }
+    }
+    
+    func testCanNotCreateGetRequestWithBody() {
+        TS.assertFatalError {
+            _ = HTTPRequest(method: .get, path: "", body: .empty())
         }
     }
     
