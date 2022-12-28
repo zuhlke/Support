@@ -1,4 +1,3 @@
-import Combine
 import Foundation
 
 /// An error when performing an HTTP request
