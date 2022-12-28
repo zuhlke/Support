@@ -3,7 +3,10 @@ import YAMLBuilder
 
 public extension XCUIElementSnapshotProviding {
     
-    var snapshotRepresentation: String {
+    /// A readable representation of the UI.
+    ///
+    /// - Note: The representation format is not guaranteed to be stable across releases of the library, and therefore is not recommended for structural snapshot testing.
+    var snapshotDescription: String {
         get throws {
             YAMLEncoder().encode(YAML(root: try snapshot().node))
         }

@@ -12,6 +12,10 @@ complicated types. ``TS/assert(_:equals:after:message:file:line:)-7f32a`` functi
 `XCTAssertEqual`; except that it will try to provide better error messages by producing a diff output between the two
 types.
 
+If interested, see these packages that provide a similar functionality:
+* [Difference](https://github.com/krzysztofzablocki/Difference)
+* [swift-custom-dump](https://github.com/pointfreeco/swift-custom-dump)
+
 ### Asserting values are effectively the same
 
 Sometimes we may want to test that some values are “effectively the same” without them actually being “equal”.

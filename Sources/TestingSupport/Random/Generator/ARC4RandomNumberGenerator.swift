@@ -5,11 +5,15 @@ import Foundation
 // Licensed under Apache License v2.0 with Runtime Library Exception
 // https://github.com/apple/swift/blob/bc8f9e61d333b8f7a625f74d48ef0b554726e349/stdlib/public/TensorFlow/Random.swift
 
+/// A seeded random number generator.
 public struct ARC4RandomNumberGenerator: SeedableRandomNumberGenerator {
     private var state: [UInt8] = Array(0 ... 255)
     private var iPos: UInt8 = 0
     private var jPos: UInt8 = 0
-
+    
+    /// Creates a new random number generator.
+    ///
+    /// - Parameter seed: The seed for the generator.
     public init<T: BinaryInteger>(seed: T) {
         var newSeed: [UInt8] = []
         for i in 0 ..< seed.bitWidth / UInt8.bitWidth {
@@ -30,8 +34,7 @@ public struct ARC4RandomNumberGenerator: SeedableRandomNumberGenerator {
         }
     }
 
-    // Produce the next random UInt64 from the stream, and advance the internal
-    // state.
+    /// Produce the next random UInt64.
     public mutating func next() -> UInt64 {
         var result: UInt64 = 0
         for _ in 0 ..< UInt64.bitWidth / UInt8.bitWidth {

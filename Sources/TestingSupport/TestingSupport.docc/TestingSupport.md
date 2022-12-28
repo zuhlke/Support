@@ -15,6 +15,13 @@ A collection of commonly used code in tests.
 
 ### Random value generation
 
+- <doc:Random-Value-Generation>
 - ``ARC4RandomNumberGenerator``
 
-### UI testing
+### Convenience methods
+
+- <doc:Creating-Structured-Temporary-Directories>
+
+### Readable UI element snapshots
+
+- <doc:Readable-UI-Element-Snapshots>

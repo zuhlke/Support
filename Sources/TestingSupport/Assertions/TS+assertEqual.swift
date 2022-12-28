@@ -10,7 +10,7 @@ extension TS {
     ///
     /// This method applies the provided `normalizations` before comparing the values.
     ///
-    /// See “Improved Equality Checking” article for more details.
+    /// See <doc:Improved-Equality-Checking> article for more details.
     public static func assert<T>(
         _ actual: @autoclosure () throws -> T,
         equals expected: @autoclosure () throws -> T,
@@ -36,7 +36,7 @@ extension TS {
     ///
     /// This method applies the provided `normalizations` before comparing the values.
     ///
-    /// See “Improved Equality Checking” article for more details.
+    /// See <doc:Improved-Equality-Checking> article for more details.
     public static func assert<T>(
         _ actual: @autoclosure () throws -> T,
         equals expected: @autoclosure () throws -> T,
