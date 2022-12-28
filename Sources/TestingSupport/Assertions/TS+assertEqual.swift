@@ -7,6 +7,10 @@ extension TS {
     ///
     /// Functionally, this is equivalent to `XCTAssertEqual`. However, if the values are not equal, this method provides better diagnostics by generating a diff
     /// between the `actual` and `expected` values.
+    ///
+    /// This method applies the provided `normalizations` before comparing the values.
+    ///
+    /// See “Improved Equality Checking” article for more details.
     public static func assert<T>(
         _ actual: @autoclosure () throws -> T,
         equals expected: @autoclosure () throws -> T,
@@ -25,6 +29,14 @@ extension TS {
         )
     }
     
+    /// Asserts that `actual` and `expected` are equal.
+    ///
+    /// Functionally, this is equivalent to `XCTAssertEqual`. However, if the values are not equal, this method provides better diagnostics by generating a diff
+    /// between the `actual` and `expected` values.
+    ///
+    /// This method applies the provided `normalizations` before comparing the values.
+    ///
+    /// See “Improved Equality Checking” article for more details.
     public static func assert<T>(
         _ actual: @autoclosure () throws -> T,
         equals expected: @autoclosure () throws -> T,
@@ -45,10 +57,6 @@ extension TS {
         )
     }
     
-    /// Asserts that `actual` and `expected` are equal.
-    ///
-    /// Functionally, this is equivalent to `XCTAssertEqual`. However, if the values are not equal, this method provides better diagnostics by generating a diff
-    /// between the `actual` and `expected` values.
     private static func assertNormalized<T>(
         _ actual: @autoclosure () throws -> T,
         equals expected: @autoclosure () throws -> T,
