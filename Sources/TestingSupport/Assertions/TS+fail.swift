@@ -1,7 +1,7 @@
 import Foundation
 import XCTest
 
-private let key = "7CE4289E-6AF7-47D9-A195-B699AD9A61A4" // random
+private let key = String.random()
 
 extension TS {
     

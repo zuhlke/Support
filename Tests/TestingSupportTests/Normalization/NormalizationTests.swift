@@ -9,9 +9,4 @@ class NormalizationTests: XCTestCase {
         TS.assert(normalization.normalize(0), equals: 1)
     }
     
-    func testNormalizationWithMethodReference() {
-        let normalization = Normalization.applying(String.lowercased)
-        TS.assert(normalization.normalize("A"), equals: "a")
-    }
-    
 }

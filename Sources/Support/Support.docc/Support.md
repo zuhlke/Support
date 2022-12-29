@@ -18,7 +18,3 @@ The framework is effectively a collection of “micro frameworks”, each of whi
 
 - <doc:Scoping-Mutation>
 - <doc:Asserting-API-Contracts>
-
-### Describing Values
-
-- <doc:Describing-Values>

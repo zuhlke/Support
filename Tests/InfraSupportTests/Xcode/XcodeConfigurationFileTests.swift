@@ -6,7 +6,7 @@ import XCTest
 final class XcodeConfigurationFileTests: XCTestCase {
     
     func testLoadingNonExistingFileFails() throws {
-        try FileManager().makeTemporaryDirectory(perform: { url in
+        try FileManager().withTemporaryDirectory(perform: { url in
             let file = url.appendingPathComponent(.random())
             XCTAssertThrowsError(try Xcode.ConfigurationFile(contentsOf: file))
         })
@@ -106,7 +106,7 @@ final class XcodeConfigurationFileTests: XCTestCase {
     }
 
     private func load(_ contents: String) throws -> Xcode.ConfigurationFile {
-        try FileManager().makeTemporaryDirectory(perform: { url in
+        try FileManager().withTemporaryDirectory(perform: { url in
             let file = url.appendingPathComponent(.random())
             
             try contents.write(to: file, atomically: true, encoding: .utf8)

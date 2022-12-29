@@ -84,7 +84,7 @@ class HTTPRemoteTests: XCTestCase {
                 $0.addValue("1", forHTTPHeaderField: "client_id")
                 $0.addValue("1234", forHTTPHeaderField: "state")
             }
-            TS.assert(actual, equals: expected, after: .applying(URLRequest.normalizingForTesting))
+            TS.assert(actual, equals: expected, after: .normalizingForTesting)
         } catch {
             XCTFail("Unexpected error: \(error)")
         }
@@ -132,7 +132,7 @@ class HTTPRemoteTests: XCTestCase {
                 $0.addValue("4", forHTTPHeaderField: "content-length")
                 $0.httpBody = "body".data(using: .utf8)
             }
-            TS.assert(actual, equals: expected, after: .applying(URLRequest.normalizingForTesting))
+            TS.assert(actual, equals: expected, after: .normalizingForTesting)
         } catch {
             XCTFail("Unexpected error: \(error)")
         }
@@ -149,7 +149,7 @@ class HTTPRemoteTests: XCTestCase {
         do {
             let actual = try remote.urlRequest(from: request)
             let expected = URLRequest(url: URL(string: "https://example.com/path")!)
-            TS.assert(actual, equals: expected, after: .applying(URLRequest.normalizingForTesting))
+            TS.assert(actual, equals: expected, after: .normalizingForTesting)
         } catch {
             XCTFail("Unexpected error: \(error)")
         }
