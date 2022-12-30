@@ -6,6 +6,8 @@ public enum Runtime {
     /// Returns all classes that (directly or indirectly) conform to ``RuntimeDiscoverable``.
     ///
     /// Calling this method has a non-trivial overhead, so you should process and cache the result as appropriate.
+    ///
+    /// See <doc:Runtime-Class-Discovery> to learn more about the purpose of this method.
     public static var allDiscoveredClasses: some Sequence<RuntimeDiscoverable.Type> {
         // AnyClass.init seems to register new objective-C class the first time it is called.
         //
