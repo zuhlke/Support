@@ -16,6 +16,10 @@ let package = Package(
             targets: ["Support"]
         ),
         .library(
+            name: "ScenariosSupport",
+            targets: ["ScenariosSupport"]
+        ),
+        .library(
             name: "TestingSupport",
             targets: ["TestingSupport"]
         ),
@@ -29,6 +33,10 @@ let package = Package(
         .target(
             name: "Support",
             dependencies: []
+        ),
+        .target(
+            name: "ScenariosSupport",
+            dependencies: ["Support"]
         ),
         .target(
             name: "TestingSupport",
@@ -45,6 +53,10 @@ let package = Package(
         .testTarget(
             name: "SupportTests",
             dependencies: ["Support", "TestingSupport"]
+        ),
+        .testTarget(
+            name: "ScenariosSupportTests",
+            dependencies: ["ScenariosSupport", "Support", "TestingSupport"]
         ),
         .testTarget(
             name: "TestingSupportTests",
