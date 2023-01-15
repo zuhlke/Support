@@ -23,10 +23,6 @@ let package = Package(
             name: "TestingSupport",
             targets: ["TestingSupport"]
         ),
-        .library(
-            name: "InfraSupport",
-            targets: ["InfraSupport"]
-        ),
     ],
     dependencies: [],
     targets: [
