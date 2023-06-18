@@ -24,7 +24,7 @@ public final class URLSessionHTTPClient: HTTPClient {
         await Result { try remote.urlRequest(from: request) }
             .mapError(HTTPRequestPerformingError.rejectedRequest)
             .flatMap { urlRequest in
-                await Result { try await URLSession.shared.data(for: urlRequest, delegate: nil) }
+                await Result { try await session.data(for: urlRequest, delegate: nil) }
                     .mapError(HTTPRequestPerformingError.fromUntypedNetworkError)
             }
             .map { HTTPResponse(httpUrlResponse: $1 as! HTTPURLResponse, bodyContent: $0) }
