@@ -63,11 +63,11 @@ extension Composite.Step {
     
     @NodeMappingBuilder
     var yamlDescription: YAML.Map {
-        if let name = name {
+        if let name {
             "name".is(.text(name))
         }
         
-        if let id = id {
+        if let id {
             "id".is(.text(id))
         }
         

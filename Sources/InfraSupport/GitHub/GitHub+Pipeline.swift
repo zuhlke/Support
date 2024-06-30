@@ -33,7 +33,7 @@ extension GitHub.Pipeline {
     /// The initialiser performs some validation on the workflow files, and may throw errors if it finds issues.
     /// The exact validations performed may evolve in each version of the package.
     /// Therefore, it’s highly recommended to re-run this pipeline after a version upgrade to ensure the definitions are still valid.
-    init<PipelineDefinition>(pipeline: PipelineDefinition) throws where PipelineDefinition: GitHubPipeline {
+    init(pipeline: some GitHubPipeline) throws {
         let workflows = pipeline.workflows
         let actions = workflows.lazy
             .flatMap(\.jobs)

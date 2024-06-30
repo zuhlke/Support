@@ -74,7 +74,7 @@ extension Xcode {
                     
                     let path = scanner.scanUpToString(String(quote))
                     
-                    guard let path = path, scanner.scanString(String(quote)) != nil else {
+                    guard let path, scanner.scanString(String(quote)) != nil else {
                         throw MalformedConfiguration(contents: contents)
                     }
                     
@@ -91,13 +91,13 @@ extension Xcode {
                     while scanner.scanString("[") != nil {
                         repeat {
                             let keyword = AssignmentSelector.supportedConditions.first { scanner.scanString($0) != nil }
-                            guard let keyword = keyword, scanner.scanString("=") != nil else {
+                            guard let keyword, scanner.scanString("=") != nil else {
                                 throw MalformedConfiguration(contents: contents)
                             }
                             scanner.charactersToBeSkipped = nil
                             let value = scanner.scanCharacters(from: .conditionValue)
                             scanner.charactersToBeSkipped = .whitespaces
-                            guard let value = value else {
+                            guard let value else {
                                 throw MalformedConfiguration(contents: contents)
                             }
                             conditions[keyword] = value
@@ -129,11 +129,10 @@ extension Xcode {
                     kind = .empty
                 }
                 
-                let comment: String?
-                if scanner.scanString("//") != nil { // Comment
-                    comment = scanner.scanUpToString("\n")?.trimmingCharacters(in: .whitespaces)
+                let comment: String? = if scanner.scanString("//") != nil { // Comment
+                    scanner.scanUpToString("\n")?.trimmingCharacters(in: .whitespaces)
                 } else {
-                    comment = nil
+                    nil
                 }
                 
                 guard scanner.isAtEnd || scanner.scanString("\n") != nil else {
@@ -192,11 +191,10 @@ private extension Xcode.ConfigurationFile.LineKind {
         case .include(let path):
             return #"#include "\#(path)""#
         case .assignment(let selector, value: let value):
-            let conditional: String
-            if selector.conditions.isEmpty {
-                conditional = ""
+            let conditional: String = if selector.conditions.isEmpty {
+                ""
             } else {
-                conditional = selector.conditions
+                selector.conditions
                     .sorted(using: KeyPathComparator(\.key))
                     .map { "[\($0)=\($1)]" }
                     .joined()

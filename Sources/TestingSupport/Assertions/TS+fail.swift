@@ -48,7 +48,7 @@ extension TS {
             XCTFail("Expected a failure", file: file, line: line)
             return
         }
-        if let expectedMessage = expectedMessage {
+        if let expectedMessage {
             let actualMessage = failures[0].message
             guard expectedMessage == actualMessage else {
                 let description =

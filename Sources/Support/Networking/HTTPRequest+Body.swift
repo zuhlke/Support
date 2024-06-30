@@ -38,8 +38,8 @@ extension HTTPRequest.Body {
     }
     
     /// Creates a body by encoding `content` and using `application/json` content type.
-    public static func json<Content: Encodable>(_ content: Content, encoder: JSONEncoder = JSONEncoder()) throws -> HTTPRequest.Body {
-        .json(try encoder.encode(content))
+    public static func json(_ content: some Encodable, encoder: JSONEncoder = JSONEncoder()) throws -> HTTPRequest.Body {
+        try .json(encoder.encode(content))
     }
     
 }

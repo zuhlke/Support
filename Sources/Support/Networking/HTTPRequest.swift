@@ -167,7 +167,6 @@ extension HTTPRequest {
         )
     }
     
-    
     /// Returns an HTTP DELETE request
     /// - Parameters:
     ///   - path: The request’s path. If the path is not empty, it must start with `/`.

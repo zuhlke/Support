@@ -12,7 +12,7 @@ class GitHubPipelineTests: XCTestCase {
             workflows: [pipeline.workflow]
         )
         let encoder = GitHub.MetadataEncoder()
-        TS.assert(try encoder.projectFiles(for: pipeline), equals: encoder.projectFiles(for: expected))
+        try TS.assert(encoder.projectFiles(for: pipeline), equals: encoder.projectFiles(for: expected))
     }
     
 }

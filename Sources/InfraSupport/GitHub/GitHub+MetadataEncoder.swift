@@ -34,7 +34,7 @@ extension GitHub.MetadataEncoder {
     /// This method performs some validation on the pipeline, and may throw errors if it finds issues.
     /// The exact validations performed may evolve in each version of the package.
     /// Therefore, it’s highly recommended to re-run this pipeline after a version upgrade to ensure the definitions are still valid.
-    public func projectFiles<P: GitHubPipeline>(for pipeline: P) throws -> [ProjectFile] {
+    public func projectFiles(for pipeline: some GitHubPipeline) throws -> [ProjectFile] {
         let pipeline = try GitHub.Pipeline(pipeline: pipeline)
         return pipeline.actions.map { projectFile(for: $0) }
             + pipeline.workflows.map { projectFile(for: $0) }

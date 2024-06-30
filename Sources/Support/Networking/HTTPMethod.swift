@@ -27,15 +27,15 @@ extension HTTPMethod {
     ///
     public var bodyRequirement: BodyRequirment {
         switch self {
-        case .get: return .mustNotHave // Spec says "SHOULD NOT generate content"
-        case .head: return .mustNotHave // Spec says "SHOULD NOT generate content"
-        case .post: return .mustHave // Implied by expectations on request content
-        case .put: return .mustHave // Implied by expectations on request content
-        case .delete: return .mustNotHave // Spec says "SHOULD NOT generate content"
-        case .connect: return .mustNotHave // Spec says "does not have content"
-        case .options: return .mustNotHave // Spec says "does not define any use for such content"
-        case .trace: return .mustNotHave // Spec says "MUST NOT send content"
-        case .patch: return .mustHave // Implied by expectations on request content
+        case .get: .mustNotHave // Spec says "SHOULD NOT generate content"
+        case .head: .mustNotHave // Spec says "SHOULD NOT generate content"
+        case .post: .mustHave // Implied by expectations on request content
+        case .put: .mustHave // Implied by expectations on request content
+        case .delete: .mustNotHave // Spec says "SHOULD NOT generate content"
+        case .connect: .mustNotHave // Spec says "does not have content"
+        case .options: .mustNotHave // Spec says "does not define any use for such content"
+        case .trace: .mustNotHave // Spec says "MUST NOT send content"
+        case .patch: .mustHave // Implied by expectations on request content
         }
     }
     

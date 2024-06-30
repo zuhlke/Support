@@ -46,8 +46,8 @@ extension HTTPResponse.Body {
         json(Data(string.utf8))
     }
     
-    public static func json<Content: Encodable>(_ content: Content, encoder: JSONEncoder = JSONEncoder()) throws -> HTTPRequest.Body {
-        .json(try encoder.encode(content))
+    public static func json(_ content: some Encodable, encoder: JSONEncoder = JSONEncoder()) throws -> HTTPRequest.Body {
+        try .json(encoder.encode(content))
     }
     
 }

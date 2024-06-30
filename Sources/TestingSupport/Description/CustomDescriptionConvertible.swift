@@ -7,9 +7,9 @@ protocol CustomDescriptionConvertible {
 extension Data: CustomDescriptionConvertible {
     var structuredDescription: Description {
         if let string = String(data: self, encoding: .utf8) {
-            return .string(string)
+            .string(string)
         } else {
-            return .dictionary([
+            .dictionary([
                 "base64Encoded": .string(base64EncodedString()),
             ])
         }

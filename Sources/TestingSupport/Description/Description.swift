@@ -33,7 +33,7 @@ extension Description {
             var instanceMirror: Mirror? = mirror
             while instanceMirror != nil {
                 instanceMirror?.children.forEach { key, value in
-                    if let key = key {
+                    if let key {
                         dictionary[key] = Description(for: value)
                     }
                 }
@@ -44,10 +44,10 @@ extension Description {
             
         case .optional:
             var value: Any?
-            mirror.children.forEach { _, child in
+            for (_, child) in mirror.children {
                 value = child
             }
-            if let value = value {
+            if let value {
                 self = Description(for: value)
             } else {
                 self = .null
@@ -68,10 +68,10 @@ extension Description {
             
         case .dictionary:
             var dictionary = [String: Description]()
-            mirror.children.forEach { _, child in
+            for (_, child) in mirror.children {
                 var key: String?
                 var value: Any?
-                Mirror(reflecting: child).children.forEach { label, subchild in
+                for (label, subchild) in Mirror(reflecting: child).children {
                     switch label {
                     case "key":
                         key = subchild as? String
@@ -81,7 +81,7 @@ extension Description {
                         break
                     }
                 }
-                if let key = key, let value = value {
+                if let key, let value {
                     dictionary[key] = Description(for: value)
                 }
             }
@@ -115,17 +115,17 @@ private extension Description {
     var jsonObject: Any {
         switch self {
         case .string(let value):
-            return value
+            value
         case .dictionary(let value):
-            return value.mapValues { $0.jsonObject }
+            value.mapValues { $0.jsonObject }
         case .array(let value):
-            return value.map(\.jsonObject)
+            value.map(\.jsonObject)
         case .set(let value):
-            return value
+            value
                 .sorted { "\($0)" < "\($1)" } // doesn’t matter as long as it’s predictable
                 .map(\.jsonObject)
         case .null:
-            return NSNull()
+            NSNull()
         }
     }
 }

@@ -176,17 +176,17 @@ private extension YAMLEncoder {
             .drop { instructions in
                 switch instructions {
                 case .lineBreak, .groupBreak, .softLineBreak, .consumeNextSoftLineBreak, .resetGroup:
-                    return true
+                    true
                 case .incrementLevel, .decrementLevel, .text:
-                    return false
+                    false
                 }
             }
             .reversed().drop { instructions in
                 switch instructions {
                 case .lineBreak, .groupBreak, .incrementLevel, .decrementLevel, .softLineBreak, .consumeNextSoftLineBreak, .resetGroup:
-                    return true
+                    true
                 case .text:
-                    return false
+                    false
                 }
             }.reversed()
     }
@@ -196,9 +196,9 @@ private extension YAML.Node {
     var needsGroupSeparator: Bool {
         switch self {
         case .text:
-            return false
+            false
         case .map, .list:
-            return true
+            true
         }
     }
 }
@@ -207,9 +207,9 @@ private extension YAML.Node {
     var incrementsLevel: Bool {
         switch self {
         case .text, .map:
-            return true
+            true
         case .list:
-            return false
+            false
         }
     }
 }

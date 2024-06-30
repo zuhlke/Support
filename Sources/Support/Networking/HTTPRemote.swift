@@ -104,8 +104,8 @@ extension HTTPRemote: URLRequestProviding {
         let url = try url(for: request, scheme: .https)
         
         return mutating(URLRequest(url: url)) { urlRequest in
-            headers.fields.forEach {
-                urlRequest.addValue($0.value, forHTTPHeaderField: $0.key.lowercaseName)
+            for field in headers.fields {
+                urlRequest.addValue(field.value, forHTTPHeaderField: field.key.lowercaseName)
             }
             
             urlRequest.httpMethod = request.method.rawValue
@@ -134,8 +134,8 @@ extension HTTPRemote.HeadersMergePolicy {
         }
         
         return mutating(remoteHeaders) { remoteHeaders in
-            requestHeaders.fields.forEach {
-                remoteHeaders.fields[$0.key] = $0.value
+            for field in requestHeaders.fields {
+                remoteHeaders.fields[field.key] = field.value
             }
         }
     }

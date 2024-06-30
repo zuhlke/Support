@@ -32,7 +32,7 @@ extension Output {
     var yamlDescription: YAML.Map.Element {
         id.is {
             "description".is(.text(description))
-            if let value = value {
+            if let value {
                 "value".is(.text(value))
             }
         }

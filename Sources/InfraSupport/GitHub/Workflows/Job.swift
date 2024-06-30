@@ -203,11 +203,11 @@ extension GitHub.Workflow.Job.Step {
         YAML.Node {
             "name".is(.text(name))
             
-            if let condition = condition {
+            if let condition {
                 "if".is(.text(condition))
             }
             
-            if let workingDirectory = workingDirectory {
+            if let workingDirectory {
                 "working-directory".is(.text(workingDirectory))
             }
             

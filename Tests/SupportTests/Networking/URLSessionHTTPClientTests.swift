@@ -27,7 +27,7 @@ private struct MockURLSession: URLSessionProtocol {
     var response: HTTPURLResponse
     
     func data(for request: URLRequest, delegate: URLSessionTaskDelegate?) async throws -> (Data, URLResponse) {
-        return (data, response)
+        (data, response)
     }
     
 }

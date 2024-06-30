@@ -12,6 +12,8 @@ class TSAssertFatalErrorTests: XCTestCase {
     
     func testThatPreconditionsAreCaptured() {
         TS.assertFatalError {
+            // We’re testing `precondition` here; don’t format it
+            // swiftformat:disable assertionFailures
             Supervisor.precondition(false)
         }
     }

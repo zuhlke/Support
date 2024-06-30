@@ -35,7 +35,7 @@ extension Input {
         id.is {
             "description".is(.text(description))
             "required".is(.text(isRequired ? "true" : "false"))
-            if let defaultValue = defaultValue {
+            if let defaultValue {
                 "default".is(.text(defaultValue))
             }
         }

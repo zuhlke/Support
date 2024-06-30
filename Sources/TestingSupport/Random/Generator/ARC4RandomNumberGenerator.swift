@@ -14,7 +14,7 @@ public struct ARC4RandomNumberGenerator: SeedableRandomNumberGenerator {
     /// Creates a new random number generator.
     ///
     /// - Parameter seed: The seed for the generator.
-    public init<T: BinaryInteger>(seed: T) {
+    public init(seed: some BinaryInteger) {
         var newSeed: [UInt8] = []
         for i in 0 ..< seed.bitWidth / UInt8.bitWidth {
             newSeed.append(UInt8(truncatingIfNeeded: seed >> (UInt8.bitWidth * i)))

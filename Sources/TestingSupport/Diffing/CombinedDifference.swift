@@ -19,12 +19,12 @@ extension BidirectionalCollection where Element: Equatable {
         var lines = other.map { CombinedDifference(element: $0, change: .none) }
         
         var indexes = (0 ..< lines.count).map { $0 }
-        difference.removals.reversed().forEach {
-            indexes.remove(at: $0.offset)
-            lines[$0.offset].change = .removed
+        for removal in difference.removals.reversed() {
+            indexes.remove(at: removal.offset)
+            lines[removal.offset].change = .removed
         }
         
-        difference.insertions.forEach { change in
+        for change in difference.insertions {
             let indexToInsert = (change.offset < indexes.count) ? indexes[change.offset] : lines.count
             lines.insert(CombinedDifference(element: change.element, change: .added), at: indexToInsert)
             for i in 0 ..< indexes.count {
@@ -42,14 +42,14 @@ private extension CollectionDifference.Change {
     var offset: Int {
         switch self {
         case .insert(let offset, _, _), .remove(let offset, _, _):
-            return offset
+            offset
         }
     }
     
     var element: ChangeElement {
         switch self {
         case .insert(_, let element, _), .remove(_, let element, _):
-            return element
+            element
         }
     }
     

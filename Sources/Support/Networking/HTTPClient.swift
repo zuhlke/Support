@@ -40,10 +40,10 @@ extension HTTPClient {
             .flatMap { response in
                 switch response.statusCode {
                 case 200 ..< 300:
-                    return Result { try endpoint.parse(response) }
+                    Result { try endpoint.parse(response) }
                         .mapError(HTTPEndpointCallError.badResponse)
                 default:
-                    return .failure(.httpError(response: response))
+                    .failure(.httpError(response: response))
                 }
             }
     }

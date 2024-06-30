@@ -19,9 +19,9 @@ extension TS {
         file: StaticString = #file,
         line: UInt = #line
     ) where T: Equatable {
-        assert(
-            try actual(),
-            equals: try expected(),
+        try assert(
+            actual(),
+            equals: expected(),
             after: normalization,
             message: message(),
             file: file,
@@ -48,9 +48,9 @@ extension TS {
         let normalize = { (value: T) -> T in
             normalizations.reduce(value) { $1.normalize($0) }
         }
-        assertNormalized(
-            normalize(try actual()),
-            equals: normalize(try expected()),
+        try assertNormalized(
+            normalize(actual()),
+            equals: normalize(expected()),
             message(),
             file: file,
             line: line
@@ -98,9 +98,9 @@ private extension CombinedDifference.Change {
     
     var description: String {
         switch self {
-        case .added: return "+++"
-        case .removed: return "---"
-        case .none: return "   "
+        case .added: "+++"
+        case .removed: "---"
+        case .none: "   "
         }
     }
     

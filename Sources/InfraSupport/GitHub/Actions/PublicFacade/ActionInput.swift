@@ -24,18 +24,18 @@ public struct ActionInput: Encodable {
     var defaultValue: String? {
         switch optionality {
         case .optional(let defaultValue):
-            return defaultValue
+            defaultValue
         case .required:
-            return nil
+            nil
         }
     }
     
     var isRequired: Bool {
         switch optionality {
         case .optional:
-            return false
+            false
         case .required:
-            return true
+            true
         }
     }
     

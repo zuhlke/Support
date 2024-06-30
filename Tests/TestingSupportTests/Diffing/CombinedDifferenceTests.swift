@@ -42,7 +42,7 @@ class CombinedDifferenceTests: XCTestCase {
     
 }
 
-private extension Array where Element == UUID {
+private extension [UUID] {
     
     static func random(length: Int) -> [UUID] {
         (0 ..< length).map { _ in UUID() }

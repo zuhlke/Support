@@ -14,7 +14,7 @@ class TSAssertEqualTests: XCTestCase {
     func testThrowingInActualValueClosureIsReported() {
         TS.assertFailsOnces(expectedMessage: "Threw error “Error()”") {
             do { // boilderplate as compiler _thinks_ we’re a throwing closure
-                TS.assert(try fail(), equals: 2)
+                try TS.assert(fail(), equals: 2)
                 _ = try fail()
             } catch {}
         }
@@ -23,7 +23,7 @@ class TSAssertEqualTests: XCTestCase {
     func testThrowingInExpectedValueClosureIsReported() {
         TS.assertFailsOnces(expectedMessage: "Threw error “Error()”") {
             do { // boilderplate as compiler _thinks_ we’re a throwing closure
-                TS.assert(2, equals: try fail())
+                try TS.assert(2, equals: fail())
                 _ = try fail()
             } catch {}
         }

@@ -80,7 +80,7 @@ class HTTPServiceTests: XCTestCase {
             $0.mock.output = expected
         }
         let result = await service.mock(with: UUID())
-        TS.assert(try result.get(), equals: expected)
+        try TS.assert(result.get(), equals: expected)
     }
     
     func testSucceedingWithNoInput() async {
@@ -89,7 +89,7 @@ class HTTPServiceTests: XCTestCase {
             $0.noInputMock.output = expected
         }
         let result = await service.noInputMock
-        TS.assert(try result.get(), equals: expected)
+        try TS.assert(result.get(), equals: expected)
     }
     
 }

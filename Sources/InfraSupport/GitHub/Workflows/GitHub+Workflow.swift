@@ -93,21 +93,21 @@ private extension GitHub.Workflow.Triggers.CodeChangeOptions {
     
     var content: YAML.Node {
         YAML.Node {
-            if let branches = branches {
+            if let branches {
                 "branches".is {
                     for branch in branches {
                         branch
                     }
                 }
             }
-            if let tags = tags {
+            if let tags {
                 "tags".is {
                     for tag in tags {
                         tag
                     }
                 }
             }
-            if let paths = paths {
+            if let paths {
                 "paths".is {
                     for path in paths {
                         path

@@ -132,7 +132,7 @@ private class Container<Value, Key: CodingKey>: KeyedEncodingContainerProtocol {
         fatalError()
     }
     
-    func encode<T>(_ value: T, forKey key: Key) throws where T: Encodable {
+    func encode(_ value: some Encodable, forKey key: Key) throws {
         guard let value = value as? Value else {
             fatalError()
         }
