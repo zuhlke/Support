@@ -27,7 +27,7 @@ public extension Supervisor {
     /// A supervised variant of `precondition()`.
     ///
     /// - SeeAlso: ``Supervisor/fatalError(_:file:line:)``.
-    static func precondition(_ condition: @autoclosure () -> Bool, _ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) {
+    static func precondition(_ condition: @autoclosure () -> Bool, _ message: @autoclosure () -> String = "", file: StaticString = #fileID, line: UInt = #line) {
         if !condition() {
             trap(message(), file: file, line: line)
         }
@@ -36,7 +36,7 @@ public extension Supervisor {
     /// A supervised variant of `preconditionFailure()`.
     ///
     /// - SeeAlso: ``Supervisor/fatalError(_:file:line:)``.
-    static func preconditionFailure(_ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) -> Never {
+    static func preconditionFailure(_ message: @autoclosure () -> String = "", file: StaticString = #fileID, line: UInt = #line) -> Never {
         trap(message(), file: file, line: line)
     }
     
@@ -44,7 +44,7 @@ public extension Supervisor {
     ///
     /// If this method was called as part of the `work` passed to ``Supervisor/runSupervised(_:)``, this exits the call and cause it to return ``ExitManner/fatalError``.
     /// Otherwise, the behaviour is the same as calling `Swift.fatalError()`.
-    static func fatalError(_ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) -> Never {
+    static func fatalError(_ message: @autoclosure () -> String = "", file: StaticString = #fileID, line: UInt = #line) -> Never {
         trap(message(), file: file, line: line)
     }
     
