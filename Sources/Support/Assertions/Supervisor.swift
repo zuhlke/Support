@@ -96,10 +96,10 @@ private extension Thread {
     
     static var supervisor: Supervisor? {
         get {
-            Thread.current.threadDictionary[Self.supervisorKey] as? Supervisor
+            Thread.current.threadDictionary[supervisorKey] as? Supervisor
         }
         set {
-            Thread.current.threadDictionary[Self.supervisorKey] = newValue
+            Thread.current.threadDictionary[supervisorKey] = newValue
         }
     }
         
