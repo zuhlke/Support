@@ -85,7 +85,7 @@ final class XcodeConfigurationFileTests: XCTestCase {
         XCTAssertThrowsError(try load("variable name =b")) // Variable name with a space
     }
     
-    private func assert(_ contents: String, is expected: Xcode.ConfigurationFile.LineKind, file: StaticString = #file, line: UInt = #line) {
+    private func assert(_ contents: String, is expected: Xcode.ConfigurationFile.LineKind, file: StaticString = #filePath, line: UInt = #line) {
         XCTAssertNil(contents.range(of: "\n"), "This command only supports single lines", file: file, line: line)
         do {
             let actual = try XCTUnwrap(load(contents).lines.first).kind
@@ -95,7 +95,7 @@ final class XcodeConfigurationFileTests: XCTestCase {
         }
     }
     
-    private func assert(_ contents: String, hasComment expected: String?, file: StaticString = #file, line: UInt = #line) {
+    private func assert(_ contents: String, hasComment expected: String?, file: StaticString = #filePath, line: UInt = #line) {
         XCTAssertNil(contents.range(of: "\n"), "This command only supports single lines", file: file, line: line)
         do {
             let actual = try XCTUnwrap(load(contents).lines.first).comment

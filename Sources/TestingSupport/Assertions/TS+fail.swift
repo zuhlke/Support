@@ -24,7 +24,7 @@ extension TS {
     ///
     /// Normally this behaves identical to calling `XCTFail`. However, when called inside the closure passed to `captureFailures`; the failure is captured
     /// and returned as a `Failure` instead of causing the test to fail.
-    static func fail(_ message: String = "", file: StaticString = #file, line: UInt = #line) {
+    static func fail(_ message: String = "", file: StaticString = #filePath, line: UInt = #line) {
         if let capture = _capture {
             capture(Failure(message: message, file: file.description, line: line))
         } else {
@@ -42,7 +42,7 @@ extension TS {
         return failures
     }
     
-    static func assertFailsOnces(expectedMessage: String? = nil, file: StaticString = #file, line: UInt = #line, work: () -> Void) {
+    static func assertFailsOnces(expectedMessage: String? = nil, file: StaticString = #filePath, line: UInt = #line, work: () -> Void) {
         let failures = captureFailures(in: work)
         guard failures.count == 1 else {
             XCTFail("Expected a failure", file: file, line: line)

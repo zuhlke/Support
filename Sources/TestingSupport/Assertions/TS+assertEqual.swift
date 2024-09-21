@@ -16,7 +16,7 @@ extension TS {
         equals expected: @autoclosure () throws -> T,
         after normalization: Normalization<T>...,
         message: @autoclosure () -> String = "",
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) where T: Equatable {
         try assert(
@@ -42,7 +42,7 @@ extension TS {
         equals expected: @autoclosure () throws -> T,
         after normalizations: [Normalization<T>],
         message: @autoclosure () -> String = "",
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) where T: Equatable {
         let normalize = { (value: T) -> T in
@@ -61,7 +61,7 @@ extension TS {
         _ actual: @autoclosure () throws -> T,
         equals expected: @autoclosure () throws -> T,
         _ message: @autoclosure () -> String = "",
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) where T: Equatable {
         do {
