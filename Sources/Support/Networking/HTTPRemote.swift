@@ -3,15 +3,15 @@ import Foundation
 /// A description of a remote service, including information such as host domain, path, and authentication details.
 public struct HTTPRemote {
     
-    public struct HeadersMergePolicy {
+    public struct HeadersMergePolicy: Sendable {
         
-        var merge: (_ remoteHeaders: HTTPHeaders, _ requestHeaders: HTTPHeaders) throws -> HTTPHeaders
+        var merge: @Sendable (_ remoteHeaders: HTTPHeaders, _ requestHeaders: HTTPHeaders) throws -> HTTPHeaders
         
     }
     
-    public struct QueryParametersMergePolicy {
+    public struct QueryParametersMergePolicy: @unchecked Sendable {
         
-        var merge: (_ remoteHeaders: [String: String], _ requestHeaders: [String: String]) throws -> [String: String]
+        var merge: @Sendable (_ remoteHeaders: [String: String], _ requestHeaders: [String: String]) throws -> [String: String]
         
     }
     
@@ -141,7 +141,7 @@ extension HTTPRemote.HeadersMergePolicy {
     }
     
     /// A custom header policy that accepts a closure to determine the behaviour.
-    public static func custom(merge: @escaping (_ remoteHeaders: HTTPHeaders, _ requestHeaders: HTTPHeaders) throws -> HTTPHeaders) -> HTTPRemote.HeadersMergePolicy {
+    public static func custom(merge: @escaping @Sendable (_ remoteHeaders: HTTPHeaders, _ requestHeaders: HTTPHeaders) throws -> HTTPHeaders) -> HTTPRemote.HeadersMergePolicy {
         HTTPRemote.HeadersMergePolicy(merge: merge)
     }
     
@@ -165,7 +165,7 @@ extension HTTPRemote.QueryParametersMergePolicy {
     }
     
     /// A custom header policy that accepts a closure to determine the behaviour.
-    public static func custom(merge: @escaping (_ remoteHeaders: [String: String], _ requestHeaders: [String: String]) throws -> [String: String]) -> HTTPRemote.QueryParametersMergePolicy {
+    public static func custom(merge: @escaping @Sendable (_ remoteHeaders: [String: String], _ requestHeaders: [String: String]) throws -> [String: String]) -> HTTPRemote.QueryParametersMergePolicy {
         HTTPRemote.QueryParametersMergePolicy(merge: merge)
     }
     

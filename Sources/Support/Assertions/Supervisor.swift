@@ -17,7 +17,7 @@ public struct Supervisor {
 public extension Supervisor {
     
     /// Indicates how a supervised work completed.
-    enum ExitManner {
+    enum ExitManner: Sendable {
         /// The work completed successfully.
         case normal
         /// The work caused a fatal error.
@@ -55,12 +55,15 @@ public extension Supervisor {
     ///
     /// - Parameter work: The work to perform
     /// - Returns: `fatalError` if `work` terminated due to a trap (e.g. `Supervisor.fatalError` was called); `normal` otherwise.
-    static func runSupervised(_ work: @escaping () -> Void) -> ExitManner {
-        var reason = ExitManner.normal
+    static func runSupervised(_ work: @escaping @Sendable () -> Void) -> ExitManner {
+        class Job: @unchecked Sendable {
+            var exitManner = ExitManner.normal
+        }
+        let box = Job()
         let sema = DispatchSemaphore(value: 0)
         let thread = Thread {
-            Thread.current.supervisor = Supervisor {
-                reason = .fatalError
+            Thread.supervisor = Supervisor {
+                box.exitManner = .fatalError
                 sema.signal()
                 Thread.exit()
                 fatalError("Unreachable")
@@ -70,7 +73,7 @@ public extension Supervisor {
         }
         thread.start()
         sema.wait()
-        return reason
+        return box.exitManner
     }
     
 }
@@ -78,7 +81,7 @@ public extension Supervisor {
 private extension Supervisor {
     
     static func trap(_ message: @autoclosure () -> String, file: StaticString, line: UInt) -> Never {
-        if let supervisor = Thread.current.supervisor {
+        if let supervisor = Thread.supervisor {
             supervisor.trapHandler()
         } else {
             Swift.fatalError(message(), file: file, line: line)
@@ -91,7 +94,7 @@ private extension Thread {
     
     private static let supervisorKey = UUID().uuidString
     
-    var supervisor: Supervisor? {
+    static var supervisor: Supervisor? {
         get {
             Thread.current.threadDictionary[Self.supervisorKey] as? Supervisor
         }

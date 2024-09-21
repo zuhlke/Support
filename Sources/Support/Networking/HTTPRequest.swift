@@ -6,7 +6,7 @@ import Foundation
 ///
 /// As an example, to call `https://example.com/service/v1/content`, you may create an `HTTPRequest` with `path` of `/content`.
 /// The rest of the URL information can be provided further down in the networking stack.
-public struct HTTPRequest: Equatable {
+public struct HTTPRequest: Equatable, Sendable {
     
     public let method: HTTPMethod
     public let path: String

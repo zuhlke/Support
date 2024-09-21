@@ -3,7 +3,7 @@ import Support
 
 public struct YAMLEncoder {
     
-    public struct Options {
+    public struct Options: Sendable {
         public var indentationSpaces = 2
         public var maximumGroupingDepth = 3
         public var includeNewLineAtEndOfFile = true

@@ -1,7 +1,7 @@
 import Foundation
 
 /// A collection of HTTP header fields.
-public struct HTTPHeaders: ExpressibleByDictionaryLiteral, Equatable {
+public struct HTTPHeaders: ExpressibleByDictionaryLiteral, Equatable, Sendable {
     
     public var fields: [HTTPHeaderFieldName: String]
     

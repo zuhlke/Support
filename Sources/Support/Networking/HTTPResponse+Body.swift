@@ -4,7 +4,7 @@ extension HTTPResponse {
     /// An HTTP response’s payload.
     ///
     /// In addition to payload’s data, this type specifies the content-type if it’s known.
-    public struct Body: Equatable {
+    public struct Body: Equatable, Sendable {
         public let content: Data
         public let type: String?
         public init(content: Data, type: String?) {

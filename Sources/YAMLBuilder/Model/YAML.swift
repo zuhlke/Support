@@ -1,8 +1,8 @@
 import Foundation
 
-public struct YAML: Equatable {
-    public struct Map: Equatable, ExpressibleByDictionaryLiteral {
-        public struct Element: Equatable {
+public struct YAML: Equatable, Sendable {
+    public struct Map: Equatable, ExpressibleByDictionaryLiteral, Sendable {
+        public struct Element: Equatable, Sendable {
             var key: String
             var node: Node
             var comment: String?
@@ -25,7 +25,7 @@ public struct YAML: Equatable {
         }
     }
 
-    public enum Node: Equatable, ExpressibleByStringLiteral, ExpressibleByDictionaryLiteral, ExpressibleByArrayLiteral, ExpressibleByStringInterpolation {
+    public enum Node: Equatable, ExpressibleByStringLiteral, ExpressibleByDictionaryLiteral, ExpressibleByArrayLiteral, ExpressibleByStringInterpolation, Sendable {
         case text(String)
         case map(Map)
         case list([Node])

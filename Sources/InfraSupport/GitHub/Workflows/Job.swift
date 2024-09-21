@@ -28,7 +28,7 @@ extension JobStepMethod where Self == GitHub.Workflow.Job.Step.ScriptMethod {
 extension GitHub.Workflow {
     public struct Job {
         
-        public struct Runner: ExpressibleByStringLiteral {
+        public struct Runner: ExpressibleByStringLiteral, Sendable {
             var label: String
             var comment: String?
             

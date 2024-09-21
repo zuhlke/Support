@@ -1,7 +1,7 @@
 import Foundation
 
 /// A URL scheme.
-public struct URLScheme: Equatable {
+public struct URLScheme: Equatable, Sendable {
     
     var canonicalValue: String
     
