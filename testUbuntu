@@ -4,4 +4,4 @@ set -e
 
 support_dir=$(dirname "$(realpath "$0")")
 
-docker run --rm -v $support_dir:/Support -w /Support swift:6.0 swift t
+docker run --rm -v $support_dir:/Support -w /Support swift:6.0 swift test
