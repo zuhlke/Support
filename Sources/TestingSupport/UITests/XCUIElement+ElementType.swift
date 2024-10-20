@@ -1,3 +1,4 @@
+#if canImport(Darwin)
 import XCTest
 
 extension XCUIElement.ElementType {
@@ -92,3 +93,4 @@ extension XCUIElement.ElementType {
     }
     
 }
+#endif

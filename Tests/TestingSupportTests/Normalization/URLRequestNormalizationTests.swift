@@ -1,4 +1,7 @@
 import Support
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 import TestingSupport
 import XCTest
 

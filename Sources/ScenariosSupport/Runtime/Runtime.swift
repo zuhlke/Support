@@ -1,3 +1,4 @@
+#if canImport(ObjectiveC)
 import Foundation
 
 /// A namespace for operations related to runtime.
@@ -44,3 +45,4 @@ private func class_inherited_conformsToProtocol(_ cls: AnyClass, _ p: Protocol) 
     guard let sup = class_getSuperclass(cls) else { return false }
     return class_inherited_conformsToProtocol(sup, p)
 }
+#endif

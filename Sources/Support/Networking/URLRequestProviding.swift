@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 
 /// Resolves an ``HTTPRequest`` to be passed to the networking stack.
 ///

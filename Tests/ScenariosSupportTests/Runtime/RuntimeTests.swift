@@ -1,3 +1,4 @@
+#if canImport(ObjectiveC)
 import Foundation
 import ScenariosSupport
 import TestingSupport
@@ -31,3 +32,4 @@ private final class FinalConformanceViaProtocol: Intermediate {}
 
 private class ConformanceViaProtocol: Intermediate {}
 private class InheritedConformanceViaProtocol: ConformanceViaProtocol {}
+#endif

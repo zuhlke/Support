@@ -1,3 +1,4 @@
+#if canImport(Darwin)
 import XCTest
 import YAMLBuilder
 
@@ -42,3 +43,4 @@ private extension XCUIElementSnapshot {
     }
     
 }
+#endif

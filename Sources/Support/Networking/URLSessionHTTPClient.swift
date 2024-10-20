@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 
 /// A concrete implementation of `HTTPClient` that uses `URLSession` to make the HTTP calls.
 public final class URLSessionHTTPClient: HTTPClient {

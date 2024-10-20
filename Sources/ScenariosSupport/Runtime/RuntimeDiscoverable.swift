@@ -1,3 +1,5 @@
+#if canImport(ObjectiveC)
+
 import Foundation
 
 /// A protocol that marks types to be found at runtime.
@@ -6,3 +8,5 @@ import Foundation
 ///
 /// See <doc:Runtime-Class-Discovery> to learn more about the purpose of this type.
 @objc public protocol RuntimeDiscoverable: AnyObject {}
+
+#endif
