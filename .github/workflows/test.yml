@@ -11,11 +11,15 @@ on:
 
 jobs:
   test:
-    name: Build and Test
+    name: Test
 
     # See available software: https://github.com/actions/virtual-environments/blob/master/images/macos/macos-15-Readme.md
-    runs-on: macos-15
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
 
+    runs-on: ${{ matrix.os }}
+    
     steps:
     - uses: actions/checkout@v4
 
