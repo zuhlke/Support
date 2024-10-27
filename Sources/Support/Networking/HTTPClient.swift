@@ -38,8 +38,8 @@ extension HTTPClient {
                     .mapError(HTTPEndpointCallError.init)
             }
             .flatMap { response in
-                switch response.statusCode {
-                case 200 ..< 300:
+                switch response.status.kind {
+                case .successful:
                     Result { try endpoint.parse(response) }
                         .mapError(HTTPEndpointCallError.badResponse)
                 default:

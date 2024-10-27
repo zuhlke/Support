@@ -10,12 +10,13 @@ import HTTPTypes
 ///
 /// `HTTPResponse` does not expose many properties of the response otherwise available on `URLResponse` and `HTTPURLResponse` such as the `url` to better enforce separation of concerns.
 public struct HTTPResponse: Equatable, Sendable {
-    public let statusCode: Int
+    public let status: HTTPTypes.HTTPResponse.Status
     public let body: Body
     public let headers: HTTPHeaders
     
-    public var status: HTTPTypes.HTTPResponse.Status {
-        .init(code: statusCode)
+    @available(*, deprecated, message: "Use `status` instead.")
+    public var statusCode: Int {
+        status.code
     }
     
     public init(
@@ -23,7 +24,7 @@ public struct HTTPResponse: Equatable, Sendable {
         body: Body,
         headers: HTTPHeaders = HTTPHeaders()
     ) {
-        self.statusCode = statusCode
+        self.status = .init(code: statusCode)
         self.body = body
         self.headers = headers
     }
