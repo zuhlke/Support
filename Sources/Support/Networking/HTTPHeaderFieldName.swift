@@ -6,6 +6,7 @@ import HTTPTypes
 /// `HTTPHeaderFieldName` provides a type-safe way of referring to HTTP header fields.
 ///
 /// `HTTPHeaderFieldName` is case-insensitive, so `HTTPHeaderFieldName("CUSTOM-FIELD") == HTTPHeaderFieldName("custom-field")` evaluates to true.
+@available(*, deprecated, message: "Use `HTTPField.Name` instead.")
 public struct HTTPHeaderFieldName: Hashable, Sendable {
     public var lowercaseName: String
     

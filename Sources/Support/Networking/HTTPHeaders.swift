@@ -2,6 +2,7 @@ import Foundation
 import HTTPTypes
 
 /// A collection of HTTP header fields.
+@available(*, deprecated, message: "Use `HTTPFields` instead.")
 public struct HTTPHeaders: ExpressibleByDictionaryLiteral, Equatable, Sendable {
     
     public var fields: [HTTPHeaderFieldName: String]
