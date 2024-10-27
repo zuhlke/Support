@@ -110,7 +110,7 @@ class HTTPRemoteTests: XCTestCase {
             body: .plain("body"),
             fragment: "subpage",
             queryParameters: ["query": "value"],
-            headers: [HTTPHeaderFieldName("state"): "1234"]
+            headerFields: [HTTPField.Name("state")!: "1234"]
         )
         
         do {
@@ -194,7 +194,7 @@ class HTTPRemoteTests: XCTestCase {
             headerFields: [headerName: "true"]
         )
         
-        let request = HTTPRequest.get("/path", headers: [.init(headerName.canonicalName): "false"])
+        let request = HTTPRequest.get("/path", headerFields: [headerName: "false"])
         
         XCTAssertThrowsError(try remote.urlRequest(from: request))
     }
@@ -209,7 +209,7 @@ class HTTPRemoteTests: XCTestCase {
         
         remote.headersMergePolicy = .custom { remoteHeaders, _ in remoteHeaders }
         
-        let request = HTTPRequest.get("/path", headers: [.init(headerName.canonicalName): "false"])
+        let request = HTTPRequest.get("/path", headerFields: [headerName: "false"])
         
         let urlRequest = try remote.urlRequest(from: request)
         TS.assert(urlRequest.allHTTPHeaderFields?.count, equals: 1)

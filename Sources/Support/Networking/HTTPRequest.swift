@@ -36,7 +36,7 @@ public struct HTTPRequest: Equatable, Sendable {
         body: Body?,
         fragment: String? = nil,
         queryParameters: [String: String] = [:],
-        headers: HTTPHeaders = HTTPHeaders()
+        headerFields: HTTPFields = HTTPFields()
     ) {
         guard path.isEmpty || path.starts(with: "/") else {
             Supervisor.fatalError("`path` must start with `/` if it’s not empty.")
@@ -52,9 +52,9 @@ public struct HTTPRequest: Equatable, Sendable {
             break
         }
         
-        for bodyHeader in HTTPHeaderFieldName.bodyHeaders {
-            guard !headers.hasValue(for: bodyHeader) else {
-                Supervisor.fatalError("\(bodyHeader.lowercaseName) header must not be set separately. Set the content type on the body.")
+        for bodyHeaderFieldName in [HTTPField.Name.contentType, .contentLength] {
+            guard !headerFields.contains(bodyHeaderFieldName) else {
+                Supervisor.fatalError("\(bodyHeaderFieldName) header must not be set separately. Set the content type on the body.")
             }
         }
         
@@ -63,7 +63,7 @@ public struct HTTPRequest: Equatable, Sendable {
         self.body = body
         self.fragment = fragment
         self.queryParameters = queryParameters
-        self.headerFields = HTTPFields(headers)
+        self.headerFields = headerFields
     }
     
 }
@@ -81,7 +81,7 @@ extension HTTPRequest {
         _ path: String,
         fragment: String? = nil,
         queryParameters: [String: String] = [:],
-        headers: HTTPHeaders = HTTPHeaders()
+        headerFields: HTTPFields = HTTPFields()
     ) -> HTTPRequest {
         HTTPRequest(
             method: .get,
@@ -89,7 +89,7 @@ extension HTTPRequest {
             body: nil,
             fragment: fragment,
             queryParameters: queryParameters,
-            headers: headers
+            headerFields: headerFields
         )
     }
         
@@ -106,7 +106,7 @@ extension HTTPRequest {
         body: Body,
         fragment: String? = nil,
         queryParameters: [String: String] = [:],
-        headers: HTTPHeaders = HTTPHeaders()
+        headerFields: HTTPFields = HTTPFields()
     ) -> HTTPRequest {
         HTTPRequest(
             method: .post,
@@ -114,7 +114,7 @@ extension HTTPRequest {
             body: body,
             fragment: fragment,
             queryParameters: queryParameters,
-            headers: headers
+            headerFields: headerFields
         )
     }
     
@@ -131,7 +131,7 @@ extension HTTPRequest {
         body: Body,
         fragment: String? = nil,
         queryParameters: [String: String] = [:],
-        headers: HTTPHeaders = HTTPHeaders()
+        headerFields: HTTPFields = HTTPFields()
     ) -> HTTPRequest {
         HTTPRequest(
             method: .put,
@@ -139,7 +139,7 @@ extension HTTPRequest {
             body: body,
             fragment: fragment,
             queryParameters: queryParameters,
-            headers: headers
+            headerFields: headerFields
         )
     }
  
@@ -156,7 +156,7 @@ extension HTTPRequest {
         body: Body,
         fragment: String? = nil,
         queryParameters: [String: String] = [:],
-        headers: HTTPHeaders = HTTPHeaders()
+        headerFields: HTTPFields = HTTPFields()
     ) -> HTTPRequest {
         HTTPRequest(
             method: .patch,
@@ -164,7 +164,7 @@ extension HTTPRequest {
             body: body,
             fragment: fragment,
             queryParameters: queryParameters,
-            headers: headers
+            headerFields: headerFields
         )
     }
     
@@ -179,7 +179,7 @@ extension HTTPRequest {
         _ path: String,
         fragment: String? = nil,
         queryParameters: [String: String] = [:],
-        headers: HTTPHeaders = HTTPHeaders()
+        headerFields: HTTPFields = HTTPFields()
     ) -> HTTPRequest {
         HTTPRequest(
             method: .delete,
@@ -187,7 +187,7 @@ extension HTTPRequest {
             body: nil,
             fragment: fragment,
             queryParameters: queryParameters,
-            headers: headers
+            headerFields: headerFields
         )
     }
     
@@ -202,7 +202,7 @@ extension HTTPRequest {
         _ path: String,
         fragment: String? = nil,
         queryParameters: [String: String] = [:],
-        headers: HTTPHeaders = HTTPHeaders()
+        headerFields: HTTPFields = HTTPFields()
     ) -> HTTPRequest {
         HTTPRequest(
             method: .options,
@@ -210,7 +210,7 @@ extension HTTPRequest {
             body: nil,
             fragment: fragment,
             queryParameters: queryParameters,
-            headers: headers
+            headerFields: headerFields
         )
     }
     
@@ -225,7 +225,7 @@ extension HTTPRequest {
         _ path: String,
         fragment: String? = nil,
         queryParameters: [String: String] = [:],
-        headers: HTTPHeaders = HTTPHeaders()
+        headerFields: HTTPFields = HTTPFields()
     ) -> HTTPRequest {
         HTTPRequest(
             method: .connect,
@@ -233,7 +233,7 @@ extension HTTPRequest {
             body: nil,
             fragment: fragment,
             queryParameters: queryParameters,
-            headers: headers
+            headerFields: headerFields
         )
     }
     
@@ -248,7 +248,7 @@ extension HTTPRequest {
         _ path: String,
         fragment: String? = nil,
         queryParameters: [String: String] = [:],
-        headers: HTTPHeaders = HTTPHeaders()
+        headerFields: HTTPFields = HTTPFields()
     ) -> HTTPRequest {
         HTTPRequest(
             method: .head,
@@ -256,7 +256,7 @@ extension HTTPRequest {
             body: nil,
             fragment: fragment,
             queryParameters: queryParameters,
-            headers: headers
+            headerFields: headerFields
         )
     }
     
@@ -271,7 +271,7 @@ extension HTTPRequest {
         _ path: String,
         fragment: String? = nil,
         queryParameters: [String: String] = [:],
-        headers: HTTPHeaders = HTTPHeaders()
+        headerFields: HTTPFields = HTTPFields()
     ) -> HTTPRequest {
         HTTPRequest(
             method: .trace,
@@ -279,7 +279,7 @@ extension HTTPRequest {
             body: nil,
             fragment: fragment,
             queryParameters: queryParameters,
-            headers: headers
+            headerFields: headerFields
         )
     }
 
@@ -294,4 +294,245 @@ extension HTTPRequest {
         HTTPHeaders(headerFields)
     }
     
+    @available(*, deprecated, message: "")
+    init(
+        method: HTTPMethod,
+        path: String,
+        body: Body?,
+        fragment: String? = nil,
+        queryParameters: [String: String] = [:],
+        headers: HTTPHeaders
+    ) {
+        self.init(
+            method: method,
+            path: path,
+            body: body,
+            fragment: fragment,
+            queryParameters: queryParameters,
+            headerFields: HTTPFields(headers)
+        )
+    }
+    
+    /// Returns an HTTP GET request
+    /// - Parameters:
+    ///   - path: The request’s path. If the path is not empty, it must start with `/`.
+    ///   - fragment: The URL’s fragment (the part following a `#`).
+    ///   - queryParameters: Request specific query parameters.
+    ///   - headers: Request specific headers. Setting `content-type` and `content-length` is not allowed.
+    /// - Returns: ``HTTPRequest`` with the GET HTTP method.
+    @available(*, deprecated, message: "Use variant taking `headerFields`")
+    public static func get(
+        _ path: String,
+        fragment: String? = nil,
+        queryParameters: [String: String] = [:],
+        headers: HTTPHeaders
+    ) -> HTTPRequest {
+        HTTPRequest(
+            method: .get,
+            path: path,
+            body: nil,
+            fragment: fragment,
+            queryParameters: queryParameters,
+            headerFields: .init(headers)
+        )
+    }
+        
+    /// Returns an HTTP POST request
+    /// - Parameters:
+    ///   - path: The request’s path. If the path is not empty, it must start with `/`.
+    ///   - body:The request’s body.
+    ///   - fragment: The URL’s fragment (the part following a `#`).
+    ///   - queryParameters: Request specific query parameters.
+    ///   - headers: Request specific headers. Setting `content-type` and `content-length` is not allowed as these are determined from the `body` parameter.
+    /// - Returns: ``HTTPRequest`` with the GET HTTP method.
+    @available(*, deprecated, message: "Use variant taking `headerFields`")
+    public static func post(
+        _ path: String,
+        body: Body,
+        fragment: String? = nil,
+        queryParameters: [String: String] = [:],
+        headers: HTTPHeaders
+    ) -> HTTPRequest {
+        HTTPRequest(
+            method: .post,
+            path: path,
+            body: body,
+            fragment: fragment,
+            queryParameters: queryParameters,
+            headerFields: .init(headers)
+        )
+    }
+    
+    /// Returns an HTTP PUT request
+    /// - Parameters:
+    ///   - path: The request’s path. If the path is not empty, it must start with `/`.
+    ///   - body:The request’s body.
+    ///   - fragment: The URL’s fragment (the part following a `#`).
+    ///   - queryParameters: Request specific query parameters.
+    ///   - headers: Request specific headers. Setting `content-type` and `content-length` is not allowed as these are determined from the `body` parameter.
+    /// - Returns: ``HTTPRequest`` with the PUT HTTP method.
+    @available(*, deprecated, message: "Use variant taking `headerFields`")
+    public static func put(
+        _ path: String,
+        body: Body,
+        fragment: String? = nil,
+        queryParameters: [String: String] = [:],
+        headers: HTTPHeaders
+    ) -> HTTPRequest {
+        HTTPRequest(
+            method: .put,
+            path: path,
+            body: body,
+            fragment: fragment,
+            queryParameters: queryParameters,
+            headerFields: .init(headers)
+        )
+    }
+ 
+    /// Returns an HTTP PATCH request
+    /// - Parameters:
+    ///   - path: The request’s path. If the path is not empty, it must start with `/`.
+    ///   - body:The request’s body.
+    ///   - fragment: The URL’s fragment (the part following a `#`).
+    ///   - queryParameters: Request specific query parameters.
+    ///   - headers: Request specific headers. Setting `content-type` and `content-length` is not allowed as these are determined from the `body` parameter.
+    /// - Returns: ``HTTPRequest`` with the PATCH HTTP method.
+    @available(*, deprecated, message: "Use variant taking `headerFields`")
+    public static func patch(
+        _ path: String,
+        body: Body,
+        fragment: String? = nil,
+        queryParameters: [String: String] = [:],
+        headers: HTTPHeaders
+    ) -> HTTPRequest {
+        HTTPRequest(
+            method: .patch,
+            path: path,
+            body: body,
+            fragment: fragment,
+            queryParameters: queryParameters,
+            headerFields: .init(headers)
+        )
+    }
+    
+    /// Returns an HTTP DELETE request
+    /// - Parameters:
+    ///   - path: The request’s path. If the path is not empty, it must start with `/`.
+    ///   - fragment: The URL’s fragment (the part following a `#`).
+    ///   - queryParameters: Request specific query parameters.
+    ///   - headers: Request specific headers. Setting `content-type` and `content-length` is not allowed.
+    /// - Returns: `HTTPRequest` with the DELETE HTTP method.
+    @available(*, deprecated, message: "Use variant taking `headerFields`")
+    public static func delete(
+        _ path: String,
+        fragment: String? = nil,
+        queryParameters: [String: String] = [:],
+        headers: HTTPHeaders
+    ) -> HTTPRequest {
+        HTTPRequest(
+            method: .delete,
+            path: path,
+            body: nil,
+            fragment: fragment,
+            queryParameters: queryParameters,
+            headerFields: .init(headers)
+        )
+    }
+    
+    /// Returns an HTTP OPTIONS request
+    /// - Parameters:
+    ///   - path: The request’s path. If the path is not empty, it must start with `/`.
+    ///   - fragment: The URL’s fragment (the part following a `#`).
+    ///   - queryParameters: Request specific query parameters.
+    ///   - headers: Request specific headers. Setting `content-type` and `content-length` is not allowed.
+    /// - Returns: ``HTTPRequest`` with the OPTIONS HTTP method.
+    @available(*, deprecated, message: "Use variant taking `headerFields`")
+    public static func options(
+        _ path: String,
+        fragment: String? = nil,
+        queryParameters: [String: String] = [:],
+        headers: HTTPHeaders
+    ) -> HTTPRequest {
+        HTTPRequest(
+            method: .options,
+            path: path,
+            body: nil,
+            fragment: fragment,
+            queryParameters: queryParameters,
+            headerFields: .init(headers)
+        )
+    }
+    
+    /// Returns an HTTP CONNECT request
+    /// - Parameters:
+    ///   - path: The request’s path. If the path is not empty, it must start with `/`.
+    ///   - fragment: The URL’s fragment (the part following a `#`).
+    ///   - queryParameters: Request specific query parameters.
+    ///   - headers: Request specific headers. Setting `content-type` and `content-length` is not allowed.
+    /// - Returns: ``HTTPRequest`` with the CONNECT HTTP method.
+    @available(*, deprecated, message: "Use variant taking `headerFields`")
+    public static func connect(
+        _ path: String,
+        fragment: String? = nil,
+        queryParameters: [String: String] = [:],
+        headers: HTTPHeaders
+    ) -> HTTPRequest {
+        HTTPRequest(
+            method: .connect,
+            path: path,
+            body: nil,
+            fragment: fragment,
+            queryParameters: queryParameters,
+            headerFields: .init(headers)
+        )
+    }
+    
+    /// Returns an HTTP HEAD request
+    /// - Parameters:
+    ///   - path: The request’s path. If the path is not empty, it must start with `/`.
+    ///   - fragment: The URL’s fragment (the part following a `#`).
+    ///   - queryParameters: Request specific query parameters.
+    ///   - headers: Request specific headers. Setting `content-type` and `content-length` is not allowed.
+    /// - Returns: ``HTTPRequest`` with the HEAD HTTP method.
+    @available(*, deprecated, message: "Use variant taking `headerFields`")
+    public static func head(
+        _ path: String,
+        fragment: String? = nil,
+        queryParameters: [String: String] = [:],
+        headers: HTTPHeaders
+    ) -> HTTPRequest {
+        HTTPRequest(
+            method: .head,
+            path: path,
+            body: nil,
+            fragment: fragment,
+            queryParameters: queryParameters,
+            headerFields: .init(headers)
+        )
+    }
+    
+    /// Returns an HTTP TRACE request
+    /// - Parameters:
+    ///   - path: The request’s path. If the path is not empty, it must start with `/`.
+    ///   - fragment: The URL’s fragment (the part following a `#`).
+    ///   - queryParameters: Request specific query parameters.
+    ///   - headers: Request specific headers. Setting `content-type` and `content-length` is not allowed.
+    /// - Returns: ``HTTPRequest`` with the TRACE HTTP method.
+    @available(*, deprecated, message: "Use variant taking `headerFields`")
+    public static func trace(
+        _ path: String,
+        fragment: String? = nil,
+        queryParameters: [String: String] = [:],
+        headers: HTTPHeaders
+    ) -> HTTPRequest {
+        HTTPRequest(
+            method: .trace,
+            path: path,
+            body: nil,
+            fragment: fragment,
+            queryParameters: queryParameters,
+            headerFields: .init(headers)
+        )
+    }
+
 }

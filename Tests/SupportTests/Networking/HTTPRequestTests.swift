@@ -25,13 +25,13 @@ class HTTPRequestTests: XCTestCase {
     
     func testCanNotCreateRequestWithContentTypeHeader() {
         TS.assertFatalError {
-            _ = HTTPRequest(method: .get, path: "", body: nil, headers: [.contentType: "a"])
+            _ = HTTPRequest(method: .get, path: "", body: nil, headerFields: [.contentType: "a"])
         }
     }
     
     func testCanNotCreateRequestWithContentTypeLength() {
         TS.assertFatalError {
-            _ = HTTPRequest(method: .get, path: "", body: nil, headers: [.contentLength: "a"])
+            _ = HTTPRequest(method: .get, path: "", body: nil, headerFields: [.contentLength: "a"])
         }
     }
     
