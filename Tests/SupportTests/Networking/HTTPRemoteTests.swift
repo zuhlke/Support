@@ -4,6 +4,7 @@ import FoundationNetworking
 #endif
 import TestingSupport
 @testable import Support
+import HTTPTypes
 
 import XCTest
 
@@ -31,19 +32,19 @@ class HTTPRemoteTests: XCTestCase {
     
     func testCanNotPreSetContentLengthHeader() {
         TS.assertFatalError {
-            _ = HTTPRemote(host: "example.com", path: "/somewhere", headers: [.contentLength: "a"])
+            _ = HTTPRemote(host: "example.com", path: "/somewhere", headerFields: [.contentLength: "a"])
         }
     }
     
     func testCanNotPreSetContentTypeHeader() {
         TS.assertFatalError {
-            _ = HTTPRemote(host: "example.com", path: "/somewhere", headers: [.contentType: "a"])
+            _ = HTTPRemote(host: "example.com", path: "/somewhere", headerFields: [.contentType: "a"])
         }
     }
     
     func testCanNotPreSetContentTypeHeaderWithDifferentCase() {
         TS.assertFatalError {
-            _ = HTTPRemote(host: "example.com", path: "/somewhere", headers: [.contentType: "a"])
+            _ = HTTPRemote(host: "example.com", path: "/somewhere", headerFields: [.contentType: "a"])
         }
     }
     
@@ -56,7 +57,7 @@ class HTTPRemoteTests: XCTestCase {
             port: 9000,
             user: "user",
             password: "password",
-            headers: [HTTPHeaderFieldName("client_id"): "1"]
+            headerFields: [HTTPField.Name("client_id")!: "1"]
         )
         
         let request = HTTPRequest(
@@ -65,7 +66,7 @@ class HTTPRemoteTests: XCTestCase {
             body: nil,
             fragment: "subpage",
             queryParameters: ["query": "value"],
-            headers: [HTTPHeaderFieldName("state"): "1234"]
+            headerFields: [HTTPField.Name("state")!: "1234"]
         )
         
         do {
@@ -101,7 +102,7 @@ class HTTPRemoteTests: XCTestCase {
             user: "user",
             password: "password",
             queryParameters: ["remote-query": "remote-value"],
-            headers: [HTTPHeaderFieldName("client_id"): "1"]
+            headerFields: [HTTPField.Name("client_id")!: "1"]
         )
         
         let request = HTTPRequest.post(
@@ -186,33 +187,33 @@ class HTTPRemoteTests: XCTestCase {
     }
     
     func testDefaultHeaderMergePolicyDisallowsOverrides() {
-        let headerName = HTTPHeaderFieldName("verbose")
+        let headerName = HTTPField.Name("verbose")!
         let remote = HTTPRemote(
             host: "example.com",
             path: "",
-            headers: [headerName: "true"]
+            headerFields: [headerName: "true"]
         )
         
-        let request = HTTPRequest.get("/path", headers: [headerName: "false"])
+        let request = HTTPRequest.get("/path", headers: [.init(headerName.canonicalName): "false"])
         
         XCTAssertThrowsError(try remote.urlRequest(from: request))
     }
     
     func testUpdatingHeaderMergePolicyWorks() throws {
-        let headerName = HTTPHeaderFieldName("verbose")
+        let headerName = HTTPField.Name("verbose")!
         var remote = HTTPRemote(
             host: "example.com",
             path: "",
-            headers: [headerName: "true"]
+            headerFields: [headerName: "true"]
         )
         
         remote.headersMergePolicy = .custom { remoteHeaders, _ in remoteHeaders }
         
-        let request = HTTPRequest.get("/path", headers: [headerName: "false"])
+        let request = HTTPRequest.get("/path", headers: [.init(headerName.canonicalName): "false"])
         
         let urlRequest = try remote.urlRequest(from: request)
         TS.assert(urlRequest.allHTTPHeaderFields?.count, equals: 1)
-        TS.assert(urlRequest.value(forHTTPHeaderField: headerName.lowercaseName), equals: "true")
+        TS.assert(urlRequest.value(forHTTPHeaderField: headerName.canonicalName), equals: "true")
     }
     
 }

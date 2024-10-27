@@ -53,16 +53,16 @@ public struct HTTPRemote {
         user: String? = nil,
         password: String? = nil,
         queryParameters: [String: String] = [:],
-        headers: HTTPHeaders = HTTPHeaders()
+        headerFields: HTTPFields = HTTPFields()
     ) {
         
         guard path.isEmpty || path.starts(with: "/") else {
             Supervisor.fatalError("`path` must start with `/` if it’s not empty.")
         }
         
-        for disallowedHeader in HTTPHeaderFieldName.bodyHeaders {
-            guard !headers.hasValue(for: disallowedHeader) else {
-                Supervisor.fatalError("\(disallowedHeader.lowercaseName) header must not be set on a remote. Provide this value for each request.")
+        for bodyHeaderFieldName in [HTTPField.Name.contentType, .contentLength] {
+            guard !headerFields.contains(bodyHeaderFieldName) else {
+                Supervisor.fatalError("\(bodyHeaderFieldName) header must not be set on a remote. Provide this value for each request.")
             }
         }
         
@@ -72,7 +72,7 @@ public struct HTTPRemote {
         self.user = user
         self.password = password
         self.queryParameters = queryParameters
-        self.headerFields = HTTPFields(headers)
+        self.headerFields = headerFields
     }
     
 }
@@ -189,6 +189,27 @@ extension HTTPRemote {
     @available(*, deprecated, message: "Use `headerFields` instead.")
     public var headers: HTTPHeaders {
         HTTPHeaders(headerFields)
+    }
+    
+    @available(*, deprecated, message: "Use `init(host:path:port:user:password:queryParameters:headerFields:)` instead")
+    public init(
+        host: String,
+        path: String,
+        port: Int? = nil,
+        user: String? = nil,
+        password: String? = nil,
+        queryParameters: [String: String] = [:],
+        headers: HTTPHeaders
+    ) {
+        self.init(
+            host: host,
+            path: path,
+            port: port,
+            user: user,
+            password: password,
+            queryParameters: queryParameters,
+            headerFields: HTTPFields(headers)
+        )
     }
     
 }
