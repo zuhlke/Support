@@ -9,7 +9,7 @@ public struct HTTPRemote {
     
     public struct HeadersMergePolicy: Sendable {
         
-        var merge: @Sendable (_ remoteHeaders: HTTPHeaders, _ requestHeaders: HTTPHeaders) throws -> HTTPHeaders
+        var merge: @Sendable (_ remoteHeaders: HTTPFields, _ requestHeaders: HTTPFields) throws -> HTTPFields
         
     }
     
@@ -103,13 +103,13 @@ extension HTTPRemote {
 extension HTTPRemote: URLRequestProviding {
     
     public func urlRequest(from request: HTTPRequest) throws -> URLRequest {
-        let headers = try headersMergePolicy.merge(headers, request.headers)
+        let headers = try headersMergePolicy.merge(headerFields, request.headerFields)
         
         let url = try url(for: request, scheme: .https)
         
         return mutating(URLRequest(url: url)) { urlRequest in
-            for field in headers.fields {
-                urlRequest.addValue(field.value, forHTTPHeaderField: field.key.lowercaseName)
+            for field in headers {
+                urlRequest.addValue(field.value, forHTTPHeaderField: field.name.canonicalName)
             }
             
             urlRequest.httpMethod = request.method.rawValue
@@ -126,26 +126,33 @@ extension HTTPRemote: URLRequestProviding {
 extension HTTPRemote.HeadersMergePolicy {
     
     private enum Errors: Error {
-        case requestOverridesHeaders(Set<HTTPHeaderFieldName>)
+        case requestOverridesHeaders(Set<HTTPField.Name>)
     }
     
     /// A header policy that throws an error if a request tries to set headers already present in the remote.
-    public static let disallowOverrides: HTTPRemote.HeadersMergePolicy = .init { remoteHeaders, requestHeaders -> HTTPHeaders in
-        let overriddenHeaders = Set(remoteHeaders.fields.keys)
-            .intersection(requestHeaders.fields.keys)
-        guard overriddenHeaders.isEmpty else {
-            throw Errors.requestOverridesHeaders(overriddenHeaders)
+    public static let disallowOverrides: HTTPRemote.HeadersMergePolicy = .init { remoteHeaders, requestHeaders -> HTTPFields in
+        let overriddenFieldNames = Set(remoteHeaders.lazy.map(\.name))
+            .intersection(requestHeaders.lazy.map(\.name))
+        guard overriddenFieldNames.isEmpty else {
+            throw Errors.requestOverridesHeaders(overriddenFieldNames)
         }
         
         return mutating(remoteHeaders) { remoteHeaders in
-            for field in requestHeaders.fields {
-                remoteHeaders.fields[field.key] = field.value
+            for field in requestHeaders {
+                remoteHeaders[field.name] = field.value
             }
         }
     }
     
     /// A custom header policy that accepts a closure to determine the behaviour.
+    @available(*, deprecated, message: "Use the variant that accepts `HTTPFields` instead.")
+    @_disfavoredOverload
     public static func custom(merge: @escaping @Sendable (_ remoteHeaders: HTTPHeaders, _ requestHeaders: HTTPHeaders) throws -> HTTPHeaders) -> HTTPRemote.HeadersMergePolicy {
+        HTTPRemote.HeadersMergePolicy { HTTPFields(try merge(HTTPHeaders($0), HTTPHeaders($1))) }
+    }
+    
+    /// A custom header policy that accepts a closure to determine the behaviour.
+    public static func custom(merge: @escaping @Sendable (_ remoteHeaders: HTTPFields, _ requestHeaders: HTTPFields) throws -> HTTPFields) -> HTTPRemote.HeadersMergePolicy {
         HTTPRemote.HeadersMergePolicy(merge: merge)
     }
     
