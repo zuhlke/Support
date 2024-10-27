@@ -14,10 +14,10 @@ public struct HTTPResponse: Equatable, Sendable {
     
     public let status: Status
     public let body: Body
-    public let headers: HTTPHeaders
+    public let headerFields: HTTPFields
     
-    public var headerFields: HTTPFields {
-        HTTPFields(headers)
+    public var headers: HTTPHeaders {
+        HTTPHeaders(headerFields)
     }
     
     public init(
@@ -27,7 +27,7 @@ public struct HTTPResponse: Equatable, Sendable {
     ) {
         self.status = status
         self.body = body
-        self.headers = headers
+        self.headerFields = HTTPFields(headers)
     }
     
 }

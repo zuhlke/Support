@@ -14,10 +14,10 @@ public struct HTTPRequest: Equatable, Sendable {
     public let body: Body?
     public let fragment: String?
     public let queryParameters: [String: String]
-    public let headers: HTTPHeaders
+    public let headerFields: HTTPFields
     
-    public var headerFields: HTTPFields {
-        HTTPFields(headers)
+    public var headers: HTTPHeaders {
+        HTTPHeaders(headerFields)
     }
     
     /// Creates an HTTP request.
@@ -67,7 +67,7 @@ public struct HTTPRequest: Equatable, Sendable {
         self.body = body
         self.fragment = fragment
         self.queryParameters = queryParameters
-        self.headers = headers
+        self.headerFields = HTTPFields(headers)
     }
     
 }

@@ -42,3 +42,11 @@ extension HTTPFields {
     }
     
 }
+
+extension HTTPHeaders {
+    
+    init(_ headerFields: HTTPFields) {
+        self.init(fields: Dictionary(uniqueKeysWithValues: headerFields.lazy.map { (HTTPHeaderFieldName($0.name.canonicalName), $0.value) } ))
+    }
+    
+}
