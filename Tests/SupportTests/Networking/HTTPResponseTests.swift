@@ -22,7 +22,7 @@ class HTTPResponseTests: XCTestCase {
         let body = "body".data(using: .utf8)!
         let actual = HTTPResponse(httpUrlResponse: urlResponse, bodyContent: body)
         let expected = HTTPResponse(
-            statusCode: 200,
+            status: .ok,
             body: HTTPResponse.Body(content: body, type: "text/plain"),
             headers: [
                 HTTPHeaderFieldName("header"): "value",
@@ -45,7 +45,7 @@ class HTTPResponseTests: XCTestCase {
         let body = "body".data(using: .utf8)!
         let actual = HTTPResponse(httpUrlResponse: urlResponse, bodyContent: body)
         let expected = HTTPResponse(
-            statusCode: 200,
+            status: .ok,
             body: HTTPResponse.Body(content: body, type: "text/plain"),
             headers: [
                 HTTPHeaderFieldName("header"): "value",
@@ -58,7 +58,7 @@ class HTTPResponseTests: XCTestCase {
         let url = URL(string: "https://example.com")!
         let urlResponse = HTTPURLResponse(
             url: url,
-            statusCode: 200,
+            statusCode: 404,
             httpVersion: nil,
             headerFields: [
                 "Header": "value",
@@ -67,7 +67,7 @@ class HTTPResponseTests: XCTestCase {
         let body = "body".data(using: .utf8)!
         let actual = HTTPResponse(httpUrlResponse: urlResponse, bodyContent: body)
         let expected = HTTPResponse(
-            statusCode: 200,
+            status: .notFound,
             body: HTTPResponse.Body(content: body, type: nil),
             headers: [
                 HTTPHeaderFieldName("header"): "value",

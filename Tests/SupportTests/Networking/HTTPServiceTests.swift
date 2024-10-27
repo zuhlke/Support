@@ -49,7 +49,7 @@ class HTTPServiceTests: XCTestCase {
     }
     
     func testErrorOnHTTPFailure() async {
-        let response = HTTPResponse(statusCode: 401, body: .plain(UUID().uuidString))
+        let response = HTTPResponse(status: .unauthorized, body: .plain(UUID().uuidString))
         client.response = response
         let service = HTTPService(client: client)
         let result = await service.mock(with: UUID())
