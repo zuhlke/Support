@@ -3,6 +3,7 @@ import Foundation
 import FoundationNetworking
 #endif
 import HTTPTypes
+import HTTPTypesFoundation
 
 /// An HTTP response.
 ///
@@ -19,11 +20,11 @@ public struct HTTPResponse: Equatable, Sendable {
     public init(
         status: Status,
         body: Body,
-        headers: HTTPHeaders = HTTPHeaders()
+        headerFields: HTTPFields = HTTPFields()
     ) {
         self.status = status
         self.body = body
-        self.headerFields = HTTPFields(headers)
+        self.headerFields = headerFields
     }
     
 }
@@ -31,15 +32,19 @@ public struct HTTPResponse: Equatable, Sendable {
 extension HTTPResponse {
     
     public init(httpUrlResponse: HTTPURLResponse, bodyContent: Data) {
-        var headers = httpUrlResponse.headers
-        let contentType = headers.fields.removeValue(forKey: .contentType)
+        guard let response = httpUrlResponse.httpResponse else {
+            fatalError("Malformed `httpUrlResponse`.")
+        }
+        var headerFields = response.headerFields
+        let contentType = headerFields[.contentType]
+        headerFields[.contentType] = nil
         self.init(
-            status: .init(code: httpUrlResponse.statusCode),
+            status: response.status,
             body: HTTPResponse.Body(
                 content: bodyContent,
                 type: contentType
             ),
-            headers: headers
+            headerFields: headerFields
         )
     }
     
@@ -63,7 +68,7 @@ extension HTTPResponse {
         HTTPHeaders(headerFields)
     }
     
-    @available(*, deprecated, message: "Use `init(status:body:headers:)` instead.")
+    @available(*, deprecated, message: "Use `init(status:body:headerFields:)` instead.")
     public init(
         statusCode: Int,
         body: Body,
@@ -72,7 +77,7 @@ extension HTTPResponse {
         self.init(
             status: .init(code: statusCode),
             body: body,
-            headers: headers
+            headerFields: HTTPFields(headers)
         )
     }
     
