@@ -16,6 +16,10 @@ public struct HTTPResponse: Equatable, Sendable {
     public let body: Body
     public let headers: HTTPHeaders
     
+    public var headerFields: HTTPFields {
+        HTTPFields(headers)
+    }
+    
     public init(
         status: Status,
         body: Body,

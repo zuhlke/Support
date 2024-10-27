@@ -1,4 +1,5 @@
 import Foundation
+import HTTPTypes
 
 /// An HTTP request against an unspecified remote.
 ///
@@ -14,6 +15,10 @@ public struct HTTPRequest: Equatable, Sendable {
     public let fragment: String?
     public let queryParameters: [String: String]
     public let headers: HTTPHeaders
+    
+    public var headerFields: HTTPFields {
+        HTTPFields(headers)
+    }
     
     /// Creates an HTTP request.
     ///

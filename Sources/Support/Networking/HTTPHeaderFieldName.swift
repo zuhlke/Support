@@ -1,4 +1,5 @@
 import Foundation
+import HTTPTypes
 
 /// An HTTP header field’s name.
 ///
@@ -23,5 +24,13 @@ extension HTTPHeaderFieldName {
         .contentLength,
         .contentType,
     ]
+    
+}
+
+extension HTTPField.Name {
+    
+    init(_ name: HTTPHeaderFieldName) {
+        self.init(name.lowercaseName)!
+    }
     
 }

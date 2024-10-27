@@ -1,4 +1,5 @@
 import Foundation
+import HTTPTypes
 
 /// A collection of HTTP header fields.
 public struct HTTPHeaders: ExpressibleByDictionaryLiteral, Equatable, Sendable {
@@ -30,6 +31,14 @@ extension HTTPHeaders {
     
     var stringFields: [String: String] {
         Dictionary(uniqueKeysWithValues: fields.lazy.map { ($0.lowercaseName, $1) })
+    }
+    
+}
+
+extension HTTPFields {
+    
+    init(_ headers: HTTPHeaders) {
+        self.init(headers.fields.lazy.map { HTTPField(name: HTTPField.Name($0.key), value: $0.value) })
     }
     
 }
