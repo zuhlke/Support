@@ -16,10 +16,6 @@ public struct HTTPResponse: Equatable, Sendable {
     public let body: Body
     public let headerFields: HTTPFields
     
-    public var headers: HTTPHeaders {
-        HTTPHeaders(headerFields)
-    }
-    
     public init(
         status: Status,
         body: Body,
@@ -60,6 +56,11 @@ extension HTTPResponse {
     @available(*, deprecated, message: "Use `status` instead.")
     public var statusCode: Int {
         status.code
+    }
+    
+    @available(*, deprecated, message: "Use `headerFields` instead.")
+    public var headers: HTTPHeaders {
+        HTTPHeaders(headerFields)
     }
     
     @available(*, deprecated, message: "Use `init(status:body:headers:)` instead.")

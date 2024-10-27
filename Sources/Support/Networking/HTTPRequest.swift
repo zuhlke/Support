@@ -16,10 +16,6 @@ public struct HTTPRequest: Equatable, Sendable {
     public let queryParameters: [String: String]
     public let headerFields: HTTPFields
     
-    public var headers: HTTPHeaders {
-        HTTPHeaders(headerFields)
-    }
-    
     /// Creates an HTTP request.
     ///
     /// This initialiser enforces that the following invaritants hold:
@@ -287,4 +283,15 @@ extension HTTPRequest {
         )
     }
 
+}
+
+// MARK: - Deprecated
+
+extension HTTPRequest {
+    
+    @available(*, deprecated, message: "Use `headerFields` instead.")
+    public var headers: HTTPHeaders {
+        HTTPHeaders(headerFields)
+    }
+    
 }
