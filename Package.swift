@@ -24,11 +24,16 @@ let package = Package(
             targets: ["TestingSupport"]
         ),
     ],
-    dependencies: [],
+    dependencies: [
+        .package(url: "https://github.com/apple/swift-http-types.git", from: "1.3.0"),
+    ],
     targets: [
         .target(
             name: "Support",
-            dependencies: []
+            dependencies: [
+                .product(name: "HTTPTypes", package: "swift-http-types"),
+                .product(name: "HTTPTypesFoundation", package: "swift-http-types"),
+            ]
         ),
         .target(
             name: "ScenariosSupport",
