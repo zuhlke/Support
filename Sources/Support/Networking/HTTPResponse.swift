@@ -2,6 +2,7 @@ import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
+import HTTPTypes
 
 /// An HTTP response.
 ///
@@ -12,6 +13,10 @@ public struct HTTPResponse: Equatable, Sendable {
     public let statusCode: Int
     public let body: Body
     public let headers: HTTPHeaders
+    
+    public var status: HTTPTypes.HTTPResponse.Status {
+        .init(code: statusCode)
+    }
     
     public init(
         statusCode: Int,
