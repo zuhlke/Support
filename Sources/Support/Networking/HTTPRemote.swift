@@ -1,4 +1,5 @@
 import Foundation
+import HTTPTypes
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
@@ -24,7 +25,7 @@ public struct HTTPRemote {
     public let user: String?
     public let password: String?
     public let queryParameters: [String: String]
-    public let headers: HTTPHeaders
+    public let headerFields: HTTPFields
     
     /// Determines how headers from an `HTTPRequest` must be processed when creating a `URLRequest`.
     ///
@@ -71,7 +72,7 @@ public struct HTTPRemote {
         self.user = user
         self.password = password
         self.queryParameters = queryParameters
-        self.headers = headers
+        self.headerFields = HTTPFields(headers)
     }
     
 }
@@ -170,6 +171,17 @@ extension HTTPRemote.QueryParametersMergePolicy {
     /// A custom header policy that accepts a closure to determine the behaviour.
     public static func custom(merge: @escaping @Sendable (_ remoteHeaders: [String: String], _ requestHeaders: [String: String]) throws -> [String: String]) -> HTTPRemote.QueryParametersMergePolicy {
         HTTPRemote.QueryParametersMergePolicy(merge: merge)
+    }
+    
+}
+
+// MARK: - Deprecated
+
+extension HTTPRemote {
+    
+    @available(*, deprecated, message: "Use `headerFields` instead.")
+    public var headers: HTTPHeaders {
+        HTTPHeaders(headerFields)
     }
     
 }
