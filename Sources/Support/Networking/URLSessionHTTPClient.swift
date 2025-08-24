@@ -39,10 +39,9 @@ private extension HTTPRequestPerformingError {
     
     /// Create an `HTTPRequestError` from the networking error provided.
     ///
-    /// We assume is `URLSession.data` always returns a `URLError`; but the API is untyped, so it’s not possible to be entirely sure. Review this over time
-    /// to see if a better solution becomes available.
-    @available(iOS, deprecated: 16.0)
     static func fromUntypedNetworkError(_ error: Error) -> HTTPRequestPerformingError {
+        // TODO: P4 – Look for alternative solutions if available (last reviews as of OS 26)
+        // We assume is `URLSession.data` always returns a `URLError`; but the API is untyped, so it’s not possible to be entirely sure.
         if let error = error as? URLError {
             return .networkFailure(underlyingError: error)
         } else {
