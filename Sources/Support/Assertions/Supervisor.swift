@@ -71,6 +71,7 @@ public extension Supervisor {
             work()
             sema.signal()
         }
+        thread.qualityOfService = Thread.current.qualityOfService
         thread.start()
         sema.wait()
         return box.exitManner
