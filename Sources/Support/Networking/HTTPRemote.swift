@@ -145,13 +145,6 @@ extension HTTPRemote.HeadersMergePolicy {
     }
     
     /// A custom header policy that accepts a closure to determine the behaviour.
-    @available(*, deprecated, message: "Use the variant that accepts `HTTPFields` instead.")
-    @_disfavoredOverload
-    public static func custom(merge: @escaping @Sendable (_ remoteHeaders: HTTPHeaders, _ requestHeaders: HTTPHeaders) throws -> HTTPHeaders) -> HTTPRemote.HeadersMergePolicy {
-        HTTPRemote.HeadersMergePolicy { HTTPFields(try merge(HTTPHeaders($0), HTTPHeaders($1))) }
-    }
-    
-    /// A custom header policy that accepts a closure to determine the behaviour.
     public static func custom(merge: @escaping @Sendable (_ remoteHeaders: HTTPFields, _ requestHeaders: HTTPFields) throws -> HTTPFields) -> HTTPRemote.HeadersMergePolicy {
         HTTPRemote.HeadersMergePolicy(merge: merge)
     }
@@ -178,38 +171,6 @@ extension HTTPRemote.QueryParametersMergePolicy {
     /// A custom header policy that accepts a closure to determine the behaviour.
     public static func custom(merge: @escaping @Sendable (_ remoteHeaders: [String: String], _ requestHeaders: [String: String]) throws -> [String: String]) -> HTTPRemote.QueryParametersMergePolicy {
         HTTPRemote.QueryParametersMergePolicy(merge: merge)
-    }
-    
-}
-
-// MARK: - Deprecated
-
-extension HTTPRemote {
-    
-    @available(*, deprecated, message: "Use `headerFields` instead.")
-    public var headers: HTTPHeaders {
-        HTTPHeaders(headerFields)
-    }
-    
-    @available(*, deprecated, message: "Use `init(host:path:port:user:password:queryParameters:headerFields:)` instead")
-    public init(
-        host: String,
-        path: String,
-        port: Int? = nil,
-        user: String? = nil,
-        password: String? = nil,
-        queryParameters: [String: String] = [:],
-        headers: HTTPHeaders
-    ) {
-        self.init(
-            host: host,
-            path: path,
-            port: port,
-            user: user,
-            password: password,
-            queryParameters: queryParameters,
-            headerFields: HTTPFields(headers)
-        )
     }
     
 }

@@ -25,10 +25,6 @@ public enum HTTPEndpointCallError: Error {
     case badResponse(underlyingError: Error)
 }
 
-/// Use ``HTTPEndpointCallError`` instead.
-@available(*, deprecated, renamed: "HTTPEndpointCallError")
-public typealias NetworkRequestError = HTTPEndpointCallError
-
 extension HTTPEndpointCallError {
     init(error: HTTPRequestPerformingError) {
         switch error {

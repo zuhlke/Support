@@ -53,32 +53,3 @@ extension HTTPResponse {
     }
     
 }
-
-// MARK: - Deprecated
-
-extension HTTPResponse {
-    
-    @available(*, deprecated, message: "Use `status` instead.")
-    public var statusCode: Int {
-        status.code
-    }
-    
-    @available(*, deprecated, message: "Use `headerFields` instead.")
-    public var headers: HTTPHeaders {
-        HTTPHeaders(headerFields)
-    }
-    
-    @available(*, deprecated, message: "Use `init(status:body:headerFields:)` instead.")
-    public init(
-        statusCode: Int,
-        body: Body,
-        headers: HTTPHeaders = HTTPHeaders()
-    ) {
-        self.init(
-            status: .init(code: statusCode),
-            body: body,
-            headerFields: HTTPFields(headers)
-        )
-    }
-    
-}

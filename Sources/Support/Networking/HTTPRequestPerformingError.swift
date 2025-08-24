@@ -15,7 +15,3 @@ public enum HTTPRequestPerformingError: Error {
     /// You should expect this error in situations that ``URLSessionProtocol/data(for:delegate:)`` would throw.
     case networkFailure(underlyingError: URLError)
 }
-
-/// Use ``HTTPRequestPerformingError`` instead.
-@available(*, deprecated, renamed: "HTTPRequestPerformingError")
-public typealias HTTPRequestError = HTTPRequestPerformingError

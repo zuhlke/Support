@@ -24,10 +24,6 @@ public protocol HTTPClient {
     func perform(_ request: HTTPRequest) async -> Result<HTTPResponse, HTTPRequestPerformingError>
 }
 
-/// Use ``HTTPClient`` instead.
-@available(*, deprecated, renamed: "HTTPClient")
-public typealias AsyncHTTPClient = HTTPClient
-
 extension HTTPClient {
     
     func fetch<E: HTTPEndpoint>(_ endpoint: E, with input: E.Input) async -> Result<E.Output, HTTPEndpointCallError> {
