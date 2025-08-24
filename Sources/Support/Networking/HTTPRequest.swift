@@ -75,7 +75,7 @@ extension HTTPRequest {
     ///   - path: The request’s path. If the path is not empty, it must start with `/`.
     ///   - fragment: The URL’s fragment (the part following a `#`).
     ///   - queryParameters: Request specific query parameters.
-    ///   - headers: Request specific headers. Setting `content-type` and `content-length` is not allowed.
+    ///   - headerFields: Request specific headers. Setting `content-type` and `content-length` is not allowed.
     /// - Returns: ``HTTPRequest`` with the GET HTTP method.
     public static func get(
         _ path: String,
@@ -99,7 +99,7 @@ extension HTTPRequest {
     ///   - body:The request’s body.
     ///   - fragment: The URL’s fragment (the part following a `#`).
     ///   - queryParameters: Request specific query parameters.
-    ///   - headers: Request specific headers. Setting `content-type` and `content-length` is not allowed as these are determined from the `body` parameter.
+    ///   - headerFields: Request specific headers. Setting `content-type` and `content-length` is not allowed as these are determined from the `body` parameter.
     /// - Returns: ``HTTPRequest`` with the GET HTTP method.
     public static func post(
         _ path: String,
@@ -124,7 +124,7 @@ extension HTTPRequest {
     ///   - body:The request’s body.
     ///   - fragment: The URL’s fragment (the part following a `#`).
     ///   - queryParameters: Request specific query parameters.
-    ///   - headers: Request specific headers. Setting `content-type` and `content-length` is not allowed as these are determined from the `body` parameter.
+    ///   - headerFields: Request specific headers. Setting `content-type` and `content-length` is not allowed as these are determined from the `body` parameter.
     /// - Returns: ``HTTPRequest`` with the PUT HTTP method.
     public static func put(
         _ path: String,
@@ -149,7 +149,7 @@ extension HTTPRequest {
     ///   - body:The request’s body.
     ///   - fragment: The URL’s fragment (the part following a `#`).
     ///   - queryParameters: Request specific query parameters.
-    ///   - headers: Request specific headers. Setting `content-type` and `content-length` is not allowed as these are determined from the `body` parameter.
+    ///   - headerFields: Request specific headers. Setting `content-type` and `content-length` is not allowed as these are determined from the `body` parameter.
     /// - Returns: ``HTTPRequest`` with the PATCH HTTP method.
     public static func patch(
         _ path: String,
@@ -173,7 +173,7 @@ extension HTTPRequest {
     ///   - path: The request’s path. If the path is not empty, it must start with `/`.
     ///   - fragment: The URL’s fragment (the part following a `#`).
     ///   - queryParameters: Request specific query parameters.
-    ///   - headers: Request specific headers. Setting `content-type` and `content-length` is not allowed.
+    ///   - headerFields: Request specific headers. Setting `content-type` and `content-length` is not allowed.
     /// - Returns: `HTTPRequest` with the DELETE HTTP method.
     public static func delete(
         _ path: String,
@@ -196,7 +196,7 @@ extension HTTPRequest {
     ///   - path: The request’s path. If the path is not empty, it must start with `/`.
     ///   - fragment: The URL’s fragment (the part following a `#`).
     ///   - queryParameters: Request specific query parameters.
-    ///   - headers: Request specific headers. Setting `content-type` and `content-length` is not allowed.
+    ///   - headerFields: Request specific headers. Setting `content-type` and `content-length` is not allowed.
     /// - Returns: ``HTTPRequest`` with the OPTIONS HTTP method.
     public static func options(
         _ path: String,
@@ -219,7 +219,7 @@ extension HTTPRequest {
     ///   - path: The request’s path. If the path is not empty, it must start with `/`.
     ///   - fragment: The URL’s fragment (the part following a `#`).
     ///   - queryParameters: Request specific query parameters.
-    ///   - headers: Request specific headers. Setting `content-type` and `content-length` is not allowed.
+    ///   - headerFields: Request specific headers. Setting `content-type` and `content-length` is not allowed.
     /// - Returns: ``HTTPRequest`` with the CONNECT HTTP method.
     public static func connect(
         _ path: String,
@@ -242,7 +242,7 @@ extension HTTPRequest {
     ///   - path: The request’s path. If the path is not empty, it must start with `/`.
     ///   - fragment: The URL’s fragment (the part following a `#`).
     ///   - queryParameters: Request specific query parameters.
-    ///   - headers: Request specific headers. Setting `content-type` and `content-length` is not allowed.
+    ///   - headerFields: Request specific headers. Setting `content-type` and `content-length` is not allowed.
     /// - Returns: ``HTTPRequest`` with the HEAD HTTP method.
     public static func head(
         _ path: String,
@@ -265,7 +265,7 @@ extension HTTPRequest {
     ///   - path: The request’s path. If the path is not empty, it must start with `/`.
     ///   - fragment: The URL’s fragment (the part following a `#`).
     ///   - queryParameters: Request specific query parameters.
-    ///   - headers: Request specific headers. Setting `content-type` and `content-length` is not allowed.
+    ///   - headerFields: Request specific headers. Setting `content-type` and `content-length` is not allowed.
     /// - Returns: ``HTTPRequest`` with the TRACE HTTP method.
     public static func trace(
         _ path: String,

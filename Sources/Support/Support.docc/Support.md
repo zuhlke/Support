@@ -10,7 +10,7 @@ The framework is effectively a collection of “micro frameworks”, each of whi
 
 ## Topics
 
-### Networking
+### HTTP Networking
 
 - <doc:Networking>
 

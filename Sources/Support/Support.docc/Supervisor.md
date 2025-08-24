@@ -1,9 +1,5 @@
 # ``Support/Supervisor``
 
-@Metadata {
-    @DocumentationExtension(mergeBehavior: append)
-}
-
 ## Topics
 
 ### Asserting runtime behaviour

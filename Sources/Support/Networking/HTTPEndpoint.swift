@@ -19,7 +19,7 @@ public protocol HTTPEndpoint {
     /// Parses the HTTP response to extract the output.
     ///
     /// Normally you don’t call this method directly. as it is called by ``HTTPService`` as part of an HTTP call.
-    /// - Parameter response: The http response to decode. The implementation can usually assume that the ``HTTPResponse/statusCode`` is 2xx as ``HTTPService`` will handle filtering of error responses.
+    /// - Parameter response: The http response to decode. The implementation can usually assume that the ``HTTPResponse/status`` is 2xx as ``HTTPService`` will handle filtering of error responses.
     /// - Returns: The result of decoding the response
     func parse(_ response: HTTPResponse) throws -> Output
 }

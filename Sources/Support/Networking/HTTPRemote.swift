@@ -45,7 +45,7 @@ public struct HTTPRemote {
     ///   - user: The HTTP user to use. Defaults to `nil`.
     ///   - password: The HTTP password to use. Defaults to `nil`.
     ///   - queryParameters: Service-level query parameters, such as channel or client identifiers.
-    ///   - headers: Service-level HTTP headers, such as authentication. Setting call-specific headers such as `content-type` and `content-length` is not allowed.
+    ///   - headerFields: Service-level HTTP headers, such as authentication. Setting call-specific headers such as `content-type` and `content-length` is not allowed.
     public init(
         host: String,
         path: String,

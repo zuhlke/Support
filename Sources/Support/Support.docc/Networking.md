@@ -27,17 +27,9 @@ Use ``HTTPService`` to provide a consistent API for accessing HTTP endpoints for
 - ``HTTPRemote``
 - ``HTTPRequest``
 - ``HTTPResponse``
-- ``HTTPHeaders``
-- ``HTTPHeaderFieldName``
 - ``HTTPMethod``
 - ``URLScheme``
 
 ### Supporting types
 
 - ``HTTPCallableEndpoint``
-
-### Deprecated
-
-- ``AsyncHTTPClient``
-- ``HTTPRequestError``
-- ``NetworkRequestError``

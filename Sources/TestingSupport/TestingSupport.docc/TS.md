@@ -1,9 +1,5 @@
 # ``TestingSupport/TS``
 
-@Metadata {
-    @DocumentationExtension(mergeBehavior: append)
-}
-
 ## Topics
 
 ### Asserting equality

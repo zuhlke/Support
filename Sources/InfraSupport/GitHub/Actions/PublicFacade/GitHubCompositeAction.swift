@@ -32,7 +32,7 @@ public protocol GitHubCompositeAction: GitHubAction {
     /// User-friendly description for this action.
     var description: String { get }
     
-    #warning("Make it possible to create `Step`s externally.")
+    // TODO: P4 – Make it possible to create `Step`s externally.
     // Currently, all initialisers of `Step` are internal, so actually there’s no way someone outside this module can
     // conform to this protocol.
     //
