@@ -12,7 +12,7 @@ public class LogRetriever {
             .appending(components: convention.basePathComponents)
     }
     
-    public var executables: [String] {
+    public var executables: [Executable] {
         get throws {
             precondition(convention.executableTargetGroupingStrategy == .none, "Unknown strategy")
             guard case .byBundleIdentifier(let pathExtension) = convention.executableTargetLogFileNamingStrategy else {
@@ -23,7 +23,12 @@ public class LogRetriever {
             let contents = try fileManager.contentsOfDirectory(at: logsFolder, includingPropertiesForKeys: nil)
             return contents
                 .filter { $0.pathExtension == pathExtension }
-                .map { $0.deletingPathExtension().lastPathComponent }
+                .map { Executable(url: $0, bundleIdentifier: $0.deletingPathExtension().lastPathComponent) }
         }
     }
+}
+
+public struct Executable {
+    public var url: URL
+    public var bundleIdentifier: String
 }

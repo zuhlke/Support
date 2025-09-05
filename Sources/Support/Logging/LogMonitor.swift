@@ -1,6 +1,5 @@
 import Foundation
 import OSLog
-import Support
 import SwiftData
 
 public actor OSLogMonitor {
@@ -24,7 +23,7 @@ public actor OSLogMonitor {
     private func monitorOSLog() async {
         let context = ModelContext(modelContainer)
                 
-        let appRun = await AppRun(
+        let appRun = AppRun(
             appVersion: Bundle.main.infoDictionary!["CFBundleVersion"] as! String,
             operatingSystemVersion: ProcessInfo.processInfo.operatingSystemVersionString,
             launchDate: appLaunchDate,
@@ -89,7 +88,7 @@ struct Logs: Codable {
 }
 
 @Model
-class AppRun {
+public class AppRun {
     
     struct Snapshot: Codable {
         struct Info: Codable {
@@ -130,7 +129,7 @@ class AppRun {
 }
 
 @Model
-class LogEntry {
+public class LogEntry {
     
     struct Snapshot: Codable {
         var date: Date
@@ -144,11 +143,11 @@ class LogEntry {
     
     var appRun: AppRun
     
-    var date: Date
-    var composedMessage: String
+    public var date: Date
+    public var composedMessage: String
     
     private var _level: Int?
-    var level: OSLogEntryLog.Level? {
+    public var level: OSLogEntryLog.Level? {
         get {
             guard let _level else { return nil }
             return .init(rawValue: _level)
@@ -158,12 +157,13 @@ class LogEntry {
         }
     }
     
-    var category: String?
-    var subsystem: String?
+    public var category: String?
+    public var subsystem: String?
     
-    var signpostName: String?
-    var _signpostType: Int?
-    var signpostType: OSLogEntrySignpost.SignpostType? {
+    public var signpostName: String?
+    
+    private var _signpostType: Int?
+    public var signpostType: OSLogEntrySignpost.SignpostType? {
         get {
             guard let _signpostType else { return nil }
             return .init(rawValue: _signpostType)
