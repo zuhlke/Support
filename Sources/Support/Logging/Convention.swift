@@ -42,12 +42,19 @@ public struct LogStorageConvention: Sendable {
 }
 
 extension LogStorageConvention {
-    public static let diagnosticsAppGroup = LogStorageConvention(
-        baseStorageLocation: .appGroup(identifier: "group.diagnostics"),
-        basePathComponents: ["Logs"],
-        executableTargetGroupingStrategy: .none,
-        executableTargetLogFileNamingStrategy: .byBundleIdentifier(pathExtension: "logs")
-    )
+    /// A convention that uses app groups, allowing all apps/executables using the same developer team to be stored and browsed with the same convention.
+    ///
+    /// - note: An executable must have the associated app group entitlement to read or write logs using this convention.
+    ///
+    /// - Parameter identifier: The app group identifier.
+    public static func commonAppGroup(identifier: String) -> LogStorageConvention {
+        LogStorageConvention(
+            baseStorageLocation: .appGroup(identifier: identifier),
+            basePathComponents: ["Logs"],
+            executableTargetGroupingStrategy: .none,
+            executableTargetLogFileNamingStrategy: .byBundleIdentifier(pathExtension: "logs")
+        )
+    }
 }
 
 extension FileManager {
