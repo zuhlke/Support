@@ -23,7 +23,6 @@ public class LogRetriever {
                 preconditionFailure("Unknown strategy")
             }
             
-            
             let contents = try fileManager.contentsOfDirectory(at: logsFolder, includingPropertiesForKeys: nil)
             return contents
                 .filter { $0.pathExtension == pathExtension }

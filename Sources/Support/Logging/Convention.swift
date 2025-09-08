@@ -6,6 +6,7 @@ public struct LogStorageConvention: Sendable {
     }
     
     public enum ExecutableTargetGroupingStrategy: Sendable {
+        case byAppBundleIdentifier(pathExtension: String)
         // There is no grouping. Each executable’s logs are stored separately.
         case none
     }
@@ -77,8 +78,10 @@ extension URL {
         components.reduce(self) { $0.appending(component: $1, directoryHint: .isDirectory) }
     }
     
-    func appending(groupingComponentsFor strategy: LogStorageConvention.ExecutableTargetGroupingStrategy) -> URL {
+    func appending(groupingComponentsFor strategy: LogStorageConvention.ExecutableTargetGroupingStrategy, appMetadata: AppMetadata) -> URL {
         switch strategy {
+        case .byAppBundleIdentifier(let pathExtension):
+            appending(components: appMetadata.bundleIdentifier).appendingPathExtension(pathExtension)
         case .none:
             self
         }
@@ -87,7 +90,7 @@ extension URL {
     func appending(logFilePathComponentsFor strategy: LogStorageConvention.LogFileNamingStrategy, bundleIdentifier: String) -> URL {
         switch strategy {
         case .byBundleIdentifier(let pathExtension):
-            appending(component: bundleIdentifier).appendingPathExtension("logs")
+            appending(component: bundleIdentifier).appendingPathExtension(pathExtension)
         }
     }
     

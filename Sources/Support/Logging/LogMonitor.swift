@@ -68,12 +68,12 @@ public actor OSLogMonitor {
 
 public extension OSLogMonitor {
     
-    init(convention: LogStorageConvention, appLaunchDate: Date = .now) throws {
+    init(convention: LogStorageConvention, appMetadata: AppMetadata, appLaunchDate: Date = .now) throws {
         let fileManager = FileManager()
         
         let logFile = try fileManager.url(for: convention.baseStorageLocation)
             .appending(components: convention.basePathComponents)
-            .appending(groupingComponentsFor: convention.executableTargetGroupingStrategy)
+            .appending(groupingComponentsFor: convention.executableTargetGroupingStrategy, appMetadata: appMetadata)
             .appending(logFilePathComponentsFor: convention.executableTargetLogFileNamingStrategy, bundleIdentifier: Bundle.main.bundleIdentifier!)
         
         let logDirectory = logFile.deletingLastPathComponent()
@@ -82,6 +82,16 @@ public extension OSLogMonitor {
         try self.init(url: logFile, appLaunchDate: appLaunchDate)
     }
     
+}
+
+public struct AppMetadata {
+    public var bundleIdentifier: String
+    public var name: String
+    
+    public init(bundleIdentifier: String, name: String) {
+        self.bundleIdentifier = bundleIdentifier
+        self.name = name
+    }
 }
 
 struct Logs: Codable {

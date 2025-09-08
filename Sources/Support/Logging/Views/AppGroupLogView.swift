@@ -13,7 +13,7 @@ public struct AppGroupLogView: View {
         let logRetriever = try! LogRetriever(convention: convention)
         let executables = try! logRetriever.executables
         return Dictionary(uniqueKeysWithValues: executables.map { executable in
-            let modalContainer = try! ModelContainer(for: AppRun.self, configurations:  ModelConfiguration(url: executable.url))
+            let modalContainer = try! ModelContainer(for: AppRun.self, configurations: ModelConfiguration(url: executable.url))
             return (executable.bundleIdentifier, modalContainer)
         })
     }
