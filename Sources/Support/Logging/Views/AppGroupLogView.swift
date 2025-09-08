@@ -11,7 +11,7 @@ public struct AppGroupLogView: View {
     
     var modalContainers: [String: ModelContainer] {
         let logRetriever = try! LogRetriever(convention: convention)
-        let executables = try! logRetriever.executables
+        let executables = try! logRetriever.apps.flatMap(\.executables)
         return Dictionary(uniqueKeysWithValues: executables.map { executable in
             let modalContainer = try! ModelContainer(for: AppRun.self, configurations: ModelConfiguration(url: executable.url))
             return (executable.bundleIdentifier, modalContainer)
