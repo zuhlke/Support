@@ -52,7 +52,7 @@ extension LogStorageConvention {
         LogStorageConvention(
             baseStorageLocation: .appGroup(identifier: identifier),
             basePathComponents: ["Logs"],
-            executableTargetGroupingStrategy: .none,
+            executableTargetGroupingStrategy: .byAppBundleIdentifier(pathExtension: "applogs"),
             executableTargetLogFileNamingStrategy: .byBundleIdentifier(pathExtension: "logs")
         )
     }

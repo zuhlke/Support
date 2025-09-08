@@ -18,7 +18,6 @@ public class LogRetriever {
     
     public var executables: [Executable] {
         get throws {
-            precondition(convention.executableTargetGroupingStrategy == .none, "Unknown strategy")
             guard case .byBundleIdentifier(let pathExtension) = convention.executableTargetLogFileNamingStrategy else {
                 preconditionFailure("Unknown strategy")
             }
