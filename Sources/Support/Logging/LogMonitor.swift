@@ -35,6 +35,7 @@ public actor OSLogMonitor {
         var lastDate = Date.distantPast
         while true {
             let fetchedEntries = try! logStore.entries(after: lastDate)
+            
             let modelEntries = fetchedEntries.map {
                 LogEntry(appRun: appRun, entry: $0)
             }
@@ -102,11 +103,11 @@ public class AppRun {
     
     var appVersion: String
     var operatingSystemVersion: String
-    var launchDate: Date
+    public var launchDate: Date
     var device: String
     
     @Relationship(deleteRule: .cascade, inverse: \LogEntry.appRun)
-    var logEntries = [LogEntry]()
+    public var logEntries = [LogEntry]()
     
     init(appVersion: String, operatingSystemVersion: String, launchDate: Date, device: String) {
         self.appVersion = appVersion
@@ -141,7 +142,7 @@ public class LogEntry {
         var signpostType: String?
     }
     
-    var appRun: AppRun
+    public var appRun: AppRun
     
     public var date: Date
     public var composedMessage: String
@@ -228,8 +229,8 @@ extension ModelContext {
     
 }
 
-private extension OSLogEntryLog.Level {
-    var exportDescription: String {
+public extension OSLogEntryLog.Level {
+    public var exportDescription: String {
         switch self {
         case .undefined: "undefined"
         case .debug: "debug"

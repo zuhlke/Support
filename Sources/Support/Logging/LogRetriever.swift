@@ -12,6 +12,10 @@ public class LogRetriever {
             .appending(components: convention.basePathComponents)
     }
     
+    public var appGroupURL: URL {
+        return try! fileManager.url(for: convention.baseStorageLocation)
+    }
+    
     public var executables: [Executable] {
         get throws {
             precondition(convention.executableTargetGroupingStrategy == .none, "Unknown strategy")
@@ -28,7 +32,7 @@ public class LogRetriever {
     }
 }
 
-public struct Executable {
+public struct Executable: Hashable {
     public var url: URL
     public var bundleIdentifier: String
 }
