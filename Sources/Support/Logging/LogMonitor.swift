@@ -15,7 +15,7 @@ public actor OSLogMonitor {
             for: AppRun.self,
             configurations: ModelConfiguration(url: url)
         )
-        Task.detached(name: "Log Monitor") {
+        Task.detached {
             await self.monitorOSLog()
         }
     }
@@ -240,7 +240,7 @@ extension ModelContext {
 }
 
 public extension OSLogEntryLog.Level {
-    public var exportDescription: String {
+    var exportDescription: String {
         switch self {
         case .undefined: "undefined"
         case .debug: "debug"
