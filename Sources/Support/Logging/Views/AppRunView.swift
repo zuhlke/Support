@@ -43,19 +43,44 @@ struct AppRunView: View {
             }
         }
         .toolbar {
-            Button {
-                isFilterMenuShown = true
-            } label: {
-                Image(systemName: "line.3.horizontal.decrease")
+            if isFilterMenuShown {
+                Button {
+                    isFilterMenuShown.toggle()
+                } label: {
+                    Image(systemName: "checkmark")
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.accentColor)
+            } else {
+                Button {
+                    isFilterMenuShown.toggle()
+                } label: {
+                    Image(systemName: "line.3.horizontal.decrease")
+                }
             }
-            .popover(isPresented: $isFilterMenuShown) {
+        }
+        .overlay {
+            if isFilterMenuShown {
                 List(items, id: \.self, selection: $selection) {
                     Text("\($0)")
+                        .buttonStyle(PlainButtonStyle())
                 }
                 .environment(\.editMode, .constant(EditMode.active))
-                .presentationCompactAdaptation(.popover)
-                .frame(minWidth: 200, minHeight: 275)
             }
+
+        }
+        .animation(.easeInOut, value: isFilterMenuShown)
+    }
+}
+
+extension View {
+    @ViewBuilder
+    func `if`<Content: View>(_ condition: Bool,
+                             transform: (Self) -> Content) -> some View {
+        if condition {
+            transform(self)
+        } else {
+            self
         }
     }
 }
