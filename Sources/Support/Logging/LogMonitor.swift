@@ -11,9 +11,11 @@ public actor OSLogMonitor {
     public init(url: URL, appLaunchDate: Date = .now) throws {
         self.appLaunchDate = appLaunchDate
         
+        // Explicitly opt out of storing logs in CloudKit.
+        let configuration = ModelConfiguration(url: url, cloudKitDatabase: .none)
         modelContainer = try ModelContainer(
             for: AppRun.self,
-            configurations: ModelConfiguration(url: url)
+            configurations: configuration
         )
         Task.detached {
             await self.monitorOSLog()
