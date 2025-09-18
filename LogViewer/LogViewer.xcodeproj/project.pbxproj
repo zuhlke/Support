@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 90;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -56,27 +56,21 @@
 /* Begin PBXFrameworksBuildPhase section */
 		135E236A2E69C787001C5CA5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				35F3E20C2E7309830041E30D /* Support in Frameworks */,
 				133F5FAC2E6F1EEF00CCBFBB /* Support in Frameworks */,
 				133F5F5C2E6AE4A900CCBFBB /* Support in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		135E23792E69C791001C5CA5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		135E23832E69C791001C5CA5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
@@ -114,8 +108,6 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-			);
 			fileSystemSynchronizedGroups = (
 				135E236F2E69C787001C5CA5 /* LogViewer */,
 			);
@@ -146,8 +138,6 @@
 				135E237F2E69C791001C5CA5 /* LogViewerTests */,
 			);
 			name = LogViewerTests;
-			packageProductDependencies = (
-			);
 			productName = LogViewerTests;
 			productReference = 135E237C2E69C791001C5CA5 /* LogViewerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -169,8 +159,6 @@
 				135E23892E69C791001C5CA5 /* LogViewerUITests */,
 			);
 			name = LogViewerUITests;
-			packageProductDependencies = (
-			);
 			productName = LogViewerUITests;
 			productReference = 135E23862E69C791001C5CA5 /* LogViewerUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -210,7 +198,7 @@
 			packageReferences = (
 				35F3E20A2E7309830041E30D /* XCLocalSwiftPackageReference "../." */,
 			);
-			preferredProjectObjectVersion = 77;
+			preferredProjectObjectVersion = 90;
 			productRefGroup = 135E236E2E69C787001C5CA5 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -225,48 +213,36 @@
 /* Begin PBXResourcesBuildPhase section */
 		135E236B2E69C787001C5CA5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		135E237A2E69C791001C5CA5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		135E23842E69C791001C5CA5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		135E23692E69C787001C5CA5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		135E23782E69C791001C5CA5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		135E23822E69C791001C5CA5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
@@ -284,7 +260,7 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		135E238E2E69C791001C5CA5 /* Debug */ = {
+		135E238E2E69C791001C5CA5 /* Debug configuration for PBXProject "LogViewer" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -348,7 +324,7 @@
 			};
 			name = Debug;
 		};
-		135E238F2E69C791001C5CA5 /* Release */ = {
+		135E238F2E69C791001C5CA5 /* Release configuration for PBXProject "LogViewer" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -405,7 +381,7 @@
 			};
 			name = Release;
 		};
-		135E23912E69C791001C5CA5 /* Debug */ = {
+		135E23912E69C791001C5CA5 /* Debug configuration for PBXNativeTarget "LogViewer" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -438,7 +414,7 @@
 			};
 			name = Debug;
 		};
-		135E23922E69C791001C5CA5 /* Release */ = {
+		135E23922E69C791001C5CA5 /* Release configuration for PBXNativeTarget "LogViewer" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -471,7 +447,7 @@
 			};
 			name = Release;
 		};
-		135E23942E69C791001C5CA5 /* Debug */ = {
+		135E23942E69C791001C5CA5 /* Debug configuration for PBXNativeTarget "LogViewerTests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -493,7 +469,7 @@
 			};
 			name = Debug;
 		};
-		135E23952E69C791001C5CA5 /* Release */ = {
+		135E23952E69C791001C5CA5 /* Release configuration for PBXNativeTarget "LogViewerTests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -515,7 +491,7 @@
 			};
 			name = Release;
 		};
-		135E23972E69C791001C5CA5 /* Debug */ = {
+		135E23972E69C791001C5CA5 /* Debug configuration for PBXNativeTarget "LogViewerUITests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -535,7 +511,7 @@
 			};
 			name = Debug;
 		};
-		135E23982E69C791001C5CA5 /* Release */ = {
+		135E23982E69C791001C5CA5 /* Release configuration for PBXNativeTarget "LogViewerUITests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -561,37 +537,33 @@
 		135E23682E69C787001C5CA5 /* Build configuration list for PBXProject "LogViewer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				135E238E2E69C791001C5CA5 /* Debug */,
-				135E238F2E69C791001C5CA5 /* Release */,
+				135E238E2E69C791001C5CA5 /* Debug configuration for PBXProject "LogViewer" */,
+				135E238F2E69C791001C5CA5 /* Release configuration for PBXProject "LogViewer" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		135E23902E69C791001C5CA5 /* Build configuration list for PBXNativeTarget "LogViewer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				135E23912E69C791001C5CA5 /* Debug */,
-				135E23922E69C791001C5CA5 /* Release */,
+				135E23912E69C791001C5CA5 /* Debug configuration for PBXNativeTarget "LogViewer" */,
+				135E23922E69C791001C5CA5 /* Release configuration for PBXNativeTarget "LogViewer" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		135E23932E69C791001C5CA5 /* Build configuration list for PBXNativeTarget "LogViewerTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				135E23942E69C791001C5CA5 /* Debug */,
-				135E23952E69C791001C5CA5 /* Release */,
+				135E23942E69C791001C5CA5 /* Debug configuration for PBXNativeTarget "LogViewerTests" */,
+				135E23952E69C791001C5CA5 /* Release configuration for PBXNativeTarget "LogViewerTests" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		135E23962E69C791001C5CA5 /* Build configuration list for PBXNativeTarget "LogViewerUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				135E23972E69C791001C5CA5 /* Debug */,
-				135E23982E69C791001C5CA5 /* Release */,
+				135E23972E69C791001C5CA5 /* Debug configuration for PBXNativeTarget "LogViewerUITests" */,
+				135E23982E69C791001C5CA5 /* Release configuration for PBXNativeTarget "LogViewerUITests" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */

@@ -2,15 +2,51 @@ import SwiftUI
 import SwiftData
 import Support
 
+struct Token: Identifiable {
+    var id: String { name }
+    var name: String
+}
+
+@available(iOS 26.0, *)
 struct AppRunView: View {
     @Query(sort: \LogEntry.date, order: .reverse) var logEntries: [LogEntry]
     
     @State var isFilterMenuShown: Bool = false
     let items = ["Level", "Date", "Subsystem", "Category"]
     @State var selection = Set<String>(["Level", "Date", "Subsystem", "Category"])
+    @State private var searchText = ""
+    @State private var currentTokens = [Token]()
+    let tokens: [String] = ["notice"]
+    
+    var filteredEntries: [LogEntry] {
+        let trimmedSearchText = searchText.trimmingCharacters(in: .whitespaces)
+        
+        return logEntries.filter { logEntry in
+            if !searchText.isEmpty {
+                if logEntry.composedMessage.localizedCaseInsensitiveContains(trimmedSearchText) {
+                    return true
+                }
+                
+                if let level = logEntry.level, level.exportDescription.localizedCaseInsensitiveContains(trimmedSearchText) {
+                    return true
+                }
+                
+                if let subsystem = logEntry.subsystem, subsystem.localizedCaseInsensitiveContains(trimmedSearchText) {
+                    return true
+                }
+                
+                if let category = logEntry.category, category.localizedCaseInsensitiveContains(trimmedSearchText) {
+                    return true
+                }
+                return false
+            }
+            return true
+        }
+    }
 
+    
     var groupedEntries: [AppRun: [LogEntry]] {
-        Dictionary(grouping: logEntries.filter {
+        Dictionary(grouping: filteredEntries.filter {
             !($0.subsystem?.hasPrefix("com.apple.") ?? false) }
         ) { $0.appRun }
     }
@@ -19,7 +55,7 @@ struct AppRunView: View {
         List {
             ForEach(groupedEntries.keys.sorted { $0.launchDate > $1.launchDate }, id: \.self) { appRun in
                 Section(appRun.launchDate.formatted()) {
-                    ForEach(groupedEntries[appRun]!) { entry in
+                    ForEach(groupedEntries[appRun]!.sorted { $0.date < $1.date }) { entry in
                         VStack(alignment: .leading) {
                             Text(entry.composedMessage)
                             HStack {
@@ -42,20 +78,29 @@ struct AppRunView: View {
                 }
             }
         }
+        .searchable(text: $searchText, tokens: $currentTokens) { token in
+            Text(token.name)
+        }
         .toolbar {
+            ToolbarSpacer(.flexible, placement: .bottomBar)
             if isFilterMenuShown {
-                Button {
-                    isFilterMenuShown.toggle()
-                } label: {
-                    Image(systemName: "checkmark")
+                ToolbarItem(placement: .bottomBar) {
+                    Button {
+                        isFilterMenuShown.toggle()
+                    } label: {
+                        Image(systemName: "checkmark")
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.accentColor)
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.accentColor)
             } else {
-                Button {
-                    isFilterMenuShown.toggle()
-                } label: {
-                    Image(systemName: "line.3.horizontal.decrease")
+                DefaultToolbarItem(kind: .search, placement: .bottomBar)
+                ToolbarItem(placement: .bottomBar) {
+                    Button {
+                        isFilterMenuShown.toggle()
+                    } label: {
+                        Image(systemName: "line.3.horizontal.decrease")
+                    }
                 }
             }
         }
@@ -63,24 +108,11 @@ struct AppRunView: View {
             if isFilterMenuShown {
                 List(items, id: \.self, selection: $selection) {
                     Text("\($0)")
-                        .buttonStyle(PlainButtonStyle())
                 }
                 .environment(\.editMode, .constant(EditMode.active))
             }
 
         }
         .animation(.easeInOut, value: isFilterMenuShown)
-    }
-}
-
-extension View {
-    @ViewBuilder
-    func `if`<Content: View>(_ condition: Bool,
-                             transform: (Self) -> Content) -> some View {
-        if condition {
-            transform(self)
-        } else {
-            self
-        }
     }
 }

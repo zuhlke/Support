@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 import Support
 
+@available(iOS 26.0, *)
 public struct AppGroupLogView: View {
     var convention: LogStorageConvention
     
