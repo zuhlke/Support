@@ -2,11 +2,6 @@ import SwiftUI
 import SwiftData
 import Support
 
-struct Token: Identifiable {
-    var id: String { name }
-    var name: String
-}
-
 @available(iOS 26.0, *)
 struct AppRunView: View {
     @Query(sort: \LogEntry.date, order: .reverse) var logEntries: [LogEntry]
@@ -15,8 +10,6 @@ struct AppRunView: View {
     let items = ["Level", "Date", "Subsystem", "Category"]
     @State var selection = Set<String>(["Level", "Date", "Subsystem", "Category"])
     @State private var searchText = ""
-    @State private var currentTokens = [Token]()
-    let tokens: [String] = ["notice"]
     
     var filteredEntries: [LogEntry] {
         let trimmedSearchText = searchText.trimmingCharacters(in: .whitespaces)
@@ -78,9 +71,7 @@ struct AppRunView: View {
                 }
             }
         }
-        .searchable(text: $searchText, tokens: $currentTokens) { token in
-            Text(token.name)
-        }
+        .searchable(text: $searchText)
         .toolbar {
             ToolbarSpacer(.flexible, placement: .bottomBar)
             if isFilterMenuShown {
