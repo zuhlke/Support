@@ -1,8 +1,8 @@
 import SwiftUI
 import SwiftData
-import Support
 
 @available(iOS 26.0, *)
+@available(macOS, unavailable)
 struct AppRunView: View {
     @Query(sort: \LogEntry.date, order: .reverse) var logEntries: [LogEntry]
     
