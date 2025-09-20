@@ -70,7 +70,7 @@ public actor OSLogMonitor {
 
 public extension OSLogMonitor {
     
-    init(convention: LogStorageConvention, appMetadata: AppMetadata, appLaunchDate: Date = .now) throws {
+    init(convention: LogStorageConvention, appMetadata: AppMetadata = .main, appLaunchDate: Date = .now) throws {
         let fileManager = FileManager()
         
         let logFile = try fileManager.url(for: convention.baseStorageLocation)
