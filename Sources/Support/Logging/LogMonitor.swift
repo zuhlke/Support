@@ -86,16 +86,6 @@ public extension OSLogMonitor {
     
 }
 
-public struct AppMetadata {
-    public var bundleIdentifier: String
-    public var name: String
-    
-    public init(bundleIdentifier: String, name: String) {
-        self.bundleIdentifier = bundleIdentifier
-        self.name = name
-    }
-}
-
 struct Logs: Codable {
     var runs: [AppRun.Snapshot]
 }
