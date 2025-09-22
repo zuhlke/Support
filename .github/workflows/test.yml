@@ -12,8 +12,8 @@ on:
       - log-monitoring
 
 jobs:
-  test:
-    name: Test
+  test-on-host:
+    name: Test on Host
 
     # See available software: https://github.com/actions/virtual-environments/blob/master/images/macos/macos-15-Readme.md
     strategy:
@@ -27,3 +27,22 @@ jobs:
 
     - name: Run tests
       run: swift test
+
+  test-on-simulator:
+    name: Test on Simulator
+
+    # Wait for test on host
+    needs: test-on-host
+
+    # See available software: https://github.com/actions/virtual-environments/blob/master/images/macos/macos-15-Readme.md
+    strategy:
+      matrix:
+        device: [iPhone 17 Pro, Apple Watch Ultra 3 (49mm)]
+
+    runs-on: macos-15
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Run tests
+      run: xcodebuild test -scheme Support-Package -destination 'name=${{ matrix.device }}'
