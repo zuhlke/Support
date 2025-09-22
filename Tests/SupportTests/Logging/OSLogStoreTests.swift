@@ -1,7 +1,7 @@
 #if canImport(OSLog)
 
 import Foundation
-@testable import Support
+import Support
 import Testing
 import OSLog
 

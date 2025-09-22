@@ -1,11 +1,11 @@
 import Foundation
 
-class LogRetriever {
+public class LogRetriever {
     private let fileManager = FileManager()
     private let convention: LogStorageConvention
     private let logsFolder: URL
     
-    init(convention: LogStorageConvention) throws {
+    public init(convention: LogStorageConvention) throws {
         self.convention = convention
         
         logsFolder = try fileManager.url(for: convention.baseStorageLocation)
@@ -23,7 +23,7 @@ class LogRetriever {
             .map { Executable(url: $0, bundleIdentifier: $0.deletingPathExtension().lastPathComponent) }
     }
     
-    var apps: [AppLogs] {
+    public var apps: [AppLogs] {
         get throws {
             switch convention.executableTargetGroupingStrategy {
             case .none:
@@ -38,12 +38,12 @@ class LogRetriever {
     }
 }
 
-struct AppLogs {
-    var bundleIdentifier: String
-    var executables: [Executable]
+public struct AppLogs {
+    public var bundleIdentifier: String
+    public var executables: [Executable]
 }
 
-struct Executable: Hashable {
-    var url: URL
-    var bundleIdentifier: String
+public struct Executable: Hashable {
+    public var url: URL
+    public var bundleIdentifier: String
 }

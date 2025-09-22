@@ -5,7 +5,7 @@ import OSLog
 extension OSLogStore {
     
     /// Returns a sequence of log entries with timestamp after the provided date.
-    func entries(after date: Date) throws -> AnySequence<OSLogEntry> {
+    public func entries(after date: Date) throws -> AnySequence<OSLogEntry> {
         // `OSLogStore` does not properly process `options` or `position`
         // so our implementation relies on the predicate
         // For more context, see: https://developer.apple.com/forums/thread/705868

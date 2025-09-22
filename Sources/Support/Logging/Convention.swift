@@ -34,7 +34,7 @@ public struct LogStorageConvention: Sendable {
     /// How is the log file for each executable named
     var executableTargetLogFileNamingStrategy: LogFileNamingStrategy
     
-    init(baseStorageLocation: BaseStorageLocation, basePathComponents: [String], executableTargetGroupingStrategy: ExecutableTargetGroupingStrategy, executableTargetLogFileNamingStrategy: LogFileNamingStrategy) {
+    public init(baseStorageLocation: BaseStorageLocation, basePathComponents: [String], executableTargetGroupingStrategy: ExecutableTargetGroupingStrategy, executableTargetLogFileNamingStrategy: LogFileNamingStrategy) {
         self.baseStorageLocation = baseStorageLocation
         self.basePathComponents = basePathComponents
         self.executableTargetGroupingStrategy = executableTargetGroupingStrategy
