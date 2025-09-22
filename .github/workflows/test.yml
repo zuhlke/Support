@@ -4,10 +4,12 @@ on:
   push:
     branches:    
       - main
+      - log-monitoring
       
   pull_request:
     branches:    
       - main
+      - log-monitoring
 
 jobs:
   test:
