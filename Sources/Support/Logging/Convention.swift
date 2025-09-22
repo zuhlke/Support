@@ -1,3 +1,5 @@
+#if canImport(SwiftData)
+
 import Foundation
 
 public struct LogStorageConvention: Sendable {
@@ -99,3 +101,5 @@ extension URL {
 private struct UndefinedAppGroup: Error, Sendable {
     var identifier: String
 }
+
+#endif

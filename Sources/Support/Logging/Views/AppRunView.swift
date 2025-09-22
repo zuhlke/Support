@@ -1,3 +1,5 @@
+#if canImport(SwiftUI)
+
 import SwiftUI
 import SwiftData
 
@@ -107,3 +109,5 @@ struct AppRunView: View {
         .animation(.easeInOut, value: isFilterMenuShown)
     }
 }
+
+#endif

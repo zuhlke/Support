@@ -1,3 +1,6 @@
+#if canImport(OSLog)
+#if canImport(SwiftData)
+
 import Foundation
 import OSLog
 import SwiftData
@@ -267,3 +270,6 @@ private func deviceModel() -> String {
     }
     return identifier
 }
+
+#endif
+#endif
