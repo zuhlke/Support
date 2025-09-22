@@ -3,34 +3,6 @@
 import SwiftUI
 import SwiftData
 
-enum LogToken: Identifiable, Hashable {
-    case level(String)
-    case subsystem(String)
-    case category(String)
-    
-    var id: String {
-        switch self {
-        case .level(let value):
-            return value
-        case .category(let value):
-            return value
-        case .subsystem(let value):
-            return value
-        }
-    }
-    
-    var displayName: String {
-        switch self {
-        case .level(let value):
-            return "Level: \(value)"
-        case .category(let value):
-            return "Category: \(value)"
-        case .subsystem(let value):
-            return "Subsystem: \(value)"
-        }
-    }
-}
-
 struct Token: Identifiable {
     var name: String
     var id: String {
@@ -47,58 +19,37 @@ struct AppRunView: View {
     let items = ["Level", "Date", "Subsystem", "Category"]
     @State var selection = Set<String>(["Level", "Date", "Subsystem", "Category"])
     @State private var searchText = ""
-    @State private var logTokens: [LogToken] = [.level("Notice")]
-    
-    var levels: [String] {
-        logEntries.compactMap { logEntry in
-            logEntry.level?.exportDescription
-        }
-    }
-    
-    var subsystems: [String] {
-        logEntries.compactMap { logEntry in
-            logEntry.subsystem
-        }
-    }
-    
-    var categories: [String] {
-        logEntries.compactMap { logEntry in
-            logEntry.category
-        }
-    }
-    
-    var possibleTokens: [Token] {
-        (levels + subsystems + categories).map(Token.init)
-    }
-    
-    @State var currentTokens = [Token]()
-    
+    @State private var tokens: [Token] = []
+        
     var filteredEntries: [LogEntry] {
-        let trimmedSearchText = searchText.trimmingCharacters(in: .whitespaces)
+        let trimmedSearchText = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let activeTokens = tokens.map { $0.name.lowercased() }
         
         return logEntries.filter { logEntry in
-            if !searchText.isEmpty {
-                if logEntry.composedMessage.localizedCaseInsensitiveContains(trimmedSearchText) {
-                    return true
-                }
-                
-                if let level = logEntry.level, level.exportDescription.localizedCaseInsensitiveContains(trimmedSearchText) {
-                    return true
-                }
-                
-                if let subsystem = logEntry.subsystem, subsystem.localizedCaseInsensitiveContains(trimmedSearchText) {
-                    return true
-                }
-                
-                if let category = logEntry.category, category.localizedCaseInsensitiveContains(trimmedSearchText) {
-                    return true
-                }
-                return false
+            guard !(logEntry.subsystem?.hasPrefix("com.apple.") ?? false) else { return false }
+            
+            let fields: [String] = [
+                logEntry.composedMessage,
+                logEntry.level?.exportDescription,
+                logEntry.subsystem,
+                logEntry.category
+            ].compactMap { $0?.lowercased() }
+            
+            if !trimmedSearchText.isEmpty {
+                let matchesText = fields.contains { $0.contains(trimmedSearchText) }
+                if !matchesText { return false }
             }
+            
+            if !activeTokens.isEmpty {
+                let matchesAllTokens = activeTokens.allSatisfy { token in
+                    fields.contains { $0.contains(token) }
+                }
+                if !matchesAllTokens { return false }
+            }
+            
             return true
         }
     }
-
     
     var groupedEntries: [AppRun: [LogEntry]] {
         Dictionary(grouping: filteredEntries.filter {
@@ -112,19 +63,27 @@ struct AppRunView: View {
                 Section(appRun.launchDate.formatted()) {
                     ForEach(groupedEntries[appRun]!.sorted { $0.date < $1.date }) { entry in
                         VStack(alignment: .leading) {
-                            Text(entry.composedMessage)
+                            Text(entry.composedMessage.highlighted(
+                                matching: [searchText] + tokens.map { $0.name }
+                            ))
                             HStack {
                                 if let level = entry.level, selection.contains("Level") {
-                                    Text(level.exportDescription)
+                                    Text(level.exportDescription.highlighted(
+                                        matching: [searchText] + tokens.map { $0.name }
+                                    ))
                                 }
                                 if selection.contains("Date") {
-                                    Text(entry.date.formatted())
+                                    Text(entry.date.formatted()) // probably no highlighting for dates
                                 }
                                 if let subsystem = entry.subsystem, selection.contains("Subsystem") {
-                                    Text(subsystem)
+                                    Text(subsystem.highlighted(
+                                        matching: [searchText] + tokens.map { $0.name }
+                                    ))
                                 }
                                 if let category = entry.category, selection.contains("Category") {
-                                    Text(category)
+                                    Text(category.highlighted(
+                                        matching: [searchText] + tokens.map { $0.name }
+                                    ))
                                 }
                             }
                             .font(.caption)
@@ -137,16 +96,18 @@ struct AppRunView: View {
     
     var body: some View {
         logList
-            .searchable(text: $searchText, tokens: $currentTokens) { token in
+        .searchable(text: $searchText, editableTokens: $tokens) { $token in
             Text(token.name)
         }
-        .onChange(of: searchText) {
-            if let token = searchText.endWithToken(possibleTokens) {
-                if !currentTokens.contains(where: { $0.name == token.name }) {
-                    searchText.removeLast(token.name.count)
-                    currentTokens.append(token)
-                }
+        .onSubmit(of: .search) {
+            let trimmed = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            guard !trimmed.isEmpty else { return }
+            
+            let newToken = Token(name: trimmed)
+            if !tokens.contains(where: { $0.id == newToken.id }) {
+                tokens.append(newToken)
             }
+            searchText = ""
         }
         .toolbar {
             ToolbarSpacer(.flexible, placement: .bottomBar)
@@ -186,14 +147,23 @@ struct AppRunView: View {
 
 
 extension String {
-    func endWithToken(_ types: [Token]) -> Token? {
-        let selfLowercased = self.lowercased()
-        for type in types {
-            if selfLowercased.hasSuffix(type.name.lowercased()) {
-                return type
+    func highlighted(matching queries: [String], highlightColor: Color = .yellow.opacity(0.4)) -> AttributedString {
+        var attributed = AttributedString(self)
+        let lowerSelf = self.lowercased()
+        
+        for query in queries where !query.isEmpty {
+            let lowerQuery = query.lowercased()
+            var searchRange = lowerSelf.startIndex..<lowerSelf.endIndex
+            
+            while let range = lowerSelf.range(of: lowerQuery, options: .caseInsensitive, range: searchRange) {
+                if let attrRange = Range(range, in: attributed) {
+                    attributed[attrRange].backgroundColor = UIColor(highlightColor)
+                }
+                searchRange = range.upperBound..<lowerSelf.endIndex
             }
         }
-        return nil
+        
+        return attributed
     }
 }
 
