@@ -27,8 +27,8 @@ struct OSLogStoreTests {
         logger.log("Second")
         logger.log("Third")
         
-        let entires = try store.entries(after: date)
-        let returnedMessages = entires
+        let entries = try store.entries(after: date)
+        let returnedMessages = entries
             .compactMap { $0 as? OSLogEntryLog }
             .filter { $0.subsystem == subsystem }
             .map { $0.composedMessage }
