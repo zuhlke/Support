@@ -8,7 +8,7 @@ import OSLog
 // TODO: P3 – Provide suitable environment for `OSLogStore` tests.
 // We can’t read `OSLogStore` from package tests in all environments (currently, this is failing locally but not on the CI).
 // See if we can make this reliably work without having to conditionally skip it.
-@Suite(.disabled(if: !OSLogStore.isReadable, ""))
+@Suite(.disabled())
 struct OSLogStoreTests {
     
     let store: OSLogStore
