@@ -57,11 +57,24 @@ struct AppMetadataTests {
         }
     }
     
-    @Test func `Make metadata from main bundle`() async throws {
+    // This runs when using XCTest runner or in the context of an app
+    @Test(.enabled(if: Bundle.main.bundleIdentifier != nil))
+    func `Make metadata from main bundle`() async throws {
         let metadata = AppMetadata.main
         #expect(metadata.bundleIdentifier == Bundle.main.bundleIdentifier!)
         #expect(metadata.displayName == Bundle.main.infoDictionary!["CFBundleName"] as! String)
     }
+    
+    #if os(macOS)
+    // This runs when using `swift test` directly
+    @Test(.enabled(if: Bundle.main.bundleIdentifier == nil))
+    func `Make metadata from main bundle fails if main bundle identifier doesn’t exist`() async throws {
+        await #expect(processExitsWith: .failure) {
+            _ = AppMetadata.main
+        }
+    }
+    #endif
+    
 }
 
 private extension Bundle {
