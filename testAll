@@ -1,0 +1,10 @@
+# /bin/zsh
+
+set -e
+
+# Use Xcode’s version of Swift, not e.g. toolchain managed by `swiftly`.
+xcrun swift test
+./testUbuntu
+
+xcodebuild test -scheme Support-Package -destination 'name=iPhone 17 Pro'
+xcodebuild test -scheme Support-Package -destination 'name=Apple Watch Ultra 3 (49mm)'
