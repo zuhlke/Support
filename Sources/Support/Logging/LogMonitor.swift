@@ -2,13 +2,13 @@ import Foundation
 import OSLog
 import SwiftData
 
-actor OSLogMonitor {
+public actor OSLogMonitor {
     
     let appLaunchDate: Date
     let logStore = try! OSLogStore(scope: .currentProcessIdentifier)
     let modelContainer: ModelContainer
     
-    init(url: URL, appLaunchDate: Date = .now) throws {
+    public init(url: URL, appLaunchDate: Date = .now) throws {
         self.appLaunchDate = appLaunchDate
         
         // Explicitly opt out of storing logs in CloudKit.
@@ -52,7 +52,7 @@ actor OSLogMonitor {
         }
     }
     
-    func export() throws -> String {
+    public func export() throws -> String {
         let context = ModelContext(modelContainer)
         let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
         let runs = try context.fetch(descriptor)
@@ -68,7 +68,7 @@ actor OSLogMonitor {
     
 }
 
-extension OSLogMonitor {
+public extension OSLogMonitor {
     
     init(convention: LogStorageConvention, appMetadata: AppMetadata = .main, appLaunchDate: Date = .now) throws {
         let fileManager = FileManager()
