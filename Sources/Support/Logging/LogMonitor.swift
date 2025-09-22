@@ -2,13 +2,13 @@ import Foundation
 import OSLog
 import SwiftData
 
-public actor OSLogMonitor {
+actor OSLogMonitor {
     
     let appLaunchDate: Date
     let logStore = try! OSLogStore(scope: .currentProcessIdentifier)
     let modelContainer: ModelContainer
     
-    public init(url: URL, appLaunchDate: Date = .now) throws {
+    init(url: URL, appLaunchDate: Date = .now) throws {
         self.appLaunchDate = appLaunchDate
         
         // Explicitly opt out of storing logs in CloudKit.
@@ -52,7 +52,7 @@ public actor OSLogMonitor {
         }
     }
     
-    public func export() throws -> String {
+    func export() throws -> String {
         let context = ModelContext(modelContainer)
         let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
         let runs = try context.fetch(descriptor)
@@ -68,7 +68,7 @@ public actor OSLogMonitor {
     
 }
 
-public extension OSLogMonitor {
+extension OSLogMonitor {
     
     init(convention: LogStorageConvention, appMetadata: AppMetadata = .main, appLaunchDate: Date = .now) throws {
         let fileManager = FileManager()
@@ -91,7 +91,7 @@ struct Logs: Codable {
 }
 
 @Model
-public class AppRun {
+class AppRun {
     
     struct Snapshot: Codable {
         struct Info: Codable {
@@ -105,11 +105,11 @@ public class AppRun {
     
     var appVersion: String
     var operatingSystemVersion: String
-    public var launchDate: Date
+    var launchDate: Date
     var device: String
     
     @Relationship(deleteRule: .cascade, inverse: \LogEntry.appRun)
-    public var logEntries = [LogEntry]()
+    var logEntries = [LogEntry]()
     
     init(appVersion: String, operatingSystemVersion: String, launchDate: Date, device: String) {
         self.appVersion = appVersion
@@ -132,7 +132,7 @@ public class AppRun {
 }
 
 @Model
-public class LogEntry {
+class LogEntry {
     
     struct Snapshot: Codable {
         var date: Date
@@ -144,13 +144,13 @@ public class LogEntry {
         var signpostType: String?
     }
     
-    public var appRun: AppRun
+    var appRun: AppRun
     
-    public var date: Date
-    public var composedMessage: String
+    var date: Date
+    var composedMessage: String
     
     private var _level: Int?
-    public var level: OSLogEntryLog.Level? {
+    var level: OSLogEntryLog.Level? {
         get {
             guard let _level else { return nil }
             return .init(rawValue: _level)
@@ -160,13 +160,13 @@ public class LogEntry {
         }
     }
     
-    public var category: String?
-    public var subsystem: String?
+    var category: String?
+    var subsystem: String?
     
-    public var signpostName: String?
+    var signpostName: String?
     
     private var _signpostType: Int?
-    public var signpostType: OSLogEntrySignpost.SignpostType? {
+    var signpostType: OSLogEntrySignpost.SignpostType? {
         get {
             guard let _signpostType else { return nil }
             return .init(rawValue: _signpostType)
@@ -231,7 +231,7 @@ extension ModelContext {
     
 }
 
-public extension OSLogEntryLog.Level {
+extension OSLogEntryLog.Level {
     var exportDescription: String {
         switch self {
         case .undefined: "undefined"

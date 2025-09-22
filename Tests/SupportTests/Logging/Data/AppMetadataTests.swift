@@ -1,7 +1,7 @@
 
 import Foundation
 import Testing
-import Support
+@testable import Support
 import TestingSupport
 
 @Suite
