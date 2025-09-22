@@ -1,4 +1,5 @@
 #if canImport(SwiftData)
+#if swift(>=6.2) // Required for the raw identifier in test method names.
 
 import Foundation
 import Testing
@@ -78,4 +79,5 @@ private extension Bundle {
     
 }
 
+#endif
 #endif
