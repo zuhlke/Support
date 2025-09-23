@@ -18,25 +18,23 @@ public struct AppGroupLogView: View {
             .sorted(using: KeyPathComparator(\.bundleIdentifier))
     }
     
-    var modalContainers: [String: ModelContainer] {
-        let executables = try! apps.flatMap(\.executables)
-        return Dictionary(uniqueKeysWithValues: executables.map { executable in
-            let modalContainer = try! ModelContainer(for: AppRun.self, configurations: ModelConfiguration(url: executable.url))
-            return (executable.bundleIdentifier, modalContainer)
-        })
-    }
-    
     public var body: some View {
         NavigationStack {
-            List(modalContainers.keys.sorted(), id: \.self) { bundleIdentifier in
-                NavigationLink(bundleIdentifier, value: bundleIdentifier)
+            List(apps.flatMap(\.executables), id: \.bundleIdentifier) { executable in
+                NavigationLink(executable.bundleIdentifier, value: executable)
             }
             .navigationTitle("Executables")
-            .navigationDestination(for: String.self) { bundleIdentifier in
+            .navigationDestination(for: ExecutableLogContainer.self) { executable in
                 AppRunView()
-                    .modelContainer(modalContainers[bundleIdentifier]!)
+                    .modelContainer(try! ModelContainer(from: executable))
             }
         }
+    }
+}
+
+private extension ModelContainer {
+    convenience init(from executable: ExecutableLogContainer) throws {
+        try self.init(for: AppRun.self, configurations: ModelConfiguration(url: executable.url))
     }
 }
 
