@@ -16,8 +16,8 @@ struct AppRunView: View {
     @Query(sort: \LogEntry.date, order: .reverse) var logEntries: [LogEntry]
     
     @State var isFilterMenuShown: Bool = false
-    let items = ["Level", "Date", "Subsystem", "Category"]
-    @State var selection = Set<String>(["Level", "Date", "Subsystem", "Category"])
+    static let items = ["Level", "Date", "Subsystem", "Category"]
+    @State var selection = Set<String>(items)
     @State private var searchText = ""
     @State private var tokens: [Token] = []
         
@@ -57,45 +57,50 @@ struct AppRunView: View {
         ) { $0.appRun }
     }
     
-    var logList: some View {
+    @ViewBuilder
+    func appRunLogs(_ logs: [LogEntry]) -> some View {
+        ForEach(logs) { entry in
+            VStack(alignment: .leading) {
+                Text(entry.composedMessage.highlighted(
+                    matching: [searchText] + tokens.map { $0.name }
+                ))
+                HStack {
+                    if let level = entry.level, selection.contains("Level") {
+                        Text(level.exportDescription.highlighted(
+                            matching: [searchText] + tokens.map { $0.name }
+                        ))
+                    }
+                    if selection.contains("Date") {
+                        Text(entry.date.formatted())
+                    }
+                    if let subsystem = entry.subsystem, selection.contains("Subsystem") {
+                        Text(subsystem.highlighted(
+                            matching: [searchText] + tokens.map { $0.name }
+                        ))
+                    }
+                    if let category = entry.category, selection.contains("Category") {
+                        Text(category.highlighted(
+                            matching: [searchText] + tokens.map { $0.name }
+                        ))
+                    }
+                }
+                .font(.caption)
+            }
+        }
+    }
+    
+    var appRuns: some View {
         List {
             ForEach(groupedEntries.keys.sorted { $0.launchDate > $1.launchDate }, id: \.self) { appRun in
                 Section(appRun.launchDate.formatted()) {
-                    ForEach(groupedEntries[appRun]!.sorted { $0.date < $1.date }) { entry in
-                        VStack(alignment: .leading) {
-                            Text(entry.composedMessage.highlighted(
-                                matching: [searchText] + tokens.map { $0.name }
-                            ))
-                            HStack {
-                                if let level = entry.level, selection.contains("Level") {
-                                    Text(level.exportDescription.highlighted(
-                                        matching: [searchText] + tokens.map { $0.name }
-                                    ))
-                                }
-                                if selection.contains("Date") {
-                                    Text(entry.date.formatted()) // probably no highlighting for dates
-                                }
-                                if let subsystem = entry.subsystem, selection.contains("Subsystem") {
-                                    Text(subsystem.highlighted(
-                                        matching: [searchText] + tokens.map { $0.name }
-                                    ))
-                                }
-                                if let category = entry.category, selection.contains("Category") {
-                                    Text(category.highlighted(
-                                        matching: [searchText] + tokens.map { $0.name }
-                                    ))
-                                }
-                            }
-                            .font(.caption)
-                        }
-                    }
+                    appRunLogs(groupedEntries[appRun]!.sorted { $0.date < $1.date })
                 }
             }
         }
     }
     
     var body: some View {
-        logList
+        appRuns
         .searchable(text: $searchText, editableTokens: $tokens) { $token in
             Text(token.name)
         }
@@ -113,13 +118,9 @@ struct AppRunView: View {
             ToolbarSpacer(.flexible, placement: .bottomBar)
             if isFilterMenuShown {
                 ToolbarItem(placement: .bottomBar) {
-                    Button {
+                    Button(role: .confirm) {
                         isFilterMenuShown.toggle()
-                    } label: {
-                        Image(systemName: "checkmark")
                     }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.accentColor)
                 }
             } else {
                 DefaultToolbarItem(kind: .search, placement: .bottomBar)
@@ -134,7 +135,7 @@ struct AppRunView: View {
         }
         .overlay {
             if isFilterMenuShown {
-                List(items, id: \.self, selection: $selection) {
+                List(Self.items, id: \.self, selection: $selection) {
                     Text("\($0)")
                 }
                 .environment(\.editMode, .constant(EditMode.active))
@@ -145,63 +146,11 @@ struct AppRunView: View {
     }
 }
 
-
-extension String {
-    func highlighted(matching queries: [String], highlightColor: Color = .yellow.opacity(0.4)) -> AttributedString {
-        var attributed = AttributedString(self)
-        let lowerSelf = self.lowercased()
-        
-        for query in queries where !query.isEmpty {
-            let lowerQuery = query.lowercased()
-            var searchRange = lowerSelf.startIndex..<lowerSelf.endIndex
-            
-            while let range = lowerSelf.range(of: lowerQuery, options: .caseInsensitive, range: searchRange) {
-                if let attrRange = Range(range, in: attributed) {
-                    attributed[attrRange].backgroundColor = UIColor(highlightColor)
-                }
-                searchRange = range.upperBound..<lowerSelf.endIndex
-            }
-        }
-        
-        return attributed
-    }
-}
-
-struct SampleData: PreviewModifier {
-    static func makeSharedContext() throws -> ModelContainer {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: AppRun.self, configurations: config)
-        
-        let appRun = AppRun(appVersion: "1.0.0", operatingSystemVersion: "14.0.0", launchDate: Date(), device: "iPhone 12 Pro Max")
-        let logEntries = [
-            LogEntry(appRun: appRun, date: Date(), composedMessage: "Hello, world!", level: .info, category: "App", subsystem: "com.zuhlke.com"),
-            LogEntry(appRun: appRun, date: Date(), composedMessage: "Bye, world!", level: .info, category: "App", subsystem: "com.zuhlke.com")
-        ]
-        
-        let context = ModelContext(container)
-        context.insert(appRun)
-        context.insert(contentsOf: logEntries)
-        return container
-    }
-    
-    
-    func body(content: Content, context: ModelContainer) -> some View {
-        content.modelContainer(context)
-    }
-}
-
-extension PreviewTrait where T == Preview.ViewTraits {
-
-    @available(iOS 26.0, *)
-    @MainActor public static var sampleData: PreviewTrait<Preview.ViewTraits> {
-        return .modifier(SampleData())
-    }
-}
-
-
 @available(iOS 26.0, *)
 #Preview(traits: .sampleData) {
-    AppRunView()
+    NavigationStack {
+        AppRunView()
+    }
 }
 
 #endif
