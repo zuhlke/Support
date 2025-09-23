@@ -7,7 +7,7 @@ import SwiftData
 @Model
 public class AppRun {
     struct Snapshot: Codable {
-        struct Info: Codable {
+        struct Info: Codable, Equatable {
             var operatingSystemVersion: String
             var launchDate: Date
             var device: String
@@ -42,12 +42,5 @@ public class AppRun {
         )
     }
 }
-
-extension AppRun {
-    static func inMemoryModelContainer() throws -> ModelContainer {
-        try ModelContainer(for: AppRun.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
-    }
-}
-
 #endif
 #endif
