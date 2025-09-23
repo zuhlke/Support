@@ -1,3 +1,5 @@
+#if canImport(SwiftUI)
+
 import SwiftUI
 import SwiftData
 
@@ -32,3 +34,5 @@ public struct AppGroupLogView: View {
         }
     }
 }
+
+#endif

@@ -1,3 +1,15 @@
+// TODO: P2 – Improve how we use conditional compilation around Logging features
+//
+// Currently, we use a combination of framework availability checks (SwiftData, SwiftUI, OSLog) to see if we should compile the code.
+// On Apple platforms all evaluate to true so it doesn’t really matter, but ideally we need a better strategy:
+// - Some code may *compile* without the relevant framework, but is not really useful.
+// - Monitoring (and generating) logs may be done in a different environment from viewing it, so technically e.g. OSLog is not necessary for a log viewer.
+// - An app may wish to exclude compilation of code it doesn’t need (e.g. log viewing is not needed in a production app).
+//
+// Possible approach is to use package traits to provide the caller more control, and also to switch to platform checks rather than framework checks.
+
+#if canImport(SwiftData)
+
 import Foundation
 
 /// Metadata about an app.
@@ -42,3 +54,5 @@ extension AppMetadata {
     public static let main = AppMetadata(from: .main)!
     
 }
+
+#endif

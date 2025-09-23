@@ -1,5 +1,5 @@
-
 #if canImport(OSLog)
+
 import OSLog
 
 extension OSLogStore {
@@ -16,4 +16,5 @@ extension OSLogStore {
     }
     
 }
+
 #endif

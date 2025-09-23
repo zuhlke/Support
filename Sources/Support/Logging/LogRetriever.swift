@@ -1,3 +1,5 @@
+#if canImport(SwiftData)
+
 import Foundation
 
 public class LogRetriever {
@@ -47,3 +49,5 @@ public struct Executable: Hashable {
     public var url: URL
     public var bundleIdentifier: String
 }
+
+#endif
