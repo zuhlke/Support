@@ -20,8 +20,14 @@ public struct AppGroupLogView: View {
     
     public var body: some View {
         NavigationStack {
-            List(apps.flatMap(\.executables)) { executable in
-                NavigationLink(executable.id, value: executable)
+            List {
+                ForEach(apps) { app in
+                    Section(app.id) {
+                        ForEach(app.executables) { executable in
+                            NavigationLink(executable.id, value: executable)
+                        }
+                    }
+                }
             }
             .navigationTitle("Executables")
             .navigationDestination(for: ExecutableLogContainer.self) { executable in
