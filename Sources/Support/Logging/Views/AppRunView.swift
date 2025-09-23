@@ -14,13 +14,15 @@ struct Token: Identifiable {
 @available(iOS 26.0, *)
 @available(macOS, unavailable)
 struct AppRunView: View {
+    static let items = ["Level", "Date", "Subsystem", "Category"]
+
     @Query(sort: \LogEntry.date, order: .reverse) var logEntries: [LogEntry]
     
     @State var isFilterMenuShown: Bool = false
-    static let items = ["Level", "Date", "Subsystem", "Category"]
     @State var selection = Set<String>(items)
     @State private var searchText = ""
     @State private var tokens: [Token] = []
+    @State private var groupedEntries: [AppRun: [LogEntry]] = [:]
         
     var filteredEntries: [LogEntry] {
         let trimmedSearchText = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
@@ -51,13 +53,7 @@ struct AppRunView: View {
             return true
         }
     }
-    
-    var groupedEntries: [AppRun: [LogEntry]] {
-        Dictionary(grouping: filteredEntries.filter {
-            !($0.subsystem?.hasPrefix("com.apple.") ?? false) }
-        ) { $0.appRun }
-    }
-    
+        
     @ViewBuilder
     func appRunLogs(_ logs: [LogEntry]) -> some View {
         ForEach(logs) { entry in
@@ -114,6 +110,9 @@ struct AppRunView: View {
                 tokens.append(newToken)
             }
             searchText = ""
+        }
+        .onChange(of: filteredEntries) {
+            groupedEntries = Dictionary(grouping: filteredEntries) { $0.appRun }
         }
         .toolbar {
             ToolbarSpacer(.flexible, placement: .bottomBar)
