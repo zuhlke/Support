@@ -74,7 +74,7 @@ struct BundleMetadataTests {
             "CFBundleName": String.random(),
             "CFBundleVersion": String.random(),
             "CFBundleShortVersionString": String.random(),
-            "CFBundlePackageType": "AAPL",
+            "CFBundlePackageType": "APPL",
         ]
         try Bundle.withTemporaryBundle(info: info) { bundle in
             let metadata = try #require(BundleMetadata(from: bundle))
@@ -88,7 +88,7 @@ struct BundleMetadataTests {
             "CFBundleName": String.random(),
             "CFBundleVersion": String.random(),
             "CFBundleShortVersionString": String.random(),
-            "CFBundlePackageType": "AAPL",
+            "CFBundlePackageType": "APPL",
         ]
         let extensionName = String.random()
         let extensionId = String.random()
@@ -123,7 +123,7 @@ struct BundleMetadataTests {
             "CFBundleVersion": String.random(),
             "CFBundleShortVersionString": String.random(),
             "WKCompanionAppBundleIdentifier": watchCompanionAppBundleIdentifier,
-            "CFBundlePackageType": "AAPL",
+            "CFBundlePackageType": "APPL",
         ]
         try Bundle.withTemporaryBundle(info: info) { bundle in
             let metadata = try #require(BundleMetadata(from: bundle))

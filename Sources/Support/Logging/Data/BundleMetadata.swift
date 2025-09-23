@@ -62,7 +62,7 @@ extension BundleMetadata {
         
         let packageType: PackageType
         switch packageTypeIdentifier {
-        case "AAPL":
+        case "APPL":
             let plugins: [BundleMetadata]
             if let pluginsDirectory = bundle.builtInPlugInsURL {
                 do {
