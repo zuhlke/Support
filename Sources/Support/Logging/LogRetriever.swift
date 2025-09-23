@@ -14,7 +14,7 @@ public class LogRetriever {
             .appending(components: convention.basePathComponents)
     }
     
-    private func getExecutables(url: URL) throws -> [Executable] {
+    private func getExecutables(url: URL) throws -> [ExecutableLogContainer] {
         guard case .byBundleIdentifier(let pathExtension) = convention.executableTargetLogFileNamingStrategy else {
             preconditionFailure("Unknown strategy")
         }
@@ -22,7 +22,7 @@ public class LogRetriever {
         let contents = try fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
         return contents
             .filter { $0.pathExtension == pathExtension }
-            .map { Executable(url: $0, bundleIdentifier: $0.deletingPathExtension().lastPathComponent) }
+            .map { ExecutableLogContainer(url: $0, bundleIdentifier: $0.deletingPathExtension().lastPathComponent) }
     }
     
     public var apps: [AppLogContainer] {
@@ -41,9 +41,5 @@ public class LogRetriever {
 }
 
 
-public struct Executable: Hashable {
-    public var url: URL
-    public var bundleIdentifier: String
-}
 
 #endif

@@ -13,7 +13,7 @@ public struct AppLogContainer {
     public var bundleIdentifier: String
     
     /// Executables contained within this log container.
-    public var executables: [Executable]
+    public var executables: [ExecutableLogContainer]
 }
 
 #endif
