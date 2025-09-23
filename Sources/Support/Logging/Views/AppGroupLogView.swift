@@ -1,3 +1,4 @@
+#if os(iOS)
 #if canImport(SwiftUI)
 
 import SwiftUI
@@ -35,4 +36,5 @@ public struct AppGroupLogView: View {
     }
 }
 
+#endif
 #endif

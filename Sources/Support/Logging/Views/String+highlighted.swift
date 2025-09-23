@@ -1,3 +1,4 @@
+#if os(iOS)
 import SwiftUI
 
 extension String {
@@ -20,3 +21,4 @@ extension String {
         return attributed
     }
 }
+#endif

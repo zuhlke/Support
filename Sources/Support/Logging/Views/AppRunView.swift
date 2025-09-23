@@ -1,3 +1,4 @@
+#if os(iOS)
 #if canImport(SwiftUI)
 
 import SwiftUI
@@ -153,4 +154,5 @@ struct AppRunView: View {
     }
 }
 
+#endif
 #endif

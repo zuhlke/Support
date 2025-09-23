@@ -1,3 +1,5 @@
+#if os(iOS)
+
 import SwiftData
 import SwiftUI
 
@@ -31,3 +33,4 @@ extension PreviewTrait where T == Preview.ViewTraits {
         return .modifier(SampleData())
     }
 }
+#endif
