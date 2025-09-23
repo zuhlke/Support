@@ -6,14 +6,18 @@ import OSLog
 import SwiftData
 
 public actor OSLogMonitor {
-    
     let appLaunchDate: Date
-    let logStore = try! OSLogStore(scope: .currentProcessIdentifier)
+    let logStore: OSLogStoreProtocol
     let modelContainer: ModelContainer
     
-    public init(url: URL, appLaunchDate: Date = .now) throws {
+    public init(
+        url: URL,
+        logStore: OSLogStoreProtocol,
+        appLaunchDate: Date = .now
+    ) throws {
         self.appLaunchDate = appLaunchDate
-        
+        self.logStore = logStore
+
         // Explicitly opt out of storing logs in CloudKit.
         let configuration = ModelConfiguration(url: url, cloudKitDatabase: .none)
         modelContainer = try ModelContainer(
@@ -23,6 +27,11 @@ public actor OSLogMonitor {
         Task.detached {
             await self.monitorOSLog()
         }
+    }
+    
+    init(url: URL, appLaunchDate: Date = .now) throws {
+        let logStore = try OSLogStore(scope: .currentProcessIdentifier)
+        try self.init(url: url, logStore: logStore, appLaunchDate: appLaunchDate)
     }
     
     private func monitorOSLog() async {
