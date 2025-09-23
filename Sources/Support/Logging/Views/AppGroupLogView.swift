@@ -15,13 +15,13 @@ public struct AppGroupLogView: View {
     public init(convention: LogStorageConvention) {
         let logRetriever = try! LogRetriever(convention: convention)
         apps = try! logRetriever.apps
-            .sorted(using: KeyPathComparator(\.bundleIdentifier))
+            .sorted(using: KeyPathComparator(\.id))
     }
     
     public var body: some View {
         NavigationStack {
-            List(apps.flatMap(\.executables), id: \.bundleIdentifier) { executable in
-                NavigationLink(executable.bundleIdentifier, value: executable)
+            List(apps.flatMap(\.executables)) { executable in
+                NavigationLink(executable.id, value: executable)
             }
             .navigationTitle("Executables")
             .navigationDestination(for: ExecutableLogContainer.self) { executable in
