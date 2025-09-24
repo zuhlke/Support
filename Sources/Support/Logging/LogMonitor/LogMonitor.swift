@@ -7,13 +7,13 @@ import SwiftData
 
 public actor OSLogMonitor {
     let appLaunchDate: Date
-    let logStore: OSLogStoreProtocol
+    let logStore: LogStoreProtocol
     let modelContainer: ModelContainer
     
     init(
         url: URL,
         bundleMetadata: BundleMetadata,
-        logStore: OSLogStoreProtocol,
+        logStore: LogStoreProtocol,
         appLaunchDate: Date
     ) throws {
         self.appLaunchDate = appLaunchDate

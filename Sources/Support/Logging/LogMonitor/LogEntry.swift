@@ -71,7 +71,7 @@ public class LogEntry {
 }
 
 extension LogEntry {
-    convenience init(appRun: AppRun, entry: OSLogEntryProtocol) {
+    convenience init(appRun: AppRun, entry: LogEntryProtocol) {
         self.init(
             appRun: appRun,
             date: entry.date,

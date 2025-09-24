@@ -1,0 +1,26 @@
+import Foundation
+
+protocol LogEntryProtocol {
+    var composedMessage: String { get }
+    var date: Date { get }
+}
+
+protocol LogStoreProtocol {
+    func entries(after date: Date) throws -> AnySequence<LogEntryProtocol>
+}
+
+#if canImport(OSLog)
+
+import OSLog
+
+@available(macOS 10.15, *)
+extension OSLogEntry: LogEntryProtocol {}
+
+extension OSLogStore: LogStoreProtocol {
+    func entries(after date: Date) throws -> AnySequence<any LogEntryProtocol> {
+        let osLogEntries: AnySequence<OSLogEntry> = try entries(after: date)
+        return AnySequence(osLogEntries.map { $0 as LogEntryProtocol })
+    }
+}
+
+#endif
