@@ -12,8 +12,9 @@ public actor OSLogMonitor {
     
     init(
         url: URL,
+        bundleMetadata: BundleMetadata,
         logStore: OSLogStoreProtocol,
-        appLaunchDate: Date = .now
+        appLaunchDate: Date
     ) throws {
         self.appLaunchDate = appLaunchDate
         self.logStore = logStore
@@ -25,20 +26,29 @@ public actor OSLogMonitor {
             configurations: configuration
         )
         Task.detached {
-            await self.monitorOSLog()
+            await self.monitorOSLog(bundleMetadata: bundleMetadata)
         }
     }
     
-    public init(url: URL, appLaunchDate: Date = .now) throws {
+    public init(
+        url: URL,
+        bundleMetadata: BundleMetadata = .main,
+        appLaunchDate: Date = .now
+    ) throws {
         let logStore = try OSLogStore(scope: .currentProcessIdentifier)
-        try self.init(url: url, logStore: logStore, appLaunchDate: appLaunchDate)
+        try self.init(
+            url: url,
+            bundleMetadata: bundleMetadata,
+            logStore: logStore,
+            appLaunchDate: appLaunchDate
+        )
     }
-    
-    private func monitorOSLog() async {
+
+    private func monitorOSLog(bundleMetadata: BundleMetadata) async {
         let context = ModelContext(modelContainer)
-                
+        
         let appRun = AppRun(
-            appVersion: Bundle.main.infoDictionary!["CFBundleVersion"] as! String,
+            appVersion: bundleMetadata.version,
             operatingSystemVersion: ProcessInfo.processInfo.operatingSystemVersionString,
             launchDate: appLaunchDate,
             device: deviceModel()
@@ -95,7 +105,6 @@ public extension OSLogMonitor {
         
         try self.init(url: logFile, appLaunchDate: appLaunchDate)
     }
-    
 }
 
 struct Logs: Codable {
