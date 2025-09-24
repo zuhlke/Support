@@ -7,6 +7,7 @@ import SwiftData
 public class AppRun {
     struct Snapshot: Codable {
         struct Info: Codable, Equatable {
+            var appVersion: String
             var operatingSystemVersion: String
             var launchDate: Date
             var device: String
@@ -33,6 +34,7 @@ public class AppRun {
     var snapshot: Snapshot {
         .init(
             info: Snapshot.Info(
+                appVersion: self.appVersion,
                 operatingSystemVersion: self.operatingSystemVersion,
                 launchDate: self.launchDate,
                 device: self.device,
