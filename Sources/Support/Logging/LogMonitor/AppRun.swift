@@ -1,4 +1,3 @@
-#if canImport(OSLog)
 #if canImport(SwiftData)
 
 import Foundation
@@ -42,5 +41,5 @@ public class AppRun {
         )
     }
 }
-#endif
+
 #endif

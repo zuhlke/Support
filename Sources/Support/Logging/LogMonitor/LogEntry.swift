@@ -1,4 +1,3 @@
-#if canImport(OSLog)
 #if canImport(SwiftData)
 
 import Foundation
@@ -118,5 +117,4 @@ public extension OSLogEntryLog.Level {
     }
 }
 
-#endif
 #endif

@@ -1,3 +1,5 @@
+#if canImport(SwiftData)
+
 import Testing
 import Foundation
 @testable import Support
@@ -38,3 +40,5 @@ struct AppRunTests {
         )
     }
 }
+
+#endif

@@ -1,6 +1,4 @@
-#if canImport(OSLog)
-
-import OSLog
+import Foundation
 
 public protocol OSLogEntryProtocol {
     var composedMessage: String { get }
@@ -10,6 +8,10 @@ public protocol OSLogEntryProtocol {
 public protocol OSLogStoreProtocol {
     func entries(after date: Date) throws -> AnySequence<OSLogEntryProtocol>
 }
+
+#if canImport(OSLog)
+
+import OSLog
 
 @available(macOS 10.15, *)
 extension OSLogEntry: OSLogEntryProtocol {}
