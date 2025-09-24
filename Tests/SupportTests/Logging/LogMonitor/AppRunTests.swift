@@ -9,13 +9,13 @@ struct AppRunTests {
     func appRunInit() async throws {
         let appRun = AppRun(
             appVersion: "1.0.0",
-            operatingSystemVersion: "iOS",
+            operatingSystemVersion: "26.0",
             launchDate: Date(timeIntervalSince1970: 10),
             device: "iPhone 17 Pro"
         )
 
         #expect(appRun.appVersion == "1.0.0")
-        #expect(appRun.operatingSystemVersion == "iOS")
+        #expect(appRun.operatingSystemVersion == "26.0")
         #expect(appRun.launchDate == Date(timeIntervalSince1970: 10))
         #expect(appRun.device == "iPhone 17 Pro")
         #expect(appRun.logEntries.isEmpty)
@@ -25,7 +25,7 @@ struct AppRunTests {
     func appRunSnapshot() async throws {
         let appRunSnapshot = AppRun(
             appVersion: "1.0.0",
-            operatingSystemVersion: "iOS",
+            operatingSystemVersion: "26.0",
             launchDate: Date(timeIntervalSince1970: 10),
             device: "iPhone 17 Pro"
         ).snapshot
@@ -33,7 +33,8 @@ struct AppRunTests {
         #expect(appRunSnapshot.logEntries.isEmpty)
         #expect(
             appRunSnapshot.info == AppRun.Snapshot.Info(
-                operatingSystemVersion: "iOS",
+                appVersion: "1.0.0",
+                operatingSystemVersion: "26.0",
                 launchDate: Date(timeIntervalSince1970: 10),
                 device: "iPhone 17 Pro"
             )
