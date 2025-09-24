@@ -10,7 +10,7 @@ public actor OSLogMonitor {
     let logStore: OSLogStoreProtocol
     let modelContainer: ModelContainer
     
-    public init(
+    init(
         url: URL,
         logStore: OSLogStoreProtocol,
         appLaunchDate: Date = .now
@@ -29,7 +29,7 @@ public actor OSLogMonitor {
         }
     }
     
-    init(url: URL, appLaunchDate: Date = .now) throws {
+    public init(url: URL, appLaunchDate: Date = .now) throws {
         let logStore = try OSLogStore(scope: .currentProcessIdentifier)
         try self.init(url: url, logStore: logStore, appLaunchDate: appLaunchDate)
     }

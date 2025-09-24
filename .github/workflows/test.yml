@@ -15,10 +15,10 @@ jobs:
   test-on-host:
     name: Test on Host
 
-    # See available software: https://github.com/actions/virtual-environments/blob/master/images/macos/macos-15-Readme.md
+    # See available software: https://github.com/actions/runner-images/blob/main/images/macos/macos-26-arm64-Readme.md
     strategy:
       matrix:
-        os: [macos-15, ubuntu-latest]
+        os: [macos-26, ubuntu-latest]
 
     runs-on: ${{ matrix.os }}
     
@@ -34,12 +34,12 @@ jobs:
     # Wait for test on host
     needs: test-on-host
 
-    # See available software: https://github.com/actions/virtual-environments/blob/master/images/macos/macos-15-Readme.md
+    # See available software: https://github.com/actions/runner-images/blob/main/images/macos/macos-26-arm64-Readme.md
     strategy:
       matrix:
         device: [iPhone 17 Pro, Apple Watch Ultra 3 (49mm)]
 
-    runs-on: macos-15
+    runs-on: macos-26
     
     steps:
     - uses: actions/checkout@v4
