@@ -6,7 +6,7 @@ protocol LogEntryProtocol {
 }
 
 protocol LogStoreProtocol {
-    func entries(after date: Date) throws -> AnySequence<LogEntryProtocol>
+    func entries(after date: Date) throws -> any Sequence<any LogEntryProtocol>
 }
 
 #if canImport(OSLog)
@@ -17,9 +17,9 @@ import OSLog
 extension OSLogEntry: LogEntryProtocol {}
 
 extension OSLogStore: LogStoreProtocol {
-    func entries(after date: Date) throws -> AnySequence<any LogEntryProtocol> {
+    func entries(after date: Date) throws -> any Sequence<any LogEntryProtocol> {
         let osLogEntries: AnySequence<OSLogEntry> = try entries(after: date)
-        return AnySequence(osLogEntries.map { $0 as LogEntryProtocol })
+        return osLogEntries.lazy.map { $0 as LogEntryProtocol }
     }
 }
 
