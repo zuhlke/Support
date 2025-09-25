@@ -3,7 +3,11 @@ import Foundation
 
 /// Log container for individual executables
 public struct ExecutableLogContainer: Hashable, Identifiable {
-    
+    public enum PackageType: Hashable {
+        case mainApp
+        case `extension`(extensionPointIdentifier: String)
+    }
+
     // TODO: P2 – Review public exposure of the URL.
     public var url: URL
     
@@ -15,6 +19,9 @@ public struct ExecutableLogContainer: Hashable, Identifiable {
     
     /// Name of the executable
     public var displayName: String
+
+    /// The type of package
+    public var packageType: PackageType
 }
 
 #endif

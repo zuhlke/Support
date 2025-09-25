@@ -24,7 +24,17 @@ public struct AppGroupLogView: View {
                 ForEach(apps) { app in
                     Section(app.displayName) {
                         ForEach(app.executables) { executable in
-                            NavigationLink(executable.displayName, value: executable)
+                            NavigationLink(value: executable) {
+                                let systemImage = switch executable.packageType {
+                                case .mainApp: "app"
+                                case .extension(extensionPointIdentifier: "com.apple.intents-service"),
+                                    .extension(extensionPointIdentifier: "com.apple.intents-ui-service"): "siri"
+                                case .extension(extensionPointIdentifier: "com.apple.widgetkit-extension"): "widget.small"
+                                case .extension: "puzzlepiece.extension"
+                                }
+
+                                Label(executable.displayName, systemImage: systemImage)
+                            }
                         }
                     }
                 }

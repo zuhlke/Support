@@ -44,19 +44,30 @@ public class LogRetriever {
             let executablesDictionary = try executables
 
             return manifests.map {
-                var executables: [ExecutableLogContainer] = $0.extensions.compactMap {
-                    guard let url = executablesDictionary[$0.key] else {
+                var executables = $0.extensions.compactMap { ext -> ExecutableLogContainer? in
+                    guard let url = executablesDictionary[ext.key] else {
                         return nil
                     }
 
-                    return ExecutableLogContainer(url: url, id: $0.key, displayName: $0.value.displayName ?? $0.value.name)
+                    return ExecutableLogContainer(
+                        url: url,
+                        id: ext.key,
+                        displayName: ext.value.displayName ?? ext.value.name,
+                        packageType: .extension(extensionPointIdentifier: ext.value.extensionPointIdentifier)
+                    )
                 }
                 
                 if let appExectuableUrl = executablesDictionary[$0.id] {
-                    let appExecutable = ExecutableLogContainer(url: appExectuableUrl, id: $0.id, displayName: $0.displayName ?? $0.name)
+                    let appExecutable = ExecutableLogContainer(
+                        url: appExectuableUrl,
+                        id: $0.id,
+                        displayName: $0.displayName ?? $0.name,
+                        packageType: .mainApp
+                    )
+
                     executables.insert(appExecutable, at: 0)
                 }
-                
+
                 return AppLogContainer(
                     id: $0.id,
                     displayName: $0.displayName ?? $0.name,
