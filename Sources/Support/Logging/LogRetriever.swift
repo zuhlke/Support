@@ -23,7 +23,7 @@ public class LogRetriever {
     
     public var apps: [AppLogContainer] {
         get throws {
-            return try getExecutables(url: diagnosticsDirectory)
+            return try getExecutables(url: diagnosticsDirectory.appending(component: convention.logsDirectory))
                 .map { AppLogContainer(id: $0.id, executables: [$0]) }
         }
     }
