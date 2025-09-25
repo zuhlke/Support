@@ -4,6 +4,7 @@
 import Foundation
 import OSLog
 import SwiftData
+import UniformTypeIdentifiers
 
 public actor OSLogMonitor {
     let appLaunchDate: Date
