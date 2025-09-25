@@ -14,13 +14,14 @@ public class LogRetriever {
             .appending(components: convention.basePathComponents)
     }
 
-    private var executables: [ExecutableLogContainer] {
+    private var executables: [String: URL] {
         get throws {
             let logsDirectory = diagnosticsDirectory.appending(component: convention.logsDirectory)
             let contents = try fileManager.contentsOfDirectory(at: logsDirectory, includingPropertiesForKeys: nil)
-            return contents
-                .filter { $0.pathExtension == convention.logsFileExtension }
-                .map { ExecutableLogContainer(url: $0, id: $0.deletingPathExtension().lastPathComponent) }
+            return Dictionary(uniqueKeysWithValues: contents
+                .lazy
+                .filter { [convention] in $0.pathExtension == convention.logsFileExtension }
+                .map { ($0.deletingPathExtension().lastPathComponent, $0) })
         }
     }
 
@@ -40,18 +41,20 @@ public class LogRetriever {
     public var apps: [AppLogContainer] {
         get throws {
             let manifests = try manifests
-            let executables = try executables
-            let executablesDictionary = Dictionary(uniqueKeysWithValues: executables.lazy.map {
-                ($0.id, $0)
-            })
-        
+            let executablesDictionary = try executables
+
             return manifests.map {
-                var executables = $0.extensions.compactMap {
-                    executablesDictionary[$0.key]
+                var executables: [ExecutableLogContainer] = $0.extensions.compactMap {
+                    guard let url = executablesDictionary[$0.key] else {
+                        return nil
+                    }
+
+                    return ExecutableLogContainer(url: url, id: $0.key)
                 }
                 
-                if let appExectuable = executablesDictionary[$0.id] {
-                    executables.insert(appExectuable, at: 0)
+                if let appExectuableUrl = executablesDictionary[$0.id] {
+                    let appExecutable = ExecutableLogContainer(url: appExectuableUrl, id: $0.id)
+                    executables.insert(appExecutable, at: 0)
                 }
                 
                 return AppLogContainer(
