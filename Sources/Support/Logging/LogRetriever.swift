@@ -5,12 +5,12 @@ import Foundation
 public class LogRetriever {
     private let fileManager = FileManager()
     private let convention: LogStorageConvention
-    private let logsFolder: URL
+    private let diagnosticsDirectory: URL
     
     public init(convention: LogStorageConvention) throws {
         self.convention = convention
         
-        logsFolder = try fileManager.url(for: convention.baseStorageLocation)
+        diagnosticsDirectory = try fileManager.url(for: convention.baseStorageLocation)
             .appending(components: convention.basePathComponents)
     }
     
@@ -27,15 +27,8 @@ public class LogRetriever {
     
     public var apps: [AppLogContainer] {
         get throws {
-            switch convention.executableTargetGroupingStrategy {
-            case .none:
-                return try getExecutables(url: logsFolder).map { AppLogContainer(id: $0.id, executables: [$0]) }
-            case .byAppBundleIdentifier(let pathExtension):
-                let contents = try fileManager.contentsOfDirectory(at: logsFolder, includingPropertiesForKeys: nil)
-                return try contents
-                    .filter { $0.pathExtension == pathExtension }
-                    .map { AppLogContainer(id: $0.deletingPathExtension().lastPathComponent, executables: try getExecutables(url: $0)) }
-            }
+            return try getExecutables(url: diagnosticsDirectory)
+                .map { AppLogContainer(id: $0.id, executables: [$0]) }
         }
     }
 }

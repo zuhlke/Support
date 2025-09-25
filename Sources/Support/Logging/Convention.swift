@@ -6,13 +6,7 @@ public struct LogStorageConvention: Sendable {
     public enum BaseStorageLocation: Sendable {
         case appGroup(identifier: String)
     }
-    
-    public enum ExecutableTargetGroupingStrategy: Sendable {
-        case byAppBundleIdentifier(pathExtension: String)
-        // There is no grouping. Each executable’s logs are stored separately.
-        case none
-    }
-    
+
     public enum LogFileNamingStrategy: Sendable {
         case byBundleIdentifier(pathExtension: String)
     }
@@ -23,23 +17,12 @@ public struct LogStorageConvention: Sendable {
     /// Where would logs following this convention be stored
     var basePathComponents: [String]
     
-    /// How logs from different executable targets are grouped
-    ///
-    /// A single conceptual “app” may have different excutables:
-    /// - App extensions (such as widgets)
-    /// - Embedded apps (for example for Watch OS)
-    /// - Non-production variants
-    ///
-    /// This property indicates if there’s a strategy for grouping logs from these different executables
-    var executableTargetGroupingStrategy: ExecutableTargetGroupingStrategy
-    
     /// How is the log file for each executable named
     var executableTargetLogFileNamingStrategy: LogFileNamingStrategy
     
-    public init(baseStorageLocation: BaseStorageLocation, basePathComponents: [String], executableTargetGroupingStrategy: ExecutableTargetGroupingStrategy, executableTargetLogFileNamingStrategy: LogFileNamingStrategy) {
+    public init(baseStorageLocation: BaseStorageLocation, basePathComponents: [String], executableTargetLogFileNamingStrategy: LogFileNamingStrategy) {
         self.baseStorageLocation = baseStorageLocation
         self.basePathComponents = basePathComponents
-        self.executableTargetGroupingStrategy = executableTargetGroupingStrategy
         self.executableTargetLogFileNamingStrategy = executableTargetLogFileNamingStrategy
     }
 }
@@ -54,7 +37,6 @@ extension LogStorageConvention {
         LogStorageConvention(
             baseStorageLocation: .appGroup(identifier: identifier),
             basePathComponents: [],
-            executableTargetGroupingStrategy: .byAppBundleIdentifier(pathExtension: "applogs"),
             executableTargetLogFileNamingStrategy: .byBundleIdentifier(pathExtension: "logs")
         )
     }
