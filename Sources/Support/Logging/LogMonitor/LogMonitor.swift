@@ -97,9 +97,7 @@ public extension OSLogMonitor {
         switch bundleMetadata.packageType {
         case .app(let appMetadata):
             // TODO: - Create an AppMetadata file here
-            Logger().info("Plugins: \(appMetadata.plugins.description)")
-            Logger().info("Plugins: \(appMetadata.plugins.debugDescription)")
-            Logger().info("WatchOS app: \(appMetadata.watchCompanionAppBundleIdentifier ?? "")")
+            break
         default: break
         }
 
