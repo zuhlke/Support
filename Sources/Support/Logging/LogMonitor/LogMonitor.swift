@@ -29,8 +29,8 @@ public actor OSLogMonitor {
             await self.monitorOSLog(bundleMetadata: bundleMetadata)
         }
     }
-    
-    public init(
+
+    init(
         url: URL,
         bundleMetadata: BundleMetadata = .main,
         appLaunchDate: Date = .now
