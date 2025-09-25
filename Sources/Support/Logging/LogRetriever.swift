@@ -54,7 +54,11 @@ public class LogRetriever {
                     executables.insert(appExectuable, at: 0)
                 }
                 
-                return AppLogContainer(id: $0.id, executables: executables)
+                return AppLogContainer(
+                    id: $0.id,
+                    displayName: $0.displayName ?? $0.name,
+                    executables: executables
+                )
             }
         }
     }

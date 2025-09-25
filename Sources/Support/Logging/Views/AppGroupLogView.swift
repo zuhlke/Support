@@ -22,14 +22,14 @@ public struct AppGroupLogView: View {
         NavigationStack {
             List {
                 ForEach(apps) { app in
-                    Section(app.id) {
+                    Section(app.displayName) {
                         ForEach(app.executables) { executable in
                             NavigationLink(executable.id, value: executable)
                         }
                     }
                 }
             }
-            .navigationTitle("Executables")
+            .navigationTitle("Apps")
             .navigationDestination(for: ExecutableLogContainer.self) { executable in
                 AppRunView()
                     .modelContainer(try! ModelContainer(from: executable))
