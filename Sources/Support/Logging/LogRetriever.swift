@@ -49,11 +49,11 @@ public class LogRetriever {
                         return nil
                     }
 
-                    return ExecutableLogContainer(url: url, id: $0.key)
+                    return ExecutableLogContainer(url: url, id: $0.key, displayName: $0.value.displayName ?? $0.value.name)
                 }
                 
                 if let appExectuableUrl = executablesDictionary[$0.id] {
-                    let appExecutable = ExecutableLogContainer(url: appExectuableUrl, id: $0.id)
+                    let appExecutable = ExecutableLogContainer(url: appExectuableUrl, id: $0.id, displayName: $0.displayName ?? $0.name)
                     executables.insert(appExecutable, at: 0)
                 }
                 

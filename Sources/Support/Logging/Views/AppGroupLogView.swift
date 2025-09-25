@@ -24,7 +24,7 @@ public struct AppGroupLogView: View {
                 ForEach(apps) { app in
                     Section(app.displayName) {
                         ForEach(app.executables) { executable in
-                            NavigationLink(executable.id, value: executable)
+                            NavigationLink(executable.displayName, value: executable)
                         }
                     }
                 }
