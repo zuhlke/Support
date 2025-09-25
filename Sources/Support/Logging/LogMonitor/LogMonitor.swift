@@ -4,6 +4,7 @@
 import Foundation
 import OSLog
 import SwiftData
+import UniformTypeIdentifiers
 
 public actor OSLogMonitor {
     let appLaunchDate: Date
@@ -11,16 +12,46 @@ public actor OSLogMonitor {
     let modelContainer: ModelContainer
     
     init(
-        url: URL,
+        convention: LogStorageConvention,
         bundleMetadata: BundleMetadata,
         logStore: LogStoreProtocol,
         appLaunchDate: Date
     ) throws {
         self.appLaunchDate = appLaunchDate
         self.logStore = logStore
-
+        
+        let fileManager = FileManager()
+        
+        let diagnosticsDirectory = try fileManager.url(for: convention.baseStorageLocation)
+            .appending(components: convention.basePathComponents)
+        
+        do {
+            let manifestFile = diagnosticsDirectory
+                .appending(component: convention.manifestDirectory)
+                .appending(component: bundleMetadata.id)
+                .appendingPathExtension(for: .json)
+    
+            let appLogManifest = try AppLogManifest(from: bundleMetadata)
+            
+            let manifestDirectory = manifestFile.deletingLastPathComponent()
+            try? fileManager.createDirectory(at: manifestDirectory, withIntermediateDirectories: true)
+            
+            let encodedAppLogManifest = try JSONEncoder().encode(appLogManifest)
+            try encodedAppLogManifest.write(to: manifestFile)
+        } catch is AppLogManifest.NotAnAppBundle {
+            // Manifest file not needed for non app bundles
+        }
+ 
+        let logFile = diagnosticsDirectory
+            .appending(component: convention.logsDirectory)
+            .appending(component: bundleMetadata.id)
+            .appendingPathExtension(convention.logsFileExtension)
+        
+        let logDirectory = logFile.deletingLastPathComponent()
+        try? fileManager.createDirectory(at: logDirectory, withIntermediateDirectories: true)
+        
         // Explicitly opt out of storing logs in CloudKit.
-        let configuration = ModelConfiguration(url: url, cloudKitDatabase: .none)
+        let configuration = ModelConfiguration(url: logFile, cloudKitDatabase: .none)
         modelContainer = try ModelContainer(
             for: AppRun.self,
             configurations: configuration
@@ -28,20 +59,6 @@ public actor OSLogMonitor {
         Task.detached {
             await self.monitorOSLog(bundleMetadata: bundleMetadata)
         }
-    }
-    
-    public init(
-        url: URL,
-        bundleMetadata: BundleMetadata = .main,
-        appLaunchDate: Date = .now
-    ) throws {
-        let logStore = try OSLogStore(scope: .currentProcessIdentifier)
-        try self.init(
-            url: url,
-            bundleMetadata: bundleMetadata,
-            logStore: logStore,
-            appLaunchDate: appLaunchDate
-        )
     }
 
     private func monitorOSLog(bundleMetadata: BundleMetadata) async {
@@ -91,19 +108,18 @@ public actor OSLogMonitor {
 }
 
 public extension OSLogMonitor {
-    
-    init(convention: LogStorageConvention, appMetadata: AppMetadata = .main, appLaunchDate: Date = .now) throws {
-        let fileManager = FileManager()
-        
-        let logFile = try fileManager.url(for: convention.baseStorageLocation)
-            .appending(components: convention.basePathComponents)
-            .appending(groupingComponentsFor: convention.executableTargetGroupingStrategy, appMetadata: appMetadata)
-            .appending(logFilePathComponentsFor: convention.executableTargetLogFileNamingStrategy, bundleIdentifier: Bundle.main.bundleIdentifier!)
-        
-        let logDirectory = logFile.deletingLastPathComponent()
-        try? fileManager.createDirectory(at: logDirectory, withIntermediateDirectories: true)
-        
-        try self.init(url: logFile, appLaunchDate: appLaunchDate)
+    init(
+        convention: LogStorageConvention,
+        bundleMetadata: BundleMetadata = .main,
+        appLaunchDate: Date = .now
+    ) throws {
+        let logStore = try OSLogStore(scope: .currentProcessIdentifier)
+        try self.init(
+            convention: convention,
+            bundleMetadata: bundleMetadata,
+            logStore: logStore,
+            appLaunchDate: appLaunchDate
+        )
     }
 }
 

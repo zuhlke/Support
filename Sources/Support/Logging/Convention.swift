@@ -6,41 +6,16 @@ public struct LogStorageConvention: Sendable {
     public enum BaseStorageLocation: Sendable {
         case appGroup(identifier: String)
     }
-    
-    public enum ExecutableTargetGroupingStrategy: Sendable {
-        case byAppBundleIdentifier(pathExtension: String)
-        // There is no grouping. Each executable’s logs are stored separately.
-        case none
-    }
-    
-    public enum LogFileNamingStrategy: Sendable {
-        case byBundleIdentifier(pathExtension: String)
-    }
-    
+
     /// Indicates where on the system the logs should be stored
     var baseStorageLocation: BaseStorageLocation
     
     /// Where would logs following this convention be stored
     var basePathComponents: [String]
-    
-    /// How logs from different executable targets are grouped
-    ///
-    /// A single conceptual “app” may have different excutables:
-    /// - App extensions (such as widgets)
-    /// - Embedded apps (for example for Watch OS)
-    /// - Non-production variants
-    ///
-    /// This property indicates if there’s a strategy for grouping logs from these different executables
-    var executableTargetGroupingStrategy: ExecutableTargetGroupingStrategy
-    
-    /// How is the log file for each executable named
-    var executableTargetLogFileNamingStrategy: LogFileNamingStrategy
-    
-    public init(baseStorageLocation: BaseStorageLocation, basePathComponents: [String], executableTargetGroupingStrategy: ExecutableTargetGroupingStrategy, executableTargetLogFileNamingStrategy: LogFileNamingStrategy) {
+
+    public init(baseStorageLocation: BaseStorageLocation, basePathComponents: [String]) {
         self.baseStorageLocation = baseStorageLocation
         self.basePathComponents = basePathComponents
-        self.executableTargetGroupingStrategy = executableTargetGroupingStrategy
-        self.executableTargetLogFileNamingStrategy = executableTargetLogFileNamingStrategy
     }
 }
 
@@ -53,10 +28,22 @@ extension LogStorageConvention {
     public static func commonAppGroup(identifier: String) -> LogStorageConvention {
         LogStorageConvention(
             baseStorageLocation: .appGroup(identifier: identifier),
-            basePathComponents: ["Logs"],
-            executableTargetGroupingStrategy: .byAppBundleIdentifier(pathExtension: "applogs"),
-            executableTargetLogFileNamingStrategy: .byBundleIdentifier(pathExtension: "logs")
+            basePathComponents: []
         )
+    }
+}
+
+extension LogStorageConvention {
+    var manifestDirectory: String {
+        "Manifests"
+    }
+    
+    var logsDirectory: String {
+        "Logs"
+    }
+    
+    var logsFileExtension: String {
+        "logs"
     }
 }
 
@@ -78,22 +65,6 @@ extension URL {
     
     func appending(components: [String]) -> URL {
         components.reduce(self) { $0.appending(component: $1, directoryHint: .isDirectory) }
-    }
-    
-    func appending(groupingComponentsFor strategy: LogStorageConvention.ExecutableTargetGroupingStrategy, appMetadata: AppMetadata) -> URL {
-        switch strategy {
-        case .byAppBundleIdentifier(let pathExtension):
-            appending(components: appMetadata.bundleIdentifier).appendingPathExtension(pathExtension)
-        case .none:
-            self
-        }
-    }
-    
-    func appending(logFilePathComponentsFor strategy: LogStorageConvention.LogFileNamingStrategy, bundleIdentifier: String) -> URL {
-        switch strategy {
-        case .byBundleIdentifier(let pathExtension):
-            appending(component: bundleIdentifier).appendingPathExtension(pathExtension)
-        }
     }
     
 }

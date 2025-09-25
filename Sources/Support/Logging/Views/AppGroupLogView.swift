@@ -22,14 +22,24 @@ public struct AppGroupLogView: View {
         NavigationStack {
             List {
                 ForEach(apps) { app in
-                    Section(app.id) {
+                    Section(app.displayName) {
                         ForEach(app.executables) { executable in
-                            NavigationLink(executable.id, value: executable)
+                            NavigationLink(value: executable) {
+                                let systemImage = switch executable.packageType {
+                                case .mainApp: "app"
+                                case .extension(extensionPointIdentifier: "com.apple.intents-service"),
+                                    .extension(extensionPointIdentifier: "com.apple.intents-ui-service"): "siri"
+                                case .extension(extensionPointIdentifier: "com.apple.widgetkit-extension"): "widget.small"
+                                case .extension: "puzzlepiece.extension"
+                                }
+
+                                Label(executable.displayName, systemImage: systemImage)
+                            }
                         }
                     }
                 }
             }
-            .navigationTitle("Executables")
+            .navigationTitle("Apps")
             .navigationDestination(for: ExecutableLogContainer.self) { executable in
                 AppRunView()
                     .modelContainer(try! ModelContainer(from: executable))
