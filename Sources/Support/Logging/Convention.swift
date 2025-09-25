@@ -79,13 +79,6 @@ extension URL {
     func appending(components: [String]) -> URL {
         components.reduce(self) { $0.appending(component: $1, directoryHint: .isDirectory) }
     }
-
-    func appending(logFilePathComponentsFor strategy: LogStorageConvention.LogFileNamingStrategy, bundleIdentifier: String) -> URL {
-        switch strategy {
-        case .byBundleIdentifier(let pathExtension):
-            appending(component: bundleIdentifier).appendingPathExtension(pathExtension)
-        }
-    }
     
 }
 

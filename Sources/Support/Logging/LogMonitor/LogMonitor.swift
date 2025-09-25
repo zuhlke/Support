@@ -18,7 +18,34 @@ public actor OSLogMonitor {
     ) throws {
         self.appLaunchDate = appLaunchDate
         self.logStore = logStore
-
+        
+        let fileManager = FileManager()
+        
+        do {
+            let manifestFile = url
+                .appending(component: "Manifests")
+                .appending(component: bundleMetadata.id)
+                .appendingPathExtension(for: .json)
+    
+            let appLogManifest = try AppLogManifest(from: bundleMetadata)
+            
+            let manifestDirectory = manifestFile.deletingLastPathComponent()
+            try? fileManager.createDirectory(at: manifestDirectory, withIntermediateDirectories: true)
+            
+            let encodedAppLogManifest = try JSONEncoder().encode(appLogManifest)
+            try encodedAppLogManifest.write(to: manifestFile)
+        } catch is AppLogManifest.NotAnAppBundle {
+            // Manifest file not needed for non app bundles
+        }
+ 
+        let logFile = url
+            .appending(component: "Logs")
+            .appending(component: bundleMetadata.id)
+            .appendingPathExtension("logs")
+        
+        let logDirectory = logFile.deletingLastPathComponent()
+        try? fileManager.createDirectory(at: logDirectory, withIntermediateDirectories: true)
+        
         // Explicitly opt out of storing logs in CloudKit.
         let configuration = ModelConfiguration(url: url, cloudKitDatabase: .none)
         modelContainer = try ModelContainer(
@@ -28,20 +55,6 @@ public actor OSLogMonitor {
         Task.detached {
             await self.monitorOSLog(bundleMetadata: bundleMetadata)
         }
-    }
-
-    init(
-        url: URL,
-        bundleMetadata: BundleMetadata = .main,
-        appLaunchDate: Date = .now
-    ) throws {
-        let logStore = try OSLogStore(scope: .currentProcessIdentifier)
-        try self.init(
-            url: url,
-            bundleMetadata: bundleMetadata,
-            logStore: logStore,
-            appLaunchDate: appLaunchDate
-        )
     }
 
     private func monitorOSLog(bundleMetadata: BundleMetadata) async {
@@ -91,38 +104,22 @@ public actor OSLogMonitor {
 }
 
 public extension OSLogMonitor {
-    init(convention: LogStorageConvention, bundleMetadata: BundleMetadata = .main, appLaunchDate: Date = .now) throws {
+    init(
+        convention: LogStorageConvention,
+        bundleMetadata: BundleMetadata = .main,
+        appLaunchDate: Date = .now
+    ) throws {
         let fileManager = FileManager()
-
-        do {
-            let manifestFile = try fileManager.url(for: convention.baseStorageLocation)
-                .appending(components: convention.basePathComponents)
-                .appending(component: "Manifests")
-                .appending(component: bundleMetadata.id)
-                .appendingPathExtension(for: .json)
-    
-            let appLogManifest = try AppLogManifest(from: bundleMetadata)
-            
-            let manifestDirectory = manifestFile.deletingLastPathComponent()
-            try? fileManager.createDirectory(at: manifestDirectory, withIntermediateDirectories: true)
-            
-            let encodedAppLogManifest = try JSONEncoder().encode(appLogManifest)
-            try encodedAppLogManifest.write(to: manifestFile)
-        } catch is AppLogManifest.NotAnAppBundle {
-            // Manifest file not needed for non app bundles
-        }
-
-        let logFile = try fileManager.url(for: convention.baseStorageLocation)
-            .appending(components: convention.basePathComponents)
-            .appending(component: "Logs")
-            .appending(logFilePathComponentsFor: convention.executableTargetLogFileNamingStrategy, bundleIdentifier: bundleMetadata.id)
         
-        let logDirectory = logFile.deletingLastPathComponent()
-        try? fileManager.createDirectory(at: logDirectory, withIntermediateDirectories: true)
+        let diagnosticsDirectory = try fileManager.url(for: convention.baseStorageLocation)
+            .appending(components: convention.basePathComponents)
+        
+        let logStore = try OSLogStore(scope: .currentProcessIdentifier)
         
         try self.init(
-            url: logFile,
+            url: diagnosticsDirectory,
             bundleMetadata: bundleMetadata,
+            logStore: logStore,
             appLaunchDate: appLaunchDate
         )
     }
