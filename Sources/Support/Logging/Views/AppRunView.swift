@@ -24,11 +24,10 @@ struct AppRunView: View {
     @State private var tokens: [Token] = []
     @State private var groupedEntries: [AppRun: [LogEntry]] = [:]
         
-    var filteredEntries: [LogEntry] {
+    func updateGroupedEntries() {
         let trimmedSearchText = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        let activeTokens = tokens.map { $0.name.lowercased() }
-        
-        return logEntries.filter { logEntry in
+
+        let filteredEntries = logEntries.filter { logEntry in
             guard !(logEntry.subsystem?.hasPrefix("com.apple.") ?? false) else { return false }
             
             let fields: [String] = [
@@ -39,21 +38,23 @@ struct AppRunView: View {
             ].compactMap { $0?.lowercased() }
             
             if !trimmedSearchText.isEmpty {
-                let matchesText = fields.contains { $0.contains(trimmedSearchText) }
+                let matchesText = fields.contains { $0.localizedCaseInsensitiveContains(trimmedSearchText) }
                 if !matchesText { return false }
             }
             
-            if !activeTokens.isEmpty {
-                let matchesAllTokens = activeTokens.allSatisfy { token in
-                    fields.contains { $0.contains(token) }
+            if !tokens.isEmpty {
+                let matchesAllTokens = tokens.allSatisfy { token in
+                    fields.contains { $0.localizedCaseInsensitiveContains(token.name) }
                 }
                 if !matchesAllTokens { return false }
             }
             
             return true
         }
-    }
         
+        groupedEntries = Dictionary(grouping: filteredEntries) { $0.appRun }
+    }
+    
     @ViewBuilder
     func appRunLogs(_ logs: [LogEntry]) -> some View {
         ForEach(logs) { entry in
@@ -102,17 +103,20 @@ struct AppRunView: View {
             Text(token.name)
         }
         .onSubmit(of: .search) {
-            let trimmed = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-            guard !trimmed.isEmpty else { return }
+            let trimmedSearchText = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            guard !trimmedSearchText.isEmpty else { return }
             
-            let newToken = Token(name: trimmed)
+            let newToken = Token(name: trimmedSearchText)
             if !tokens.contains(where: { $0.id == newToken.id }) {
                 tokens.append(newToken)
             }
             searchText = ""
         }
-        .onChange(of: filteredEntries) {
-            groupedEntries = Dictionary(grouping: filteredEntries) { $0.appRun }
+        .onChange(of: searchText) {
+            updateGroupedEntries()
+        }
+        .onChange(of: logEntries, initial: true) {
+            updateGroupedEntries()
         }
         .toolbar {
             ToolbarSpacer(.flexible, placement: .bottomBar)
