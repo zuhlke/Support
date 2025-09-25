@@ -98,7 +98,9 @@ public extension OSLogMonitor {
             let manifestFile = try fileManager.url(for: convention.baseStorageLocation)
                 .appending(components: convention.basePathComponents)
                 .appending(component: "Manifests")
-            
+                .appending(component: bundleMetadata.id)
+                .appendingPathExtension(for: .json)
+    
             let appLogManifest = try AppLogManifest(from: bundleMetadata)
             
             let manifestDirectory = manifestFile.deletingLastPathComponent()
