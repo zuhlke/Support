@@ -93,10 +93,18 @@ public actor OSLogMonitor {
 public extension OSLogMonitor {
     init(convention: LogStorageConvention, bundleMetadata: BundleMetadata = .main, appLaunchDate: Date = .now) throws {
         let fileManager = FileManager()
-        
+
+        switch bundleMetadata.packageType {
+        case .app(let appMetadata):
+            // TODO: - Create an AppMetadata file here
+            Logger().info("Plugins: \(appMetadata.plugins.description)")
+            Logger().info("Plugins: \(appMetadata.plugins.debugDescription)")
+            Logger().info("WatchOS app: \(appMetadata.watchCompanionAppBundleIdentifier ?? "")")
+        default: break
+        }
+
         let logFile = try fileManager.url(for: convention.baseStorageLocation)
             .appending(components: convention.basePathComponents)
-//            .appending(groupingComponentsFor: convention.executableTargetGroupingStrategy, appMetadata: appMetadata)
             .appending(logFilePathComponentsFor: convention.executableTargetLogFileNamingStrategy, bundleIdentifier: bundleMetadata.id)
         
         let logDirectory = logFile.deletingLastPathComponent()
