@@ -91,19 +91,22 @@ public actor OSLogMonitor {
 }
 
 public extension OSLogMonitor {
-    
-    init(convention: LogStorageConvention, appMetadata: AppMetadata = .main, appLaunchDate: Date = .now) throws {
+    init(convention: LogStorageConvention, bundleMetadata: BundleMetadata = .main, appLaunchDate: Date = .now) throws {
         let fileManager = FileManager()
         
         let logFile = try fileManager.url(for: convention.baseStorageLocation)
             .appending(components: convention.basePathComponents)
-            .appending(groupingComponentsFor: convention.executableTargetGroupingStrategy, appMetadata: appMetadata)
-            .appending(logFilePathComponentsFor: convention.executableTargetLogFileNamingStrategy, bundleIdentifier: Bundle.main.bundleIdentifier!)
+//            .appending(groupingComponentsFor: convention.executableTargetGroupingStrategy, appMetadata: appMetadata)
+            .appending(logFilePathComponentsFor: convention.executableTargetLogFileNamingStrategy, bundleIdentifier: bundleMetadata.id)
         
         let logDirectory = logFile.deletingLastPathComponent()
         try? fileManager.createDirectory(at: logDirectory, withIntermediateDirectories: true)
         
-        try self.init(url: logFile, appLaunchDate: appLaunchDate)
+        try self.init(
+            url: logFile,
+            bundleMetadata: bundleMetadata,
+            appLaunchDate: appLaunchDate
+        )
     }
 }
 
