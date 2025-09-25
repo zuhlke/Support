@@ -15,13 +15,9 @@ public class LogRetriever {
     }
     
     private func getExecutables(url: URL) throws -> [ExecutableLogContainer] {
-        guard case .byBundleIdentifier(let pathExtension) = convention.executableTargetLogFileNamingStrategy else {
-            preconditionFailure("Unknown strategy")
-        }
-        
         let contents = try fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
         return contents
-            .filter { $0.pathExtension == pathExtension }
+            .filter { $0.pathExtension == convention.logsFileExtension }
             .map { ExecutableLogContainer(url: $0, id: $0.deletingPathExtension().lastPathComponent) }
     }
     

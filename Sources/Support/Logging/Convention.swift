@@ -7,23 +7,15 @@ public struct LogStorageConvention: Sendable {
         case appGroup(identifier: String)
     }
 
-    public enum LogFileNamingStrategy: Sendable {
-        case byBundleIdentifier(pathExtension: String)
-    }
-    
     /// Indicates where on the system the logs should be stored
     var baseStorageLocation: BaseStorageLocation
     
     /// Where would logs following this convention be stored
     var basePathComponents: [String]
-    
-    /// How is the log file for each executable named
-    var executableTargetLogFileNamingStrategy: LogFileNamingStrategy
-    
-    public init(baseStorageLocation: BaseStorageLocation, basePathComponents: [String], executableTargetLogFileNamingStrategy: LogFileNamingStrategy) {
+
+    public init(baseStorageLocation: BaseStorageLocation, basePathComponents: [String]) {
         self.baseStorageLocation = baseStorageLocation
         self.basePathComponents = basePathComponents
-        self.executableTargetLogFileNamingStrategy = executableTargetLogFileNamingStrategy
     }
 }
 
@@ -36,8 +28,7 @@ extension LogStorageConvention {
     public static func commonAppGroup(identifier: String) -> LogStorageConvention {
         LogStorageConvention(
             baseStorageLocation: .appGroup(identifier: identifier),
-            basePathComponents: [],
-            executableTargetLogFileNamingStrategy: .byBundleIdentifier(pathExtension: "logs")
+            basePathComponents: []
         )
     }
 }
