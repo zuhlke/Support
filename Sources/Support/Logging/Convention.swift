@@ -53,7 +53,7 @@ extension LogStorageConvention {
     public static func commonAppGroup(identifier: String) -> LogStorageConvention {
         LogStorageConvention(
             baseStorageLocation: .appGroup(identifier: identifier),
-            basePathComponents: ["Logs"],
+            basePathComponents: [],
             executableTargetGroupingStrategy: .byAppBundleIdentifier(pathExtension: "applogs"),
             executableTargetLogFileNamingStrategy: .byBundleIdentifier(pathExtension: "logs")
         )

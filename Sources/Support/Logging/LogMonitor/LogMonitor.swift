@@ -94,15 +94,25 @@ public extension OSLogMonitor {
     init(convention: LogStorageConvention, bundleMetadata: BundleMetadata = .main, appLaunchDate: Date = .now) throws {
         let fileManager = FileManager()
 
-        switch bundleMetadata.packageType {
-        case .app(let appMetadata):
-            // TODO: - Create an AppMetadata file here
-            break
-        default: break
+        do {
+            let manifestFile = try fileManager.url(for: convention.baseStorageLocation)
+                .appending(components: convention.basePathComponents)
+                .appending(component: "Manifests")
+            
+            let appLogManifest = try AppLogManifest(from: bundleMetadata)
+            
+            let manifestDirectory = manifestFile.deletingLastPathComponent()
+            try? fileManager.createDirectory(at: manifestDirectory, withIntermediateDirectories: true)
+            
+            let encodedAppLogManifest = try JSONEncoder().encode(appLogManifest)
+            try encodedAppLogManifest.write(to: manifestFile)
+        } catch is AppLogManifest.NotAnAppBundle {
+            // Manifest file not needed for non app bundles
         }
 
         let logFile = try fileManager.url(for: convention.baseStorageLocation)
             .appending(components: convention.basePathComponents)
+            .appending(component: "Logs")
             .appending(logFilePathComponentsFor: convention.executableTargetLogFileNamingStrategy, bundleIdentifier: bundleMetadata.id)
         
         let logDirectory = logFile.deletingLastPathComponent()
