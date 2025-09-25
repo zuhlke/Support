@@ -48,7 +48,7 @@ extension BundleMetadata {
     /// Loads AppMetadata from a bundle.
     ///
     /// `bundle` must have an identifier, and at least one of bundle name or display name set. Otherwise `init` will return `nil`.
-    init?(from bundle: Bundle) {
+    public init?(from bundle: Bundle) {
         guard
             let id = bundle.bundleIdentifier,
             let infoDictionary = bundle.infoDictionary,
