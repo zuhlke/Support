@@ -11,7 +11,7 @@ public actor OSLogMonitor {
     let modelContainer: ModelContainer
     
     init(
-        url: URL,
+        convention: LogStorageConvention,
         bundleMetadata: BundleMetadata,
         logStore: OSLogStoreProtocol,
         appLaunchDate: Date
@@ -21,9 +21,12 @@ public actor OSLogMonitor {
         
         let fileManager = FileManager()
         
+        let diagnosticsDirectory = try fileManager.url(for: convention.baseStorageLocation)
+            .appending(components: convention.basePathComponents)
+        
         do {
-            let manifestFile = url
-                .appending(component: "Manifests")
+            let manifestFile = diagnosticsDirectory
+                .appending(component: convention.manifestDirectory)
                 .appending(component: bundleMetadata.id)
                 .appendingPathExtension(for: .json)
     
@@ -38,16 +41,16 @@ public actor OSLogMonitor {
             // Manifest file not needed for non app bundles
         }
  
-        let logFile = url
-            .appending(component: "Logs")
+        let logFile = diagnosticsDirectory
+            .appending(component: convention.logsDirectory)
             .appending(component: bundleMetadata.id)
-            .appendingPathExtension("logs")
+            .appendingPathExtension(convention.logsFileExtension)
         
         let logDirectory = logFile.deletingLastPathComponent()
         try? fileManager.createDirectory(at: logDirectory, withIntermediateDirectories: true)
         
         // Explicitly opt out of storing logs in CloudKit.
-        let configuration = ModelConfiguration(url: url, cloudKitDatabase: .none)
+        let configuration = ModelConfiguration(url: logFile, cloudKitDatabase: .none)
         modelContainer = try ModelContainer(
             for: AppRun.self,
             configurations: configuration
@@ -109,15 +112,9 @@ public extension OSLogMonitor {
         bundleMetadata: BundleMetadata = .main,
         appLaunchDate: Date = .now
     ) throws {
-        let fileManager = FileManager()
-        
-        let diagnosticsDirectory = try fileManager.url(for: convention.baseStorageLocation)
-            .appending(components: convention.basePathComponents)
-        
         let logStore = try OSLogStore(scope: .currentProcessIdentifier)
-        
         try self.init(
-            url: diagnosticsDirectory,
+            convention: convention,
             bundleMetadata: bundleMetadata,
             logStore: logStore,
             appLaunchDate: appLaunchDate

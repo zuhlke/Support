@@ -60,6 +60,20 @@ extension LogStorageConvention {
     }
 }
 
+extension LogStorageConvention {
+    var manifestDirectory: String {
+        "Manifests"
+    }
+    
+    var logsDirectory: String {
+        "Logs"
+    }
+    
+    var logsFileExtension: String {
+        "logs"
+    }
+}
+
 extension FileManager {
     
     func url(for storageLocation: LogStorageConvention.BaseStorageLocation) throws -> URL {
