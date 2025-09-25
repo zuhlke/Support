@@ -43,6 +43,7 @@ public class LogRetriever {
             let manifests = try manifests
             let executablesDictionary = try executables
 
+            // TODO: (P2) - Review the edge case where we have an executable URL but no entry of that id in the App Manifest.
             return manifests.map {
                 var executables = $0.extensions.compactMap { ext -> ExecutableLogContainer? in
                     guard let url = executablesDictionary[ext.key] else {
