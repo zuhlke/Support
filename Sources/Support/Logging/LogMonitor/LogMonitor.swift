@@ -96,12 +96,9 @@ public actor OSLogMonitor {
         let runs = try context.fetch(descriptor)
         return runs.map(\.snapshot)
     }
-    
+
     public func export() throws -> String {
-        let context = ModelContext(modelContainer)
-        let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
-        let runs = try context.fetch(descriptor)
-        let runSnapshots = runs.map(\.snapshot)
+        let runSnapshots = try getAppRuns()
         let logs = Logs(runs: runSnapshots)
         let encoder = mutating(JSONEncoder()) {
             $0.outputFormatting = [.prettyPrinted, .sortedKeys]
