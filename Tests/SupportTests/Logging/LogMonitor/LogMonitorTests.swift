@@ -26,6 +26,10 @@ struct OSLogMonitorTests {
                 shortVersionString: "1",
                 packageType: .extension(.init(extensionPointIdentifier: "widget"))
             ),
+            deviceMetadata: DeviceMetadata(
+                operatingSystemVersion: "26.0",
+                deviceModel: "iPhone 17 Pro"
+            ),
             logStore: logStore,
             appLaunchDate: .init(timeIntervalSince1970: 1)
         )
@@ -38,9 +42,9 @@ struct OSLogMonitorTests {
                 AppRun.Snapshot(
                     info: .init(
                         appVersion: "1",
-                        operatingSystemVersion: "Version 15.7 (Build 24G222)",
+                        operatingSystemVersion: "26.0",
                         launchDate: .init(timeIntervalSince1970: 1),
-                        device: "arm64"
+                        device: "iPhone 17 Pro"
                     ),
                     logEntries: [
                         .init(date: .init(timeIntervalSince1970: 1), composedMessage: "Log message")

@@ -13,6 +13,7 @@ public actor OSLogMonitor {
     init(
         convention: LogStorageConvention,
         bundleMetadata: BundleMetadata,
+        deviceMetadata: DeviceMetadata,
         logStore: LogStoreProtocol,
         appLaunchDate: Date
     ) throws {
@@ -45,7 +46,7 @@ public actor OSLogMonitor {
             .appending(component: convention.logsDirectory)
             .appending(component: bundleMetadata.id)
             .appendingPathExtension(convention.logsFileExtension)
-        
+    
         let logDirectory = logFile.deletingLastPathComponent()
         try? fileManager.createDirectory(at: logDirectory, withIntermediateDirectories: true)
         
@@ -56,18 +57,18 @@ public actor OSLogMonitor {
             configurations: configuration
         )
         Task.detached {
-            await self.monitorOSLog(bundleMetadata: bundleMetadata)
+            await self.monitorOSLog(bundleMetadata: bundleMetadata, deviceMetadata: deviceMetadata)
         }
     }
 
-    private func monitorOSLog(bundleMetadata: BundleMetadata) async {
+    private func monitorOSLog(bundleMetadata: BundleMetadata, deviceMetadata: DeviceMetadata) async {
         let context = ModelContext(modelContainer)
-        
+
         let appRun = AppRun(
             appVersion: bundleMetadata.version,
-            operatingSystemVersion: ProcessInfo.processInfo.operatingSystemVersionString,
+            operatingSystemVersion: deviceMetadata.operatingSystemVersion,
             launchDate: appLaunchDate,
-            device: deviceModel()
+            device: deviceMetadata.deviceModel
         )
         context.insert(appRun)
         try! context.save()
@@ -121,6 +122,7 @@ public extension OSLogMonitor {
         try self.init(
             convention: convention,
             bundleMetadata: bundleMetadata,
+            deviceMetadata: DeviceMetadata.main,
             logStore: logStore,
             appLaunchDate: appLaunchDate
         )
@@ -142,15 +144,5 @@ extension ModelContext {
     
 }
 
-private func deviceModel() -> String {
-    var systemInfo = utsname()
-    uname(&systemInfo)
-    let machineMirror = Mirror(reflecting: systemInfo.machine)
-    let identifier = machineMirror.children.reduce("") { identifier, element in
-        guard let value = element.value as? Int8, value != 0 else { return identifier }
-        return identifier + String(UnicodeScalar(UInt8(value)))
-    }
-    return identifier
-}
 
 #endif
