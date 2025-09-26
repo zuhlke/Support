@@ -1,4 +1,3 @@
-#if canImport(OSLog)
 #if canImport(SwiftData)
 
 import Foundation
@@ -90,6 +89,13 @@ public actor OSLogMonitor {
             try? await Task.sleep(for: .seconds(1))
         }
     }
+
+    func getAppRuns() throws -> [AppRun.Snapshot] {
+        let context = ModelContext(modelContainer)
+        let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
+        let runs = try context.fetch(descriptor)
+        return runs.map(\.snapshot)
+    }
     
     public func export() throws -> String {
         let context = ModelContext(modelContainer)
@@ -107,6 +113,7 @@ public actor OSLogMonitor {
     
 }
 
+#if canImport(OSLog)
 public extension OSLogMonitor {
     init(
         convention: LogStorageConvention,
@@ -122,6 +129,7 @@ public extension OSLogMonitor {
         )
     }
 }
+#endif
 
 struct Logs: Codable {
     var runs: [AppRun.Snapshot]
@@ -148,5 +156,4 @@ private func deviceModel() -> String {
     return identifier
 }
 
-#endif
 #endif
