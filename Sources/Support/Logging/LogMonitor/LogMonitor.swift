@@ -6,10 +6,12 @@ import SwiftData
 import UniformTypeIdentifiers
 
 public actor OSLogMonitor {
+    private let logger = Logger(subsystem: "com.zuhlke.Suport", category: "LogMonitor")
+
     let appLaunchDate: Date
     let logStore: LogStoreProtocol
     let modelContainer: ModelContainer
-    
+
     init(
         convention: LogStorageConvention,
         bundleMetadata: BundleMetadata,
@@ -56,12 +58,20 @@ public actor OSLogMonitor {
             for: AppRun.self,
             configurations: configuration
         )
-        Task.detached {
-            await self.monitorOSLog(bundleMetadata: bundleMetadata, deviceMetadata: deviceMetadata)
+
+        Task.detached { [logger] in
+            do {
+                try await self.monitorOSLog(
+                    bundleMetadata: bundleMetadata,
+                    deviceMetadata: deviceMetadata
+                )
+            } catch {
+                logger.error("\(error.localizedDescription)")
+            }
         }
     }
 
-    private func monitorOSLog(bundleMetadata: BundleMetadata, deviceMetadata: DeviceMetadata) async {
+    private func monitorOSLog(bundleMetadata: BundleMetadata, deviceMetadata: DeviceMetadata) async throws {
         let context = ModelContext(modelContainer)
 
         let appRun = AppRun(
@@ -71,11 +81,11 @@ public actor OSLogMonitor {
             device: deviceMetadata.deviceModel
         )
         context.insert(appRun)
-        try! context.save()
+        try context.save()
         
         var lastDate = Date.distantPast
         while true {
-            let fetchedEntries = try! logStore.entries(after: lastDate)
+            let fetchedEntries = try logStore.entries(after: lastDate)
             
             let modelEntries = fetchedEntries.map {
                 LogEntry(appRun: appRun, entry: $0)
@@ -83,11 +93,11 @@ public actor OSLogMonitor {
             
             context.insert(contentsOf: modelEntries)
             if context.hasChanges {
-                try! context.save()
+                try context.save()
             }
             
             lastDate = modelEntries.last?.date ?? lastDate
-            try? await Task.sleep(for: .seconds(1))
+            try await Task.sleep(for: .seconds(1))
         }
     }
 
