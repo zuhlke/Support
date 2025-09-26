@@ -59,14 +59,14 @@ public actor OSLogMonitor {
             configurations: configuration
         )
 
-        Task.detached { [logger] in
+        Task.detached {
             do {
                 try await self.monitorOSLog(
                     bundleMetadata: bundleMetadata,
                     deviceMetadata: deviceMetadata
                 )
             } catch {
-                logger.error("\(error.localizedDescription)")
+                self.logger.error("\(error.localizedDescription)")
             }
         }
     }
