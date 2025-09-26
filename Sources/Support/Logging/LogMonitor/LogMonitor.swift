@@ -1,4 +1,3 @@
-#if canImport(OSLog)
 #if canImport(SwiftData)
 
 import Foundation
@@ -7,13 +6,16 @@ import SwiftData
 import UniformTypeIdentifiers
 
 public actor OSLogMonitor {
+    private let logger = Logger(subsystem: "com.zuhlke.Suport", category: "LogMonitor")
+
     let appLaunchDate: Date
     let logStore: LogStoreProtocol
     let modelContainer: ModelContainer
-    
+
     init(
         convention: LogStorageConvention,
         bundleMetadata: BundleMetadata,
+        deviceMetadata: DeviceMetadata,
         logStore: LogStoreProtocol,
         appLaunchDate: Date
     ) throws {
@@ -46,7 +48,7 @@ public actor OSLogMonitor {
             .appending(component: convention.logsDirectory)
             .appending(component: bundleMetadata.id)
             .appendingPathExtension(convention.logsFileExtension)
-        
+    
         let logDirectory = logFile.deletingLastPathComponent()
         try? fileManager.createDirectory(at: logDirectory, withIntermediateDirectories: true)
         
@@ -56,26 +58,34 @@ public actor OSLogMonitor {
             for: AppRun.self,
             configurations: configuration
         )
+
         Task.detached {
-            await self.monitorOSLog(bundleMetadata: bundleMetadata)
+            do {
+                try await self.monitorOSLog(
+                    bundleMetadata: bundleMetadata,
+                    deviceMetadata: deviceMetadata
+                )
+            } catch {
+                self.logger.error("\(error.localizedDescription)")
+            }
         }
     }
 
-    private func monitorOSLog(bundleMetadata: BundleMetadata) async {
+    private func monitorOSLog(bundleMetadata: BundleMetadata, deviceMetadata: DeviceMetadata) async throws {
         let context = ModelContext(modelContainer)
-        
+
         let appRun = AppRun(
             appVersion: bundleMetadata.version,
-            operatingSystemVersion: ProcessInfo.processInfo.operatingSystemVersionString,
+            operatingSystemVersion: deviceMetadata.operatingSystemVersion,
             launchDate: appLaunchDate,
-            device: deviceModel()
+            device: deviceMetadata.deviceModel
         )
         context.insert(appRun)
-        try! context.save()
+        try context.save()
         
         var lastDate = Date.distantPast
         while true {
-            let fetchedEntries = try! logStore.entries(after: lastDate)
+            let fetchedEntries = try logStore.entries(after: lastDate)
             
             let modelEntries = fetchedEntries.map {
                 LogEntry(appRun: appRun, entry: $0)
@@ -83,19 +93,23 @@ public actor OSLogMonitor {
             
             context.insert(contentsOf: modelEntries)
             if context.hasChanges {
-                try! context.save()
+                try context.save()
             }
             
             lastDate = modelEntries.last?.date ?? lastDate
-            try? await Task.sleep(for: .seconds(1))
+            try await Task.sleep(for: .seconds(1))
         }
     }
-    
-    public func export() throws -> String {
+
+    func getAppRuns() throws -> [AppRun.Snapshot] {
         let context = ModelContext(modelContainer)
         let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
         let runs = try context.fetch(descriptor)
-        let runSnapshots = runs.map(\.snapshot)
+        return runs.map(\.snapshot)
+    }
+
+    public func export() throws -> String {
+        let runSnapshots = try getAppRuns()
         let logs = Logs(runs: runSnapshots)
         let encoder = mutating(JSONEncoder()) {
             $0.outputFormatting = [.prettyPrinted, .sortedKeys]
@@ -107,6 +121,7 @@ public actor OSLogMonitor {
     
 }
 
+#if canImport(OSLog)
 public extension OSLogMonitor {
     init(
         convention: LogStorageConvention,
@@ -117,11 +132,13 @@ public extension OSLogMonitor {
         try self.init(
             convention: convention,
             bundleMetadata: bundleMetadata,
+            deviceMetadata: DeviceMetadata.main,
             logStore: logStore,
             appLaunchDate: appLaunchDate
         )
     }
 }
+#endif
 
 struct Logs: Codable {
     var runs: [AppRun.Snapshot]
@@ -137,16 +154,5 @@ extension ModelContext {
     
 }
 
-private func deviceModel() -> String {
-    var systemInfo = utsname()
-    uname(&systemInfo)
-    let machineMirror = Mirror(reflecting: systemInfo.machine)
-    let identifier = machineMirror.children.reduce("") { identifier, element in
-        guard let value = element.value as? Int8, value != 0 else { return identifier }
-        return identifier + String(UnicodeScalar(UInt8(value)))
-    }
-    return identifier
-}
 
-#endif
 #endif

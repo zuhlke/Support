@@ -5,6 +5,7 @@ import Foundation
 public struct LogStorageConvention: Sendable {
     public enum BaseStorageLocation: Sendable {
         case appGroup(identifier: String)
+        case customLocation(url: URL)
     }
 
     /// Indicates where on the system the logs should be stored
@@ -56,6 +57,8 @@ extension FileManager {
                 throw UndefinedAppGroup(identifier: identifier)
             }
             return appGroupFolder
+        case .customLocation(let url):
+            return url
         }
     }
     

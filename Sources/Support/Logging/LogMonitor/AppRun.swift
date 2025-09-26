@@ -5,7 +5,7 @@ import SwiftData
 
 @Model
 public class AppRun {
-    struct Snapshot: Codable {
+    struct Snapshot: Codable, Equatable {
         struct Info: Codable, Equatable {
             var appVersion: String
             var operatingSystemVersion: String

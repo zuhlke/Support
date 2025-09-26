@@ -6,7 +6,7 @@ import SwiftData
 
 @Model
 public class LogEntry {
-    struct Snapshot: Codable {
+    struct Snapshot: Codable, Equatable {
         var date: Date
         var composedMessage: String
         var level: String?
