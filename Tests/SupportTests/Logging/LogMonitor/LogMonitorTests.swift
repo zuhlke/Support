@@ -6,7 +6,7 @@ import Foundation
 
 struct OSLogMonitorTests {
     @Test
-    func `fetch initial logs`() async throws {
+    func fetchInitialLogs() async throws {
         let temporaryDirectory = FileManager().temporaryDirectory.appending(component: UUID().uuidString, directoryHint: .isDirectory)
         defer { try! FileManager().removeItem(at: temporaryDirectory) }
 
@@ -55,8 +55,6 @@ struct OSLogMonitorTests {
     }
 }
 
-#endif
-
 private class LogStore: LogStoreProtocol {
     private var entries: [LogEntryProtocol]
 
@@ -78,3 +76,5 @@ private struct LogEntry: LogEntryProtocol {
     let composedMessage: String
     let date: Date
 }
+
+#endif
