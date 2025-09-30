@@ -5,8 +5,12 @@ import OSLog
 import SwiftData
 import UniformTypeIdentifiers
 
-public actor OSLogMonitor {
-    private let logger = Logger(subsystem: "com.zuhlke.Suport", category: "LogMonitor")
+// TODO: - Avoid running on MainActor as this is not something related to UI.
+//
+// Context: Due to limitations in testing MainActor ensures that the tasks are run sequentially.
+@MainActor
+public class OSLogMonitor {
+    private let logger = Logger(subsystem: "com.zuhlke.Support", category: "LogMonitor")
 
     let appLaunchDate: Date
     let logStore: LogStoreProtocol
@@ -59,7 +63,7 @@ public actor OSLogMonitor {
             configurations: configuration
         )
 
-        Task.detached {
+        Task {
             do {
                 try await self.monitorOSLog(
                     bundleMetadata: bundleMetadata,
@@ -123,7 +127,7 @@ public actor OSLogMonitor {
 
 #if canImport(OSLog)
 public extension OSLogMonitor {
-    init(
+    convenience init(
         convention: LogStorageConvention,
         bundleMetadata: BundleMetadata = .main,
         appLaunchDate: Date = .now
