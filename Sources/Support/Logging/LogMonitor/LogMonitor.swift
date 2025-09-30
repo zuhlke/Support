@@ -105,16 +105,11 @@ public class OSLogMonitor {
         }
     }
 
-    func getAppRuns() throws -> [AppRun.Snapshot] {
+    public func export() throws -> String {
         let context = ModelContext(modelContainer)
         let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
         let runs = try context.fetch(descriptor)
-        return runs.map(\.snapshot)
-    }
-
-    public func export() throws -> String {
-        let runSnapshots = try getAppRuns()
-        let logs = Logs(runs: runSnapshots)
+        let logs = Logs(runs: runs.map(\.snapshot))
         let encoder = mutating(JSONEncoder()) {
             $0.outputFormatting = [.prettyPrinted, .sortedKeys]
             $0.dateEncodingStrategy = .iso8601
