@@ -10,7 +10,7 @@ import UniformTypeIdentifiers
 // Context: Due to limitations in testing MainActor ensures that the tasks are run sequentially.
 @MainActor
 public class OSLogMonitor {
-    private let logger = Logger(subsystem: "com.zuhlke.Suport", category: "LogMonitor")
+    private let logger = Logger(subsystem: "com.zuhlke.Support", category: "LogMonitor")
 
     let appLaunchDate: Date
     let logStore: LogStoreProtocol
