@@ -5,6 +5,9 @@ import OSLog
 import SwiftData
 import UniformTypeIdentifiers
 
+// TODO: - Avoid running on MainActor as this is not something related to UI.
+//
+// Context: Due to limitations in testing MainActor ensures that the tasks are run sequentially.
 @MainActor
 public class OSLogMonitor {
     private let logger = Logger(subsystem: "com.zuhlke.Suport", category: "LogMonitor")
