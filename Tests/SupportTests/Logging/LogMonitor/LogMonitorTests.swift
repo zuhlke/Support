@@ -31,7 +31,7 @@ struct OSLogMonitorTests {
                 logStore: logStore,
                 appLaunchDate: .init(timeIntervalSince1970: 1)
             )
-
+            
             let manifestFile = url.appending(path: "Test/Manifests/com.zuhlke.Support.json")
             let manifestFileContents = try Data(contentsOf: manifestFile)
             let appLogManifest = try JSONDecoder().decode(AppLogManifest.self, from: manifestFileContents)
@@ -74,7 +74,7 @@ struct OSLogMonitorTests {
                 logStore: logStore,
                 appLaunchDate: .init(timeIntervalSince1970: 1)
             )
-
+            
             let manifestFile = url.appending(path: "Test/Manifests")
             #expect(!fileManager.fileExists(atPath: manifestFile.path()))
             
@@ -82,7 +82,7 @@ struct OSLogMonitorTests {
             #expect(fileManager.fileExists(atPath: logFile.path()))
         }
     }
-
+    
     @Test
     func fetchInitialLogs() async throws {
         let fileManager = FileManager()
@@ -90,7 +90,7 @@ struct OSLogMonitorTests {
             let logStore = LogStore(entries: [
                 LogEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 1))
             ])
-
+            
             let logMonitor = try OSLogMonitor(
                 convention: LogStorageConvention(
                     baseStorageLocation: .customLocation(url: url),
@@ -110,30 +110,40 @@ struct OSLogMonitorTests {
                 logStore: logStore,
                 appLaunchDate: .init(timeIntervalSince1970: 1)
             )
-
+            
             let getAppRunsTask = Task {
-                let exportedLogs = try logMonitor.getAppRuns()
+                let exportedLogs = try logMonitor.export()
                 return exportedLogs
             }
             
             let exportedLogs = try await getAppRunsTask.value
-            
-            #expect(
-                exportedLogs == [
-                    AppRun.Snapshot(
-                        info: .init(
-                            appVersion: "1",
-                            operatingSystemVersion: "26.0",
-                            launchDate: .init(timeIntervalSince1970: 1),
-                            device: "iPhone 17 Pro"
-                        ),
-                        logEntries: [
-                            .init(date: .init(timeIntervalSince1970: 1), composedMessage: "Log message")
-                        ]
-                    )
+            let expectedLogs = try self.exportedLogs(runs: [AppRun.Snapshot(
+                info: .init(
+                    appVersion: "1",
+                    operatingSystemVersion: "26.0",
+                    launchDate: .init(timeIntervalSince1970: 1),
+                    device: "iPhone 17 Pro"
+                ),
+                logEntries: [
+                    .init(date: .init(timeIntervalSince1970: 1), composedMessage: "Log message")
                 ]
-            )
+            )])
+            #expect(exportedLogs == expectedLogs)
         }
+    }
+}
+
+// MARK: - Helpers
+
+extension OSLogMonitorTests {
+    private func exportedLogs(runs: [AppRun.Snapshot]) throws -> String {
+        let logs = Logs(runs: runs)
+        let encoder = mutating(JSONEncoder()) {
+            $0.outputFormatting = [.prettyPrinted, .sortedKeys]
+            $0.dateEncodingStrategy = .iso8601
+        }
+        let data = try encoder.encode(logs)
+        return String(data: data, encoding: .utf8) ?? ""
     }
 }
 
