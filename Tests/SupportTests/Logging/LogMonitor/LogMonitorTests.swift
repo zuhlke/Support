@@ -4,6 +4,7 @@ import Testing
 import Foundation
 @testable import Support
 
+@MainActor
 struct OSLogMonitorTests {
     @Test
     func createsAppLogManifestAndLogFiles_forAppPackage() async throws {
@@ -113,9 +114,13 @@ struct OSLogMonitorTests {
             appLaunchDate: .init(timeIntervalSince1970: 1)
         )
 
-        try await Task.sleep(for: .seconds(1))
-
-        let exportedLogs = try await logMonitor.getAppRuns()
+        let getAppRunsTask = Task {
+            let exportedLogs = try logMonitor.getAppRuns()
+            return exportedLogs
+        }
+        
+        let exportedLogs = try await getAppRunsTask.value
+        
         #expect(
             exportedLogs == [
                 AppRun.Snapshot(

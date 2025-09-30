@@ -5,7 +5,8 @@ import OSLog
 import SwiftData
 import UniformTypeIdentifiers
 
-public actor OSLogMonitor {
+@MainActor
+public class OSLogMonitor {
     private let logger = Logger(subsystem: "com.zuhlke.Suport", category: "LogMonitor")
 
     let appLaunchDate: Date
@@ -59,7 +60,7 @@ public actor OSLogMonitor {
             configurations: configuration
         )
 
-        Task.detached {
+        Task {
             do {
                 try await self.monitorOSLog(
                     bundleMetadata: bundleMetadata,
@@ -123,7 +124,7 @@ public actor OSLogMonitor {
 
 #if canImport(OSLog)
 public extension OSLogMonitor {
-    init(
+    convenience init(
         convention: LogStorageConvention,
         bundleMetadata: BundleMetadata = .main,
         appLaunchDate: Date = .now
