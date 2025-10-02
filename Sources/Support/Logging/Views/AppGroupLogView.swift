@@ -3,25 +3,64 @@
 
 import SwiftUI
 import SwiftData
+@preconcurrency import Combine
+
+// TODO: P3 - Review Unchecked Sendable and if we can make it safe
+@Observable
+class AppGroupLogViewModel: @unchecked Sendable {
+    let logRetriever: LogRetriever
+
+    var apps: [AppLogContainer] = []
+
+    init(convention: LogStorageConvention) {
+        let logRetriever = try! LogRetriever(convention: convention)
+        self.logRetriever = logRetriever
+        let stream = AsyncThrowingStream<[AppLogContainer], any Error> { continuation in
+            let cancellable = logRetriever.appsSubject
+                .sink(
+                    receiveCompletion: { completion in
+                        switch completion {
+                        case .finished:
+                            continuation.finish()
+                        case .failure(let error):
+                            continuation.finish(throwing: error)
+                        }
+                    },
+                    receiveValue: { value in
+                        continuation.yield(value)
+                    }
+                )
+
+            continuation.onTermination = { _ in
+                cancellable.cancel()
+            }
+        }
+
+        Task {
+            do {
+                for try await value in stream {
+                    self.apps = value
+                }
+            } catch {
+                // TODO: P3 - Handle error here
+            }
+        }
+    }
+}
 
 @available(iOS 26.0, *)
 @available(macOS, unavailable)
 public struct AppGroupLogView: View {
-    
-    // TODO: P2 – Dynamically update list of apps as they are detected
-    // This first needs a change in `LogRetriever` to publish this data.
-    var apps: [AppLogContainer]
+    let viewModel: AppGroupLogViewModel
     
     public init(convention: LogStorageConvention) {
-        let logRetriever = try! LogRetriever(convention: convention)
-        apps = try! logRetriever.apps
-            .sorted(using: KeyPathComparator(\.id))
+        self.viewModel = AppGroupLogViewModel(convention: convention)
     }
     
     public var body: some View {
         NavigationStack {
             List {
-                ForEach(apps) { app in
+                ForEach(viewModel.apps) { app in
                     Section(app.displayName) {
                         ForEach(app.executables) { executable in
                             NavigationLink(value: executable) {

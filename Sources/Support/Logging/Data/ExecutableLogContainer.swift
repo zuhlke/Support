@@ -2,8 +2,8 @@
 import Foundation
 
 /// Log container for individual executables
-public struct ExecutableLogContainer: Hashable, Identifiable {
-    public enum PackageType: Hashable {
+public struct ExecutableLogContainer: Hashable, Identifiable, Sendable {
+    public enum PackageType: Hashable, Sendable {
         case mainApp
         case `extension`(extensionPointIdentifier: String)
     }
