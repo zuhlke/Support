@@ -3,13 +3,20 @@
 import Foundation
 import Combine
 
-public class LogRetriever: ObservableObject, DirectoryWatcherDelegate {
+public class LogRetriever: ObservableObject {
     private let fileManager = FileManager()
     private let convention: LogStorageConvention
     private let diagnosticsDirectory: URL
+    
+    private var logsDirectory: URL {
+        diagnosticsDirectory.appending(component: convention.logsDirectory)
+    }
 
-    private var logsWatcher: DirectoryWatcher?
-    private var manifestsWatcher: DirectoryWatcher?
+    private var manifestDirectory: URL {
+        diagnosticsDirectory.appending(component: convention.manifestDirectory)
+    }
+
+    private var directoryWatcher: MultiDirectoryWatcher?
 
     public private(set) var appsSubject: CurrentValueSubject<[AppLogContainer], Error> = .init([])
 
@@ -24,33 +31,23 @@ public class LogRetriever: ObservableObject, DirectoryWatcherDelegate {
     }
 
     private func setupWatchers() {
-        let logsDirectory = diagnosticsDirectory.appending(component: convention.logsDirectory)
-        let manifestDirectory = diagnosticsDirectory.appending(component: convention.manifestDirectory)
-        
         try? fileManager.createDirectory(at: logsDirectory, withIntermediateDirectories: true)
         try? fileManager.createDirectory(at: manifestDirectory, withIntermediateDirectories: true)
 
-        logsWatcher = DirectoryWatcher(directoryURL: logsDirectory, delegate: self)
-        manifestsWatcher = DirectoryWatcher(directoryURL: manifestDirectory, delegate: self)
+        directoryWatcher = MultiDirectoryWatcher(urls: [logsDirectory, manifestDirectory]) { [weak self] in
+            self?.refreshApps()
+        }
     }
 
     private func startWatching() throws {
-        try logsWatcher?.startWatching()
-        try manifestsWatcher?.startWatching()
+        try directoryWatcher?.startWatching()
         refreshApps()
     }
 
     private func stopWatching() {
-        logsWatcher?.stopWatching()
-        manifestsWatcher?.stopWatching()
+        directoryWatcher?.stopWatching()
     }
 
-    func directoryWatcher(
-        _ watcher: DirectoryWatcher,
-        didDetectChangesAt url: URL
-    ) {
-        self.refreshApps()
-    }
 
     deinit {
         stopWatching()
@@ -58,7 +55,6 @@ public class LogRetriever: ObservableObject, DirectoryWatcherDelegate {
 
     private var executables: [String: URL] {
         get throws {
-            let logsDirectory = diagnosticsDirectory.appending(component: convention.logsDirectory)
             let contents = try fileManager.contentsOfDirectory(at: logsDirectory, includingPropertiesForKeys: nil)
             return Dictionary(uniqueKeysWithValues: contents
                 .lazy
@@ -69,7 +65,6 @@ public class LogRetriever: ObservableObject, DirectoryWatcherDelegate {
 
     private var manifests: [AppLogManifest] {
         get throws {
-            let manifestDirectory = diagnosticsDirectory.appending(component: convention.manifestDirectory)
             let contents = try fileManager.contentsOfDirectory(at: manifestDirectory, includingPropertiesForKeys: nil)
             let decoder = JSONDecoder()
             return try contents

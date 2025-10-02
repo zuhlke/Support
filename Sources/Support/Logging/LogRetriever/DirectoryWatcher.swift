@@ -1,9 +1,36 @@
 #if canImport(Darwin)
+
 import Foundation
 import Dispatch
 
-protocol DirectoryWatcherDelegate: AnyObject {
-    func directoryWatcher(_ watcher: DirectoryWatcher, didDetectChangesAt url: URL)
+class MultiDirectoryWatcher {
+    private var watchers: [DirectoryWatcher] = []
+    private let onDirectoryChange: (() -> Void)?
+
+    init(urls: [URL], onDirectoryChange: (() -> Void)? = nil) {
+        self.onDirectoryChange = onDirectoryChange
+        watchers = urls.map { url in
+            DirectoryWatcher(directoryURL: url) { [weak self] in
+                self?.onDirectoryChange?()
+            }
+        }
+    }
+
+    func startWatching() throws {
+        for watcher in watchers {
+            try watcher.startWatching()
+        }
+    }
+
+    func stopWatching() {
+        for watcher in watchers {
+            watcher.stopWatching()
+        }
+    }
+
+    deinit {
+        stopWatching()
+    }
 }
 
 enum DirectoryWatcherError: Error {
@@ -11,14 +38,15 @@ enum DirectoryWatcherError: Error {
 }
 
 class DirectoryWatcher {
-    weak var delegate: DirectoryWatcherDelegate?
-    private let directoryURL: URL
-    private var source: DispatchSourceFileSystemObject?
     private let queue = DispatchQueue(label: "com.zuhlke.Support.DirectoryWatcher", qos: .utility)
 
-    init(directoryURL: URL, delegate: DirectoryWatcherDelegate? = nil) {
+    private let directoryURL: URL
+    private var source: DispatchSourceFileSystemObject?
+    private let onDirectoryChange: (() -> Void)?
+
+    init(directoryURL: URL, onDirectoryChange: (() -> Void)? = nil) {
         self.directoryURL = directoryURL
-        self.delegate = delegate
+        self.onDirectoryChange = onDirectoryChange
     }
 
     func startWatching() throws {
@@ -37,7 +65,7 @@ class DirectoryWatcher {
 
         source?.setEventHandler { [weak self] in
             guard let self = self else { return }
-            self.delegate?.directoryWatcher(self, didDetectChangesAt: self.directoryURL)
+            self.onDirectoryChange?()
         }
 
         source?.setCancelHandler {
@@ -56,4 +84,5 @@ class DirectoryWatcher {
         stopWatching()
     }
 }
+
 #endif
