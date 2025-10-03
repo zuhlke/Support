@@ -5,14 +5,14 @@ import Foundation
 @testable import Support
 
 @MainActor
-struct OSLogMonitorTests {
+struct LogMonitorTests {
     @Test
     func createsAppLogManifestAndLogFiles_forAppPackage() async throws {
         let fileManager = FileManager()
         try fileManager.withTemporaryDirectory { url in
             let logStore = LogStore(entries: [])
             
-            let _ = try OSLogMonitor(
+            let _ = try LogMonitor(
                 convention: LogStorageConvention(
                     baseStorageLocation: .customLocation(url: url),
                     basePathComponents: ["Test"]
@@ -55,7 +55,7 @@ struct OSLogMonitorTests {
         try fileManager.withTemporaryDirectory { url in
             let logStore = LogStore(entries: [])
             
-            let _ = try OSLogMonitor(
+            let _ = try LogMonitor(
                 convention: LogStorageConvention(
                     baseStorageLocation: .customLocation(url: url),
                     basePathComponents: ["Test"]
@@ -91,7 +91,7 @@ struct OSLogMonitorTests {
                 LogEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 1))
             ])
             
-            let logMonitor = try OSLogMonitor(
+            let logMonitor = try LogMonitor(
                 convention: LogStorageConvention(
                     baseStorageLocation: .customLocation(url: url),
                     basePathComponents: ["Test"]
@@ -135,7 +135,7 @@ struct OSLogMonitorTests {
 
 // MARK: - Helpers
 
-extension OSLogMonitorTests {
+extension LogMonitorTests {
     private func exportedLogs(runs: [AppRun.Snapshot]) throws -> String {
         let logs = Logs(runs: runs)
         let encoder = mutating(JSONEncoder()) {

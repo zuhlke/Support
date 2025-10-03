@@ -1,7 +1,7 @@
 #if canImport(SwiftData)
 
 /// Log container for an app
-public struct AppLogContainer: Identifiable, Sendable {
+public struct AppLogContainer: Identifiable, Equatable, Sendable {
     
     // TODO: P2 – Include full `AppMetadata`.
     // Currently we have no way of getting full `AppMetadata` that was provided when creating the logs.
