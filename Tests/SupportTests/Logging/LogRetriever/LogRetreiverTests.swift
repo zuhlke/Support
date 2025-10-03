@@ -60,7 +60,7 @@ struct LogRetreiverTests {
                         displayName: "Support",
                         executables: [
                             ExecutableLogContainer(
-                                url: URL(string: "file:///private")!.appending(path: logFile.path()), // TODO: (P3) - Review the URL assertion.
+                                url: expectedURL(with: logFile),
                                 id: "com.zuhlke.Support",
                                 displayName: "Support",
                                 packageType: .mainApp
@@ -119,13 +119,13 @@ struct LogRetreiverTests {
                         displayName: "Support",
                         executables: [
                             ExecutableLogContainer(
-                                url: URL(string: "file:///private")!.appending(path: logFile.path()), // TODO: (P3) - Review the URL assertion.
+                                url: expectedURL(with: logFile),
                                 id: "com.zuhlke.Support",
                                 displayName: "Support",
                                 packageType: .mainApp
                             ),
                             ExecutableLogContainer(
-                                url: URL(string: "file:///private")!.appending(path: extensionLogFile.path()), // TODO: (P3) - Review the URL assertion.
+                                url: expectedURL(with: extensionLogFile),
                                 id: "com.zuhlke.Support.extension",
                                 displayName: "SupportExtension",
                                 packageType: .extension(extensionPointIdentifier: "com.apple.widgetkit-extension")
@@ -181,7 +181,7 @@ struct LogRetreiverTests {
                         displayName: "Support",
                         executables: [
                             ExecutableLogContainer(
-                                url: URL(string: "file:///private")!.appending(path: logFile.path()), // TODO: (P3) - Review the URL assertion.
+                                url: expectedURL(with: logFile),
                                 id: "com.zuhlke.Support",
                                 displayName: "Support",
                                 packageType: .mainApp
@@ -191,6 +191,14 @@ struct LogRetreiverTests {
                 ]
             )
         }
+    }
+
+    private func expectedURL(with url: URL) -> URL {
+#if os(macOS)
+        // TODO: (P3) - Review the URL prefix on macOS.
+        return URL(string: "file:///private")!.appending(path: url.path())
+#endif
+        return url
     }
 }
 
