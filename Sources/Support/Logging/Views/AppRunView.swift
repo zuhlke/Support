@@ -4,102 +4,22 @@
 import SwiftUI
 import SwiftData
 
-struct Token: Identifiable, Equatable {
-    var text: String
-    var scope: Scope
-    
-    init(_ text: String, in scope: Scope) {
-        self.text = text
-        self.scope = scope
-    }
-    
-    var id: String {
-        text
-    }
-}
-
-enum Scope: String, CaseIterable {
-    case message, level, subsystem, category
-}
-
-extension Scope {
-    var image: String {
-        switch self {
-        case .message:
-            return "bubble"
-        case .level:
-            return "flag"
-        case .subsystem:
-            return "puzzlepiece"
-        case .category:
-            return "tag"
-        }
-    }
-    
-    var filledImage: String {
-        "\(image).fill"
-    }
-}
-
-extension LogEntry {
-    func with(scope: Scope) -> String? {
-        switch scope {
-        case .message:
-            return composedMessage
-        case .level:
-            return level?.exportDescription
-        case .subsystem:
-            return subsystem
-        case .category:
-            return category
-        }
-        return nil
-    }
-}
-
 @available(iOS 26.0, *)
 @available(macOS, unavailable)
 struct AppRunView: View {
-    static let items = ["Level", "Date", "Subsystem", "Category"]
-
     @Query(filter: #Predicate<LogEntry> { entry in
         entry.subsystem != nil && entry.subsystem != "" && !(entry.subsystem?.contains("com.apple.") ?? false)
     }) var logEntries: [LogEntry]
     
-    @State var isFilterMenuShown: Bool = false
-    @State var selection = Set<String>(items)
+    @State var isShowingMetadata = Set<Metadata>(Metadata.allCases)
     
     @State private var searchText = ""
-    @State private var tokens: [Token] = []
+    @State private var tokens: [SearchToken] = []
     @State private var filteredEntries: [LogEntry] = []
     @State private var groupedEntries: [AppRun: [LogEntry]] = [:]
     
     func filterEntries() {
-        var filteredEntries: [LogEntry] = logEntries
-        
-        let trimmedSearchText = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        if !trimmedSearchText.isEmpty {
-            filteredEntries = filteredEntries.filter { logEntry in
-                let fields: [String] = [
-                    logEntry.composedMessage,
-                    logEntry.level?.exportDescription,
-                    logEntry.subsystem,
-                    logEntry.category
-                ].compactMap { $0 }
-                
-                return fields.contains { $0.localizedCaseInsensitiveContains(trimmedSearchText) }
-            }
-        }
-        
-        if !tokens.isEmpty {
-            filteredEntries = filteredEntries.filter { logEntry in
-                tokens.allSatisfy { token in
-                    logEntry.with(scope: token.scope)?.localizedCaseInsensitiveContains(token.text) ?? false
-                }
-            }
-        }
-        
-        self.filteredEntries = filteredEntries
+        filteredEntries = logEntries.filter(searchText: searchText, tokens: tokens)
         groupedEntries = Dictionary(grouping: filteredEntries) { $0.appRun }
     }
     
@@ -111,20 +31,23 @@ struct AppRunView: View {
                     matching: [searchText] + tokens.filter { $0.scope == .message }.map { $0.text }
                 ))
                 HStack {
-                    if let level = entry.level, selection.contains("Level") {
+                    if let level = entry.level, isShowingMetadata.contains(.level) {
                         Text(level.exportDescription.highlighted(
                             matching: [searchText] + tokens.filter { $0.scope == .level }.map { $0.text }
                         ))
                     }
-                    if selection.contains("Date") {
+                    
+                    if isShowingMetadata.contains(.date) {
                         Text(entry.date.formatted())
                     }
-                    if let subsystem = entry.subsystem, selection.contains("Subsystem") {
+                    
+                    if let subsystem = entry.subsystem, isShowingMetadata.contains(.subsystem) {
                         Text(subsystem.highlighted(
                             matching: [searchText] + tokens.filter { $0.scope == .subsystem }.map { $0.text }
                         ))
                     }
-                    if let category = entry.category, selection.contains("Category") {
+                    
+                    if let category = entry.category, isShowingMetadata.contains(.category) {
                         Text(category.highlighted(
                             matching: [searchText] + tokens.filter { $0.scope == .category }.map { $0.text }
                         ))
@@ -146,13 +69,13 @@ struct AppRunView: View {
         .listStyle(.plain)
     }
     
-    func suggestionText(for scope: Scope) -> some View {
+    func suggestionText(for scope: SearchScope) -> some View {
         HStack {
             Text("\(Image(systemName: scope.image))").bold().foregroundStyle(.blue).frame(width: 30)
-            Text("\(scope.rawValue.uppercased()) contains: ").foregroundStyle(.secondary) + Text("\(searchText)")
+            Text("\(scope.rawValue.capitalized) contains: ").foregroundStyle(.secondary) + Text("\(searchText)")
         }
         .tint(.primary)
-        .searchCompletion(Token(searchText, in: scope))
+        .searchCompletion(SearchToken(searchText, in: scope))
     }
     
     var appRuns: some View {
@@ -178,6 +101,29 @@ struct AppRunView: View {
         }
     }
     
+    var menu: some View {
+        Menu {
+            ForEach(Metadata.allCases, id: \.self) { metadata in
+                Section {
+                    Toggle(isOn: .init(get: { isShowingMetadata.contains(metadata) }, set: {
+                        if $0 {
+                            isShowingMetadata.insert(metadata)
+                        } else {
+                            isShowingMetadata.remove(metadata)
+                        }
+                    })) {
+                        HStack {
+                            Image(systemName: metadata.image)
+                            Text("Show \(metadata.rawValue.capitalized)")
+                        }
+                    }
+                }
+            }
+        } label: {
+            Image(systemName: "ellipsis")
+        }
+    }
+    
     var body: some View {
         appRuns
         .onChange(of: logEntries, initial: true) {
@@ -190,34 +136,11 @@ struct AppRunView: View {
             filterEntries()
         }
         .toolbar {
-            ToolbarSpacer(.flexible, placement: .bottomBar)
-            if isFilterMenuShown {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(role: .confirm) {
-                        isFilterMenuShown.toggle()
-                    }
-                }
-            } else {
-                DefaultToolbarItem(kind: .search, placement: .bottomBar)
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        isFilterMenuShown.toggle()
-                    } label: {
-                        Image(systemName: "line.3.horizontal.decrease")
-                    }
-                }
+            DefaultToolbarItem(kind: .search, placement: .bottomBar)
+            ToolbarItem(placement: .topBarTrailing) {
+                menu
             }
         }
-        .overlay {
-            if isFilterMenuShown {
-                List(Self.items, id: \.self, selection: $selection) {
-                    Text("\($0)")
-                }
-                .environment(\.editMode, .constant(EditMode.active))
-            }
-
-        }
-        .animation(.easeInOut, value: isFilterMenuShown)
     }
 }
 
