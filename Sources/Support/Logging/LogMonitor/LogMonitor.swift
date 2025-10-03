@@ -9,7 +9,7 @@ import UniformTypeIdentifiers
 //
 // Context: Due to limitations in testing MainActor ensures that the tasks are run sequentially.
 @MainActor
-public class OSLogMonitor {
+public class LogMonitor {
     private let logger = Logger(subsystem: "com.zuhlke.Support", category: "LogMonitor")
 
     let appLaunchDate: Date
@@ -121,7 +121,7 @@ public class OSLogMonitor {
 }
 
 #if canImport(OSLog)
-public extension OSLogMonitor {
+public extension LogMonitor {
     convenience init(
         convention: LogStorageConvention,
         bundleMetadata: BundleMetadata = .main,
