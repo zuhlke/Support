@@ -1,7 +1,7 @@
 #if canImport(SwiftData)
 
 import Foundation
-import Combine
+@preconcurrency import Combine
 
 public class LogRetriever: ObservableObject {
     private let fileManager = FileManager()
@@ -17,8 +17,30 @@ public class LogRetriever: ObservableObject {
     }
 
     private var directoryWatcher: MultiDirectoryWatcher?
+    
+    private let appsSubject: CurrentValueSubject<[AppLogContainer], Error> = .init([])
+    public var appsStream: AsyncThrowingStream<[AppLogContainer], Error> {
+        AsyncThrowingStream<[AppLogContainer], Error> { continuation in
+            let cancellable = appsSubject
+                .sink(
+                    receiveCompletion: { completion in
+                        switch completion {
+                        case .finished:
+                            continuation.finish()
+                        case .failure(let error):
+                            continuation.finish(throwing: error)
+                        }
+                    },
+                    receiveValue: { value in
+                        continuation.yield(value)
+                    }
+                )
 
-    public private(set) var appsSubject: CurrentValueSubject<[AppLogContainer], Error> = .init([])
+            continuation.onTermination = { _ in
+                cancellable.cancel()
+            }
+        }
+    }
 
     public init(convention: LogStorageConvention) throws {
         self.convention = convention
@@ -47,7 +69,6 @@ public class LogRetriever: ObservableObject {
     private func stopWatching() {
         directoryWatcher?.stopWatching()
     }
-
 
     deinit {
         stopWatching()

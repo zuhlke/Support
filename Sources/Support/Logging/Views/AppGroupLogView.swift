@@ -15,30 +15,9 @@ class AppGroupLogViewModel: @unchecked Sendable {
     init(convention: LogStorageConvention) {
         let logRetriever = try! LogRetriever(convention: convention)
         self.logRetriever = logRetriever
-        let stream = AsyncThrowingStream<[AppLogContainer], any Error> { continuation in
-            let cancellable = logRetriever.appsSubject
-                .sink(
-                    receiveCompletion: { completion in
-                        switch completion {
-                        case .finished:
-                            continuation.finish()
-                        case .failure(let error):
-                            continuation.finish(throwing: error)
-                        }
-                    },
-                    receiveValue: { value in
-                        continuation.yield(value)
-                    }
-                )
-
-            continuation.onTermination = { _ in
-                cancellable.cancel()
-            }
-        }
-
         Task {
             do {
-                for try await value in stream {
+                for try await value in logRetriever.appsStream {
                     self.apps = value
                 }
             } catch {
