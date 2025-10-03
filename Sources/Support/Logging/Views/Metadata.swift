@@ -1,3 +1,5 @@
+#if os(iOS)
+
 import Foundation
 
 enum Metadata: String, CaseIterable {
@@ -18,3 +20,5 @@ extension Metadata {
         }
     }
 }
+
+#endif

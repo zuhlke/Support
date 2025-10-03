@@ -1,3 +1,5 @@
+#if os(iOS)
+
 import Foundation
 
 extension [LogEntry] {
@@ -29,3 +31,5 @@ extension [LogEntry] {
         return filteredEntries
     }
 }
+
+#endif

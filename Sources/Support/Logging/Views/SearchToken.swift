@@ -1,3 +1,5 @@
+#if os(iOS)
+
 import Foundation
 
 struct SearchToken: Identifiable, Equatable {
@@ -52,3 +54,5 @@ extension LogEntry {
         return nil
     }
 }
+
+#endif
