@@ -3,6 +3,47 @@
 
 import SwiftUI
 import SwiftData
+import OSLog
+
+struct LevelView: View {
+    var size: CGFloat = 24
+    var cornerRadius: CGFloat = 8
+    var level: OSLogEntryLog.Level
+
+    init(_ level: OSLogEntryLog.Level) {
+        self.level = level
+    }
+    
+    var body: some View {
+        switch level {
+        case .info:
+            Image(systemName: "info")
+                .foregroundStyle(.white)
+                .frame(width: size, height: size)
+                .background(RoundedRectangle(cornerRadius: cornerRadius, style: .circular).fill(Color.blue))
+        case .debug:
+            Image(systemName: "stethoscope")
+                .foregroundStyle(.white)
+                .frame(width: size, height: size)
+                .background(RoundedRectangle(cornerRadius: cornerRadius, style: .circular).fill(Color.gray))
+        case .error:
+            Image(systemName: "exclamationmark.2")
+                .foregroundStyle(.white)
+                .frame(width: size, height: size)
+                .background(RoundedRectangle(cornerRadius: cornerRadius, style: .circular).fill(Color.yellow))
+        case .fault:
+            Image(systemName: "exclamationmark.3")
+                .foregroundStyle(.white)
+                .frame(width: size, height: size)
+                .background(RoundedRectangle(cornerRadius: cornerRadius, style: .circular).fill(Color.red))
+        default:
+            Image(systemName: "bell.fill")
+                .foregroundStyle(.white)
+                .frame(width: size, height: size)
+                .background(RoundedRectangle(cornerRadius: cornerRadius, style: .circular).fill(Color.gray))
+        }
+    }
+}
 
 @available(iOS 26.0, *)
 @available(macOS, unavailable)
@@ -32,22 +73,24 @@ struct AppRunView: View {
                 ))
                 HStack {
                     if let level = entry.level, isShowingMetadata.contains(.level) {
-                        Text(level.exportDescription.highlighted(
-                            matching: [searchText] + tokens.filter { $0.scope == .level }.map { $0.text }
-                        ))
+                        LevelView(level)
                     }
                     
-                    if isShowingMetadata.contains(.date) {
+                    if isShowingMetadata.contains(.timestamp) {
                         Text(entry.date.formatted())
                     }
                     
                     if let subsystem = entry.subsystem, isShowingMetadata.contains(.subsystem) {
+                        Image(systemName: Metadata.subsystem.image)
+                            .frame(width: 24, height: 24)
                         Text(subsystem.highlighted(
                             matching: [searchText] + tokens.filter { $0.scope == .subsystem }.map { $0.text }
                         ))
                     }
                     
                     if let category = entry.category, isShowingMetadata.contains(.category) {
+                        Image(systemName: Metadata.category.image)
+                            .frame(width: 24, height: 24)
                         Text(category.highlighted(
                             matching: [searchText] + tokens.filter { $0.scope == .category }.map { $0.text }
                         ))

@@ -3,7 +3,7 @@
 import Foundation
 
 enum Metadata: String, CaseIterable {
-    case level, date, subsystem, category
+    case level, timestamp, subsystem, category
 }
 
 extension Metadata {
@@ -11,12 +11,12 @@ extension Metadata {
         switch self {
         case .level:
             return "flag"
-        case .date:
-            return "calendar"
+        case .timestamp:
+            return "clock"
         case .subsystem:
-            return "puzzlepiece"
+            return "gearshape.2"
         case .category:
-            return "tag"
+            return "square.grid.3x3"
         }
     }
 }

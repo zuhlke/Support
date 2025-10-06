@@ -10,8 +10,11 @@ struct SampleData: PreviewModifier {
         
         let appRun = AppRun(appVersion: "1.0.0", operatingSystemVersion: "14.0.0", launchDate: Date(), device: "iPhone 12 Pro Max")
         let logEntries = [
-            LogEntry(appRun: appRun, date: Date(), composedMessage: "Hello, world!", level: .info, category: "App", subsystem: "com.zuhlke.com"),
-            LogEntry(appRun: appRun, date: Date(), composedMessage: "Bye, world!", level: .info, category: "App", subsystem: "com.zuhlke.com")
+            LogEntry(appRun: appRun, date: Date(), composedMessage: "This is an info level message", level: .info, category: "App", subsystem: "com.zuhlke.test"),
+            LogEntry(appRun: appRun, date: Date(), composedMessage: "This is a debug level message", level: .debug, category: "App", subsystem: "com.zuhlke.test"),
+            LogEntry(appRun: appRun, date: Date(), composedMessage: "This is a error level message", level: .error, category: "App", subsystem: "com.zuhlke.test"),
+            LogEntry(appRun: appRun, date: Date(), composedMessage: "This is a fault level message", level: .fault, category: "App", subsystem: "com.zuhlke.test"),
+            LogEntry(appRun: appRun, date: Date(), composedMessage: "This is a notice level message", level: .notice, category: "App", subsystem: "com.zuhlke.test")
         ]
         
         let context = ModelContext(container)
