@@ -4,7 +4,7 @@ import Testing
 import Foundation
 @testable import Support
 
-struct LogRetreiverTests {
+struct LogRetrieverTests {
     @Test
     func testInitWithValidConvention_withEmptyDirectory() async throws {
         let fileManager = FileManager()
@@ -291,7 +291,7 @@ struct LogRetreiverTests {
     }
 }
 
-extension LogRetreiverTests {
+extension LogRetrieverTests {
     private func expectedURL(with url: URL) -> URL {
 #if os(macOS)
         // TODO: (P3) - Review the URL prefix on macOS.
