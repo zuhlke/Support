@@ -56,7 +56,9 @@ public class LogRetriever {
         try? fileManager.createDirectory(at: logsDirectory, withIntermediateDirectories: true)
         try? fileManager.createDirectory(at: manifestDirectory, withIntermediateDirectories: true)
 
-        directoryWatcher = MultiDirectoryWatcher(urls: [logsDirectory, manifestDirectory]) { [weak self] in
+        directoryWatcher = MultiDirectoryWatcher(
+            urls: [logsDirectory, manifestDirectory]
+        ) { [weak self] in
             self?.refreshApps()
         }
     }

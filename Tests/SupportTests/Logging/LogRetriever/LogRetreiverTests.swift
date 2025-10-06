@@ -13,9 +13,9 @@ struct LogRetreiverTests {
                 baseStorageLocation: .customLocation(url: url),
                 basePathComponents: ["Test"]
             )
-
+            
             let retriever = try LogRetriever(convention: convention)
-
+            
             let apps = try await retriever.appsStream.first { _ in true }
             #expect(apps?.isEmpty == true)
         }
@@ -71,7 +71,7 @@ struct LogRetreiverTests {
             )
         }
     }
-
+    
     @Test
     func testInitWithValidConvention_withLogsForAppAndExtension() async throws {
         try await FileManager().withTemporaryDirectory { url in
@@ -136,7 +136,7 @@ struct LogRetreiverTests {
             )
         }
     }
-
+    
     @Test
     func testInitWithValidConvention_withLogsForAppAndExtension_withoutLogFile() async throws {
         try await FileManager().withTemporaryDirectory { url in
@@ -170,7 +170,7 @@ struct LogRetreiverTests {
             try fileManager.createDirectory(at: logsDir, withIntermediateDirectories: true)
             let logFile = logsDir.appending(path: "com.zuhlke.Support.logs")
             try "<none>".write(to: logFile, atomically: true, encoding: .utf8)
-
+            
             let retriever = try LogRetriever(convention: convention)
             
             let apps = try await retriever.appsStream.first { _ in true }
@@ -193,6 +193,72 @@ struct LogRetreiverTests {
         }
     }
 
+    @Test
+    func testInitWithValidConvention_withFilesCreated_afterInit() async throws {
+        let fileManager = FileManager()
+        try await fileManager.withTemporaryDirectory { url in
+            let convention = LogStorageConvention(
+                baseStorageLocation: .customLocation(url: url),
+                basePathComponents: ["Test"]
+            )
+            
+            let retriever = try LogRetriever(convention: convention)
+            
+            var appsStream = retriever.appsStream.makeAsyncIterator()
+            let apps = try await appsStream.next()
+            #expect(apps?.isEmpty == true)
+            
+            // Create manifest file
+            let manifestsDir = url.appending(path: "Test/Manifests")
+            
+            let manifest = AppLogManifest(
+                manifestVersion: 1,
+                id: "com.zuhlke.Support",
+                name: "Support",
+                extensions: [:]
+            )
+            let manifestData = try JSONEncoder().encode(manifest)
+            let manifestFile = manifestsDir.appending(path: "com.zuhlke.Support.json")
+            try manifestData.write(to: manifestFile)
+            
+            let appsAgain = try await appsStream.next()
+            #expect(
+                appsAgain == [
+                    AppLogContainer(
+                        id: "com.zuhlke.Support",
+                        displayName: "Support",
+                        executables: []
+                    )
+                ]
+            )
+            
+            // Create log file
+            let logsDir = url.appending(path: "Test/Logs")
+            let logFile = logsDir.appending(path: "com.zuhlke.Support.logs")
+            try "<none>".write(to: logFile, atomically: false, encoding: .utf8)
+            
+            let appsAgain2 = try await appsStream.next()
+            #expect(
+                appsAgain2 == [
+                    AppLogContainer(
+                        id: "com.zuhlke.Support",
+                        displayName: "Support",
+                        executables: [
+                            ExecutableLogContainer(
+                                url: expectedURL(with: logFile),
+                                id: "com.zuhlke.Support",
+                                displayName: "Support",
+                                packageType: .mainApp
+                            )
+                        ]
+                    )
+                ]
+            )
+        }
+    }
+}
+
+extension LogRetreiverTests {
     private func expectedURL(with url: URL) -> URL {
 #if os(macOS)
         // TODO: (P3) - Review the URL prefix on macOS.
