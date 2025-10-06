@@ -126,8 +126,11 @@ struct AppRunView: View {
     var appRunsList: some View {
         List {
             ForEach(groupedEntries.keys.sorted { $0.launchDate > $1.launchDate }, id: \.self) { appRun in
-                Section(appRun.launchDate.formatted()) {
+                Section {
                     appRunLogs(groupedEntries[appRun]!.sorted { $0.date < $1.date })
+                } header: {
+                    Text(appRun.launchDate.formatted())
+                        .foregroundStyle(.black)
                 }
             }
         }

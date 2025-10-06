@@ -17,9 +17,20 @@ struct SampleData: PreviewModifier {
             LogEntry(appRun: appRun, date: Date(), composedMessage: "This is a notice level message", level: .notice, category: "App", subsystem: "com.zuhlke.test")
         ]
         
+        let appRun2 = AppRun(appVersion: "1.0.0", operatingSystemVersion: "14.0.0", launchDate: Date().advanced(by: 3600), device: "iPhone 12 Pro Max")
+        let logEntries2 = [
+            LogEntry(appRun: appRun2, date: Date(), composedMessage: "This is an info level message", level: .info, category: "App", subsystem: "com.zuhlke.test"),
+            LogEntry(appRun: appRun2, date: Date(), composedMessage: "This is a debug level message", level: .debug, category: "App", subsystem: "com.zuhlke.test"),
+            LogEntry(appRun: appRun2, date: Date(), composedMessage: "This is a error level message", level: .error, category: "App", subsystem: "com.zuhlke.test"),
+            LogEntry(appRun: appRun2, date: Date(), composedMessage: "This is a fault level message", level: .fault, category: "App", subsystem: "com.zuhlke.test"),
+            LogEntry(appRun: appRun2, date: Date(), composedMessage: "This is a notice level message", level: .notice, category: "App", subsystem: "com.zuhlke.test")
+        ]
+        
         let context = ModelContext(container)
         context.insert(appRun)
+        context.insert(appRun2)
         context.insert(contentsOf: logEntries)
+        context.insert(contentsOf: logEntries2)
         return container
     }
     
