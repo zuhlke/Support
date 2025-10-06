@@ -5,6 +5,20 @@ import SwiftUI
 import SwiftData
 import OSLog
 
+extension LogEntry {
+    @ViewBuilder
+    var background: some View {
+        switch level {
+        case .error:
+            Color.yellow.opacity(0.2)
+        case .fault:
+            Color.red.opacity(0.2)
+        default:
+            EmptyView()
+        }
+    }
+}
+
 struct LevelView: View {
     var size: CGFloat = 24
     var cornerRadius: CGFloat = 8
@@ -105,6 +119,7 @@ struct AppRunView: View {
                 }
                 .font(.caption)
             }
+            .listRowBackground(entry.background)
         }
     }
     
