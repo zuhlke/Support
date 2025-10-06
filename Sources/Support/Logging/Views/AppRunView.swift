@@ -64,6 +64,16 @@ struct AppRunView: View {
         groupedEntries = Dictionary(grouping: filteredEntries) { $0.appRun }
     }
     
+    func scopeSection(text: String, for scope: SearchScope) -> some View {
+        HStack(spacing: 4) {
+            Image(systemName: scope.image)
+                .frame(width: 24, height: 24)
+            Text(text.highlighted(
+                matching: [searchText] + tokens.filter { $0.scope == scope }.map { $0.text }
+            ))
+        }
+    }
+    
     @ViewBuilder
     func appRunLogs(_ logs: [LogEntry]) -> some View {
         ForEach(logs) { entry in
@@ -71,7 +81,7 @@ struct AppRunView: View {
                 Text(entry.composedMessage.highlighted(
                     matching: [searchText] + tokens.filter { $0.scope == .message }.map { $0.text }
                 ))
-                HStack {
+                HStack(spacing: 8) {
                     if let level = entry.level, isShowingMetadata.contains(.level) {
                         LevelView(level)
                     }
@@ -81,19 +91,11 @@ struct AppRunView: View {
                     }
                     
                     if let subsystem = entry.subsystem, isShowingMetadata.contains(.subsystem) {
-                        Image(systemName: Metadata.subsystem.image)
-                            .frame(width: 24, height: 24)
-                        Text(subsystem.highlighted(
-                            matching: [searchText] + tokens.filter { $0.scope == .subsystem }.map { $0.text }
-                        ))
+                        scopeSection(text: subsystem, for: .subsystem)
                     }
                     
                     if let category = entry.category, isShowingMetadata.contains(.category) {
-                        Image(systemName: Metadata.category.image)
-                            .frame(width: 24, height: 24)
-                        Text(category.highlighted(
-                            matching: [searchText] + tokens.filter { $0.scope == .category }.map { $0.text }
-                        ))
+                        scopeSection(text: category, for: .category)
                     }
                 }
                 .font(.caption)
