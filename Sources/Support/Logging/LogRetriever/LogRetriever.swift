@@ -3,7 +3,7 @@
 import Foundation
 @preconcurrency import Combine
 
-public class LogRetriever: ObservableObject {
+public class LogRetriever {
     private let fileManager = FileManager()
     private let convention: LogStorageConvention
     private let diagnosticsDirectory: URL
