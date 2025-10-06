@@ -215,15 +215,20 @@ struct LogRetreiverTests {
                 manifestVersion: 1,
                 id: "com.zuhlke.Support",
                 name: "Support",
-                extensions: [:]
+                extensions: [
+                    "com.zuhlke.Support.extension": .init(
+                        name: "SupportExtension",
+                        extensionPointIdentifier: "com.apple.widgetkit-extension"
+                    )
+                ]
             )
             let manifestData = try JSONEncoder().encode(manifest)
             let manifestFile = manifestsDir.appending(path: "com.zuhlke.Support.json")
             try manifestData.write(to: manifestFile)
             
-            let appsAgain = try await appsStream.next()
+            let appsAfterManifest = try await appsStream.next()
             #expect(
-                appsAgain == [
+                appsAfterManifest == [
                     AppLogContainer(
                         id: "com.zuhlke.Support",
                         displayName: "Support",
@@ -237,9 +242,9 @@ struct LogRetreiverTests {
             let logFile = logsDir.appending(path: "com.zuhlke.Support.logs")
             try "<none>".write(to: logFile, atomically: false, encoding: .utf8)
             
-            let appsAgain2 = try await appsStream.next()
+            let appsAfterManifestAndLogfile = try await appsStream.next()
             #expect(
-                appsAgain2 == [
+                appsAfterManifestAndLogfile == [
                     AppLogContainer(
                         id: "com.zuhlke.Support",
                         displayName: "Support",
@@ -249,6 +254,34 @@ struct LogRetreiverTests {
                                 id: "com.zuhlke.Support",
                                 displayName: "Support",
                                 packageType: .mainApp
+                            )
+                        ]
+                    )
+                ]
+            )
+            
+            // Create extension log file
+            let extensionLogFile = logsDir.appending(path: "com.zuhlke.Support.extension.logs")
+            try "<none>".write(to: extensionLogFile, atomically: false, encoding: .utf8)
+
+            let appsAfterManifestAndLogfileAndExtension = try await appsStream.next()
+            #expect(
+                appsAfterManifestAndLogfileAndExtension == [
+                    AppLogContainer(
+                        id: "com.zuhlke.Support",
+                        displayName: "Support",
+                        executables: [
+                            ExecutableLogContainer(
+                                url: expectedURL(with: logFile),
+                                id: "com.zuhlke.Support",
+                                displayName: "Support",
+                                packageType: .mainApp
+                            ),
+                            ExecutableLogContainer(
+                                url: expectedURL(with: extensionLogFile),
+                                id: "com.zuhlke.Support.extension",
+                                displayName: "SupportExtension",
+                                packageType: .extension(extensionPointIdentifier: "com.apple.widgetkit-extension")
                             )
                         ]
                     )
