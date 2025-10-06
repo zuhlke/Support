@@ -87,7 +87,12 @@ struct AppRunView: View {
                     }
                     
                     if isShowingMetadata.contains(.timestamp) {
-                        Text(entry.date.formatted())
+                        Text(entry.date.formatted(.dateTime
+                            .hour(.twoDigits(amPM: .omitted))
+                            .minute(.twoDigits)
+                            .second(.twoDigits)
+                            .secondFraction(.fractional(4))
+                        ))
                     }
                     
                     if let subsystem = entry.subsystem, isShowingMetadata.contains(.subsystem) {
