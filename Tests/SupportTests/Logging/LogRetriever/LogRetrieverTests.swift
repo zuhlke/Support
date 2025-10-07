@@ -48,7 +48,7 @@ struct LogRetrieverTests {
             let logsDir = url.appending(path: "Test/Logs")
             try fileManager.createDirectory(at: logsDir, withIntermediateDirectories: true)
             let logFile = logsDir.appending(path: "com.zuhlke.Support.logs")
-            try "<none>".write(to: logFile, atomically: true, encoding: .utf8)
+            try "<none>".write(to: logFile, atomically: false, encoding: .utf8)
             
             let retriever = try LogRetriever(convention: convention)
             
@@ -104,10 +104,10 @@ struct LogRetrieverTests {
             let logsDir = url.appending(path: "Test/Logs")
             try fileManager.createDirectory(at: logsDir, withIntermediateDirectories: true)
             let logFile = logsDir.appending(path: "com.zuhlke.Support.logs")
-            try "<none>".write(to: logFile, atomically: true, encoding: .utf8)
+            try "<none>".write(to: logFile, atomically: false, encoding: .utf8)
             
             let extensionLogFile = logsDir.appending(path: "com.zuhlke.Support.extension.logs")
-            try "<none>".write(to: extensionLogFile, atomically: true, encoding: .utf8)
+            try "<none>".write(to: extensionLogFile, atomically: false, encoding: .utf8)
             
             let retriever = try LogRetriever(convention: convention)
             
@@ -169,7 +169,7 @@ struct LogRetrieverTests {
             let logsDir = url.appending(path: "Test/Logs")
             try fileManager.createDirectory(at: logsDir, withIntermediateDirectories: true)
             let logFile = logsDir.appending(path: "com.zuhlke.Support.logs")
-            try "<none>".write(to: logFile, atomically: true, encoding: .utf8)
+            try "<none>".write(to: logFile, atomically: false, encoding: .utf8)
             
             let retriever = try LogRetriever(convention: convention)
             

@@ -16,7 +16,7 @@ public class LogRetriever {
         diagnosticsDirectory.appending(component: convention.manifestDirectory)
     }
 
-    private var directoryWatcher: MultiDirectoryWatcher?
+    private var directoryWatcher: FileWatcher?
     
     private let appsSubject: CurrentValueSubject<[AppLogContainer], Error> = .init([])
     public var appsStream: AsyncThrowingStream<[AppLogContainer], Error> {
@@ -56,7 +56,7 @@ public class LogRetriever {
         try? fileManager.createDirectory(at: logsDirectory, withIntermediateDirectories: true)
         try? fileManager.createDirectory(at: manifestDirectory, withIntermediateDirectories: true)
 
-        directoryWatcher = MultiDirectoryWatcher(
+        directoryWatcher = FileWatcher(
             urls: [logsDirectory, manifestDirectory]
         ) { [weak self] in
             self?.refreshApps()
