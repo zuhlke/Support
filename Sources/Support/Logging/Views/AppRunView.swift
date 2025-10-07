@@ -3,61 +3,6 @@
 
 import SwiftUI
 import SwiftData
-import OSLog
-
-extension LogEntry {
-    @ViewBuilder
-    var background: some View {
-        switch level {
-        case .error:
-            Color.yellow.opacity(0.2)
-        case .fault:
-            Color.red.opacity(0.2)
-        default:
-            EmptyView()
-        }
-    }
-}
-
-struct LevelView: View {
-    var size: CGFloat = 24
-    var cornerRadius: CGFloat = 8
-    var level: OSLogEntryLog.Level
-
-    init(_ level: OSLogEntryLog.Level) {
-        self.level = level
-    }
-    
-    var body: some View {
-        switch level {
-        case .info:
-            Image(systemName: "info")
-                .foregroundStyle(.white)
-                .frame(width: size, height: size)
-                .background(RoundedRectangle(cornerRadius: cornerRadius, style: .circular).fill(Color.blue))
-        case .debug:
-            Image(systemName: "stethoscope")
-                .foregroundStyle(.white)
-                .frame(width: size, height: size)
-                .background(RoundedRectangle(cornerRadius: cornerRadius, style: .circular).fill(Color.gray))
-        case .error:
-            Image(systemName: "exclamationmark.2")
-                .foregroundStyle(.white)
-                .frame(width: size, height: size)
-                .background(RoundedRectangle(cornerRadius: cornerRadius, style: .circular).fill(Color.yellow))
-        case .fault:
-            Image(systemName: "exclamationmark.3")
-                .foregroundStyle(.white)
-                .frame(width: size, height: size)
-                .background(RoundedRectangle(cornerRadius: cornerRadius, style: .circular).fill(Color.red))
-        default:
-            Image(systemName: "bell.fill")
-                .foregroundStyle(.white)
-                .frame(width: size, height: size)
-                .background(RoundedRectangle(cornerRadius: cornerRadius, style: .circular).fill(Color.gray))
-        }
-    }
-}
 
 @available(iOS 26.0, *)
 @available(macOS, unavailable)
@@ -79,7 +24,7 @@ struct AppRunView: View {
     }
     
     func scopeSection(text: String, for scope: SearchScope) -> some View {
-        HStack(spacing: 4) {
+        HStack(spacing: 2) {
             Image(systemName: scope.image)
                 .frame(width: 24, height: 24)
             Text(text.highlighted(
@@ -208,6 +153,21 @@ struct AppRunView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 menu
             }
+        }
+    }
+}
+
+
+extension LogEntry {
+    @ViewBuilder
+    var background: some View {
+        switch level {
+        case .error:
+            Color.yellow.opacity(0.2)
+        case .fault:
+            Color.red.opacity(0.2)
+        default:
+            EmptyView()
         }
     }
 }
