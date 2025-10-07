@@ -111,25 +111,21 @@ struct LogMonitorTests {
                 appLaunchDate: .init(timeIntervalSince1970: 1)
             )
             
+            let logFile = url.appending(path: "Test/Logs/com.zuhlke.Support.logs")
+            let configuration = ModelConfiguration(url: logFile, cloudKitDatabase: .none)
+            let modelContainer = try ModelContainer(
+                for: AppRun.self,
+                configurations: configuration
+            )
+            let context = ModelContext(modelContainer)
+            let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
+
             // FIXME: - Remove me.
-            try await Task.sleep(for: .seconds(2))
-            
-            // Assert that the logs are written
-            let getAppRunsTask = Task {
-                let logFile = url.appending(path: "Test/Logs/com.zuhlke.Support.logs")
-                let configuration = ModelConfiguration(url: logFile, cloudKitDatabase: .none)
-                let modelContainer = try ModelContainer(
-                    for: AppRun.self,
-                    configurations: configuration
-                )
-                let context = ModelContext(modelContainer)
-                let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
-                let runs = try context.fetch(descriptor)
-                return runs.map(\.snapshot)
-            }
+            try await Task.sleep(for: .seconds(1))
+            let runs = try context.fetch(descriptor)
             
             // FIXME: - Assert AppRun instead of Snapshots
-            let appRunSnapshots = try await getAppRunsTask.value
+            let appRunSnapshots = runs.map(\.snapshot)
             #expect(appRunSnapshots == [AppRun.Snapshot(
                 info: .init(
                     appVersion: "1",
