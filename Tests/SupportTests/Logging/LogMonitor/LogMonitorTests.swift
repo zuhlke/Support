@@ -2,9 +2,9 @@
 
 import Testing
 import Foundation
+import SwiftData
 @testable import Support
 
-@MainActor
 struct LogMonitorTests {
     @Test
     func createsAppLogManifestAndLogFiles_forAppPackage() async throws {
@@ -86,22 +86,22 @@ struct LogMonitorTests {
     @Test
     func fetchInitialLogs() async throws {
         let fileManager = FileManager()
-        try await fileManager.withTemporaryDirectory { @MainActor url in
+        try await fileManager.withTemporaryDirectory { url in
             let logStore = LogStore(entries: [
                 LogEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 1))
             ])
             
-            let logMonitor = try LogMonitor(
+            let _ = try LogMonitor(
                 convention: LogStorageConvention(
                     baseStorageLocation: .customLocation(url: url),
                     basePathComponents: ["Test"]
                 ),
                 bundleMetadata: BundleMetadata(
-                    id: "id",
-                    name: "name",
+                    id: "com.zuhlke.Support",
+                    name: "Support",
                     version: "1",
                     shortVersionString: "1",
-                    packageType: .extension(.init(extensionPointIdentifier: "com.apple.widgetkit-extension"))
+                    packageType: .app(.init(plugins: []))
                 ),
                 deviceMetadata: DeviceMetadata(
                     operatingSystemVersion: "26.0",
@@ -111,13 +111,22 @@ struct LogMonitorTests {
                 appLaunchDate: .init(timeIntervalSince1970: 1)
             )
             
-            let getAppRunsTask = Task {
-                let exportedLogs = try logMonitor.export()
-                return exportedLogs
-            }
+            let logFile = url.appending(path: "Test/Logs/com.zuhlke.Support.logs")
+            let configuration = ModelConfiguration(url: logFile, cloudKitDatabase: .none)
+            let modelContainer = try ModelContainer(
+                for: AppRun.self,
+                configurations: configuration
+            )
+            let context = ModelContext(modelContainer)
+            let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
+
+            // FIXME: - Remove me.
+            try await Task.sleep(for: .seconds(1))
+            let runs = try context.fetch(descriptor)
             
-            let exportedLogs = try await getAppRunsTask.value
-            let expectedLogs = try self.exportedLogs(runs: [AppRun.Snapshot(
+            // FIXME: - Assert AppRun instead of Snapshots
+            let appRunSnapshots = runs.map(\.snapshot)
+            #expect(appRunSnapshots == [AppRun.Snapshot(
                 info: .init(
                     appVersion: "1",
                     operatingSystemVersion: "26.0",
@@ -128,24 +137,11 @@ struct LogMonitorTests {
                     .init(date: .init(timeIntervalSince1970: 1), composedMessage: "Log message")
                 ]
             )])
-            #expect(exportedLogs == expectedLogs)
         }
     }
 }
 
 // MARK: - Helpers
-
-extension LogMonitorTests {
-    private func exportedLogs(runs: [AppRun.Snapshot]) throws -> String {
-        let logs = Logs(runs: runs)
-        let encoder = mutating(JSONEncoder()) {
-            $0.outputFormatting = [.prettyPrinted, .sortedKeys]
-            $0.dateEncodingStrategy = .iso8601
-        }
-        let data = try encoder.encode(logs)
-        return String(data: data, encoding: .utf8) ?? ""
-    }
-}
 
 private class LogStore: LogStoreProtocol {
     private var entries: [LogEntryProtocol]
