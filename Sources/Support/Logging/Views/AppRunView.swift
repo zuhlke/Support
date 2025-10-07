@@ -139,13 +139,7 @@ struct AppRunView: View {
     
     var body: some View {
         appRuns
-        .onChange(of: logEntries, initial: true) {
-            filterEntries()
-        }
-        .onChange(of: tokens) {
-            filterEntries()
-        }
-        .onChange(of: searchText) {
+            .onChange(of: [logEntries.description, tokens.description, searchText], initial: true) {
             filterEntries()
         }
         .toolbar {

@@ -1,3 +1,5 @@
+#if canImport(SwiftUI)
+
 import SwiftUI
 import OSLog
 
@@ -32,3 +34,5 @@ struct LevelView: View {
         }
     }
 }
+
+#endif
