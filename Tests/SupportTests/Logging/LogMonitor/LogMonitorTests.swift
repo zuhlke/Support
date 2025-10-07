@@ -5,7 +5,6 @@ import Foundation
 import SwiftData
 @testable import Support
 
-@MainActor
 struct LogMonitorTests {
     @Test
     func createsAppLogManifestAndLogFiles_forAppPackage() async throws {
@@ -87,7 +86,7 @@ struct LogMonitorTests {
     @Test
     func fetchInitialLogs() async throws {
         let fileManager = FileManager()
-        try await fileManager.withTemporaryDirectory { @MainActor url in
+        try await fileManager.withTemporaryDirectory { url in
             let logStore = LogStore(entries: [
                 LogEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 1))
             ])
@@ -111,6 +110,9 @@ struct LogMonitorTests {
                 logStore: logStore,
                 appLaunchDate: .init(timeIntervalSince1970: 1)
             )
+            
+            // FIXME: - Remove me.
+            try await Task.sleep(for: .seconds(2))
             
             // Assert that the logs are written
             let getAppRunsTask = Task {
