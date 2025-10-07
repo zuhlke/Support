@@ -3,7 +3,7 @@
 import Foundation
 @preconcurrency import Combine
 
-public class LogRetriever: ObservableObject {
+public class LogRetriever {
     private let fileManager = FileManager()
     private let convention: LogStorageConvention
     private let diagnosticsDirectory: URL
@@ -56,7 +56,9 @@ public class LogRetriever: ObservableObject {
         try? fileManager.createDirectory(at: logsDirectory, withIntermediateDirectories: true)
         try? fileManager.createDirectory(at: manifestDirectory, withIntermediateDirectories: true)
 
-        directoryWatcher = MultiDirectoryWatcher(urls: [logsDirectory, manifestDirectory]) { [weak self] in
+        directoryWatcher = MultiDirectoryWatcher(
+            urls: [logsDirectory, manifestDirectory]
+        ) { [weak self] in
             self?.refreshApps()
         }
     }
