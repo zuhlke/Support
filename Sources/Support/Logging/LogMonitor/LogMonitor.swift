@@ -44,11 +44,11 @@ actor LogMonitoringActor {
 public actor LogMonitor {
     private static let logger = Logger(subsystem: "com.zuhlke.Support", category: "LogMonitor")
 
-    let appLaunchDate: Date
-    let logStore: LogStoreProtocol
-    let modelContainer: ModelContainer
-    let monitoringActor: LogMonitoringActor
-    let task: Task<Void, Never>
+    private let appLaunchDate: Date
+    private let logStore: LogStoreProtocol
+    private let modelContainer: ModelContainer
+    private let monitoringActor: LogMonitoringActor
+    private let monitoringTask: Task<Void, Never>
 
     init(
         convention: LogStorageConvention,
@@ -100,7 +100,7 @@ public actor LogMonitor {
 
         let monitoringActor = LogMonitoringActor()
         self.monitoringActor = monitoringActor
-        self.task = Task.detached(name: "LogMonitorTask") {
+        self.monitoringTask = Task.detached(name: "LogMonitorTask") {
             do {
                 try await monitoringActor.startMonitoring(
                     context: ModelContext(modelContainer),
@@ -116,7 +116,7 @@ public actor LogMonitor {
     }
 
     deinit {
-        task.cancel()
+        monitoringTask.cancel()
     }
 
     private func monitorOSLog(bundleMetadata: BundleMetadata, deviceMetadata: DeviceMetadata) async throws {
