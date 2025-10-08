@@ -23,6 +23,16 @@ struct AppRunView: View {
         groupedEntries = Dictionary(grouping: filteredEntries) { $0.appRun }
     }
     
+    func scopeSection(text: String, for scope: SearchScope) -> some View {
+        HStack(spacing: 2) {
+            Image(systemName: scope.image)
+                .frame(width: 24, height: 24)
+            Text(text.highlighted(
+                matching: [searchText] + tokens.filter { $0.scope == scope }.map { $0.text }
+            ))
+        }
+    }
+    
     @ViewBuilder
     func appRunLogs(_ logs: [LogEntry]) -> some View {
         ForEach(logs) { entry in
@@ -30,39 +40,42 @@ struct AppRunView: View {
                 Text(entry.composedMessage.highlighted(
                     matching: [searchText] + tokens.filter { $0.scope == .message }.map { $0.text }
                 ))
-                HStack {
+                HStack(spacing: 8) {
                     if let level = entry.level, isShowingMetadata.contains(.level) {
-                        Text(level.exportDescription.highlighted(
-                            matching: [searchText] + tokens.filter { $0.scope == .level }.map { $0.text }
-                        ))
+                        LevelView(level)
                     }
                     
-                    if isShowingMetadata.contains(.date) {
-                        Text(entry.date.formatted())
+                    if isShowingMetadata.contains(.timestamp) {
+                        Text(entry.date.formatted(.dateTime
+                            .hour(.twoDigits(amPM: .omitted))
+                            .minute(.twoDigits)
+                            .second(.twoDigits)
+                            .secondFraction(.fractional(4))
+                        ))
                     }
                     
                     if let subsystem = entry.subsystem, isShowingMetadata.contains(.subsystem) {
-                        Text(subsystem.highlighted(
-                            matching: [searchText] + tokens.filter { $0.scope == .subsystem }.map { $0.text }
-                        ))
+                        scopeSection(text: subsystem, for: .subsystem)
                     }
                     
                     if let category = entry.category, isShowingMetadata.contains(.category) {
-                        Text(category.highlighted(
-                            matching: [searchText] + tokens.filter { $0.scope == .category }.map { $0.text }
-                        ))
+                        scopeSection(text: category, for: .category)
                     }
                 }
                 .font(.caption)
             }
+            .listRowBackground(entry.background)
         }
     }
     
     var appRunsList: some View {
         List {
             ForEach(groupedEntries.keys.sorted { $0.launchDate > $1.launchDate }, id: \.self) { appRun in
-                Section(appRun.launchDate.formatted()) {
+                Section {
                     appRunLogs(groupedEntries[appRun]!.sorted { $0.date < $1.date })
+                } header: {
+                    Text(appRun.launchDate.formatted())
+                        .foregroundStyle(.black)
                 }
             }
         }
@@ -126,13 +139,7 @@ struct AppRunView: View {
     
     var body: some View {
         appRuns
-        .onChange(of: logEntries, initial: true) {
-            filterEntries()
-        }
-        .onChange(of: tokens) {
-            filterEntries()
-        }
-        .onChange(of: searchText) {
+            .onChange(of: [logEntries.description, tokens.description, searchText], initial: true) {
             filterEntries()
         }
         .toolbar {
@@ -140,6 +147,21 @@ struct AppRunView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 menu
             }
+        }
+    }
+}
+
+
+extension LogEntry {
+    @ViewBuilder
+    var background: some View {
+        switch level {
+        case .error:
+            Color.yellow.opacity(0.2)
+        case .fault:
+            Color.red.opacity(0.2)
+        default:
+            EmptyView()
         }
     }
 }

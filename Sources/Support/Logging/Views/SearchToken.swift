@@ -28,9 +28,9 @@ extension SearchScope {
         case .level:
             return "flag"
         case .subsystem:
-            return "puzzlepiece"
+            return "gearshape.2"
         case .category:
-            return "tag"
+            return "square.grid.3x3"
         }
     }
     
