@@ -26,6 +26,15 @@ struct AppRunView: View {
         filteredEntries = logEntries.filter(searchText: searchText, tokens: tokens)
         groupedEntries = Dictionary(grouping: filteredEntries) { $0.appRun }
     }
+    
+    func contextMenu(for entry: LogEntry) -> some View {
+        Button {
+            UIPasteboard.general.string = entry.composedMessage
+        } label: {
+            Image(systemName: "document.on.document")
+            Text("Copy")
+        }
+    }
         
     var appRuns: some View {
         ScrollView {
@@ -38,6 +47,7 @@ struct AppRunView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(entry.background)
                             .overlay(Divider().padding(.horizontal, 16), alignment: .bottom)
+                            .contextMenu { contextMenu(for: entry) }
                         }
                     } header: {
                         Text(appRun.launchDate.formatted())
@@ -83,6 +93,7 @@ struct AppRunView: View {
                     ForEach(filteredEntries, id: \.self) { entry in
                         LogEntryView(entry: entry, searchText: searchText, tokens: tokens, isShowingMetadata: isShowingMetadata)
                             .listRowBackground(entry.background)
+                            .contextMenu { contextMenu(for: entry) }
                     }
                 }
             }
