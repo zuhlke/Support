@@ -7,7 +7,7 @@ import SwiftData
 
 struct LogMonitorTests {
     @Test
-    func createsAppLogManifestAndLogFiles_forAppPackage() async throws {
+    func initializingLogMonitorForAppPackage_createsManifestAndLogFiles() async throws {
         let fileManager = FileManager()
         try fileManager.withTemporaryDirectory { url in
             let logStore = LogStore(entries: [])
@@ -50,7 +50,7 @@ struct LogMonitorTests {
     }
     
     @Test
-    func createsLogFile_forExtensionPackage() async throws {
+    func initializingLogMonitorForExtensionPackage_createsLogFileWithoutManifest() async throws {
         let fileManager = FileManager()
         try fileManager.withTemporaryDirectory { url in
             let logStore = LogStore(entries: [])
@@ -84,7 +84,45 @@ struct LogMonitorTests {
     }
     
     @Test
-    func fetchInitialLogs() async throws {
+    func logMonitorDeinitialization_releasesMemoryCorrectly() async throws {
+        let fileManager = FileManager()
+        try fileManager.withTemporaryDirectory { url in
+            let logStore = LogStore(entries: [])
+
+            weak var weakLogMonitor: LogMonitor?
+
+            do {
+                let logMonitor = try LogMonitor(
+                    convention: LogStorageConvention(
+                        baseStorageLocation: .customLocation(url: url),
+                        basePathComponents: ["Test"]
+                    ),
+                    bundleMetadata: BundleMetadata(
+                        id: "com.zuhlke.Support",
+                        name: "Support",
+                        version: "1",
+                        shortVersionString: "1",
+                        packageType: .app(.init(plugins: []))
+                    ),
+                    deviceMetadata: DeviceMetadata(
+                        operatingSystemVersion: "26.0",
+                        deviceModel: "iPhone 17 Pro"
+                    ),
+                    logStore: logStore,
+                    appLaunchDate: .init(timeIntervalSince1970: 1)
+                )
+
+                weakLogMonitor = logMonitor
+                #expect(weakLogMonitor != nil)
+            }
+
+            // LogMonitor should be deallocated after leaving the scope
+            #expect(weakLogMonitor == nil)
+        }
+    }
+
+    @Test
+    func fetchingInitialLogs_storesLogEntriesInDatabase() async throws {
         let fileManager = FileManager()
         try await fileManager.withTemporaryDirectory { url in
             let logStore = LogStore(entries: [
@@ -143,7 +181,7 @@ struct LogMonitorTests {
 
 // MARK: - Helpers
 
-private class LogStore: LogStoreProtocol {
+private class LogStore: LogStoreProtocol, @unchecked Sendable {
     private var entries: [LogEntryProtocol]
 
     init(entries: [LogEntry]) {

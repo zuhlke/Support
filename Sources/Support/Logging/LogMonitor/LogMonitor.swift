@@ -5,12 +5,50 @@ import OSLog
 import SwiftData
 import UniformTypeIdentifiers
 
+actor LogMonitoringActor {
+    func startMonitoring(
+        context: ModelContext,
+        bundleMetadata: BundleMetadata,
+        deviceMetadata: DeviceMetadata,
+        logStore: LogStoreProtocol,
+        appLaunchDate: Date,
+    ) async throws {
+        let appRun = AppRun(
+            appVersion: bundleMetadata.version,
+            operatingSystemVersion: deviceMetadata.operatingSystemVersion,
+            launchDate: appLaunchDate,
+            device: deviceMetadata.deviceModel
+        )
+        context.insert(appRun)
+        try context.save()
+
+        var lastDate = Date.distantPast
+        while true {
+            let fetchedEntries = try logStore.entries(after: lastDate)
+            
+            let modelEntries = fetchedEntries.map {
+                LogEntry(appRun: appRun, entry: $0)
+            }
+            
+            context.insert(contentsOf: modelEntries)
+            if context.hasChanges {
+                try context.save()
+            }
+            
+            lastDate = modelEntries.last?.date ?? lastDate
+            try await Task.sleep(for: .seconds(1))
+        }
+    }
+}
+
 public actor LogMonitor {
-    private let logger = Logger(subsystem: "com.zuhlke.Support", category: "LogMonitor")
+    private static let logger = Logger(subsystem: "com.zuhlke.Support", category: "LogMonitor")
 
     let appLaunchDate: Date
     let logStore: LogStoreProtocol
     let modelContainer: ModelContainer
+    let monitoringActor: LogMonitoringActor
+    let task: Task<Void, Never>
 
     init(
         convention: LogStorageConvention,
@@ -51,24 +89,34 @@ public actor LogMonitor {
     
         let logDirectory = logFile.deletingLastPathComponent()
         try? fileManager.createDirectory(at: logDirectory, withIntermediateDirectories: true)
-        
+
         // Explicitly opt out of storing logs in CloudKit.
         let configuration = ModelConfiguration(url: logFile, cloudKitDatabase: .none)
-        modelContainer = try ModelContainer(
+        let modelContainer = try ModelContainer(
             for: AppRun.self,
             configurations: configuration
         )
+        self.modelContainer = modelContainer
 
-        Task.detached(name: "LogMonitorTask") {
+        let monitoringActor = LogMonitoringActor()
+        self.monitoringActor = monitoringActor
+        self.task = Task.detached(name: "LogMonitorTask") {
             do {
-                try await self.monitorOSLog(
+                try await monitoringActor.startMonitoring(
+                    context: ModelContext(modelContainer),
                     bundleMetadata: bundleMetadata,
-                    deviceMetadata: deviceMetadata
+                    deviceMetadata: deviceMetadata,
+                    logStore: logStore,
+                    appLaunchDate: appLaunchDate,
                 )
             } catch {
-                self.logger.error("\(error.localizedDescription)")
+                LogMonitor.logger.error("\(error.localizedDescription)")
             }
         }
+    }
+
+    deinit {
+        task.cancel()
     }
 
     private func monitorOSLog(bundleMetadata: BundleMetadata, deviceMetadata: DeviceMetadata) async throws {
