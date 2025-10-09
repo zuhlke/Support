@@ -240,7 +240,9 @@ struct LogMonitorTests {
                 logStore.log(entry: LogStoreEntry(composedMessage: "Log message 3", date: .init(timeIntervalSince1970: 4)))
 
                 var logs: [LogEntry] = []
-                while logs.count < 2 {
+                
+                // We have done total of 3 so far logs and this will wait for them to be written in the SwiftData log file
+                while logs.count < 3 {
                     // FIXME: - Remove sleep and listen for the swift data update.
                     try await Task.sleep(for: .seconds(1))
                     let descriptor = FetchDescriptor<LogEntry>(predicate: nil, sortBy: [])
@@ -359,15 +361,18 @@ struct LogMonitorTests {
                     configurations: configuration
                 )
                 let context = ModelContext(modelContainer)
-                let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
 
-                var runs: [AppRun] = []
-                while runs.count < 2 {
+                var logs: [LogEntry] = []
+                // We have done total of 3 so far logs and this will wait for them to be written in the SwiftData log file
+                while logs.count < 3 {
                     // FIXME: - Remove sleep and listen for the swift data update.
                     try await Task.sleep(for: .seconds(1))
-                    runs = try context.fetch(descriptor)
+                    let descriptor = FetchDescriptor<LogEntry>(predicate: nil, sortBy: [])
+                    logs = try context.fetch(descriptor)
                 }
-                
+    
+                let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
+                let runs = try context.fetch(descriptor)
                 #expect(runs.count == 2)
 
                 let firstRun = try #require(runs.first)
