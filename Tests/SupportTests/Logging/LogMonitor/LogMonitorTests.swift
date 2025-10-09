@@ -261,6 +261,128 @@ struct LogMonitorTests {
             }
         }
     }
+
+    @Test
+    func fetchingLogs_afterRelaunch_storesLogEntriesInDatabase() async throws {
+        let fileManager = FileManager()
+        try await fileManager.withTemporaryDirectory { url in
+            let logStore = LogStore(entries: [
+                LogEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 1))
+            ])
+
+            do {
+                let logMonitor = try LogMonitor(
+                    convention: LogStorageConvention(
+                        baseStorageLocation: .customLocation(url: url),
+                        basePathComponents: ["Test"]
+                    ),
+                    bundleMetadata: BundleMetadata(
+                        id: "com.zuhlke.Support",
+                        name: "Support",
+                        version: "1",
+                        shortVersionString: "1",
+                        packageType: .app(.init(plugins: []))
+                    ),
+                    deviceMetadata: DeviceMetadata(
+                        operatingSystemVersion: "26.0",
+                        deviceModel: "iPhone 17 Pro"
+                    ),
+                    logStore: logStore,
+                    appLaunchDate: .init(timeIntervalSince1970: 2)
+                )
+                
+                let logFile = url.appending(path: "Test/Logs/com.zuhlke.Support.logs")
+                let configuration = ModelConfiguration(url: logFile, cloudKitDatabase: .none)
+                let modelContainer = try ModelContainer(
+                    for: AppRun.self,
+                    configurations: configuration
+                )
+                let context = ModelContext(modelContainer)
+                let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
+
+                // FIXME: - Remove sleep and listen when the change occurred.
+                try await Task.sleep(for: .seconds(2))
+                let runs = try context.fetch(descriptor)
+                
+                // FIXME: - Assert AppRun instead of Snapshots
+                let appRunSnapshots = runs.map(\.snapshot)
+                #expect(appRunSnapshots == [AppRun.Snapshot(
+                    info: .init(
+                        appVersion: "1",
+                        operatingSystemVersion: "26.0",
+                        launchDate: .init(timeIntervalSince1970: 2),
+                        device: "iPhone 17 Pro"
+                    ),
+                    logEntries: [
+                        .init(date: .init(timeIntervalSince1970: 1), composedMessage: "Log message")
+                    ]
+                )])
+            }
+
+            do {
+                logStore.log(entry: LogEntry(composedMessage: "Log message 2", date: .init(timeIntervalSince1970: 4)))
+                logStore.log(entry: LogEntry(composedMessage: "Log message 3", date: .init(timeIntervalSince1970: 5)))
+                
+                let logMonitor = try LogMonitor(
+                    convention: LogStorageConvention(
+                        baseStorageLocation: .customLocation(url: url),
+                        basePathComponents: ["Test"]
+                    ),
+                    bundleMetadata: BundleMetadata(
+                        id: "com.zuhlke.Support",
+                        name: "Support",
+                        version: "1",
+                        shortVersionString: "1",
+                        packageType: .app(.init(plugins: []))
+                    ),
+                    deviceMetadata: DeviceMetadata(
+                        operatingSystemVersion: "26.0",
+                        deviceModel: "iPhone 17 Pro"
+                    ),
+                    logStore: logStore,
+                    appLaunchDate: .init(timeIntervalSince1970: 3)
+                )
+                
+                let logFile = url.appending(path: "Test/Logs/com.zuhlke.Support.logs")
+                let configuration = ModelConfiguration(url: logFile, cloudKitDatabase: .none)
+                let modelContainer = try ModelContainer(
+                    for: AppRun.self,
+                    configurations: configuration
+                )
+                let context = ModelContext(modelContainer)
+                let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
+
+                // FIXME: - Remove sleep and listen when the change occurred.
+                try await Task.sleep(for: .seconds(5))
+                let runs = try context.fetch(descriptor)
+                
+                // FIXME: - Assert AppRun instead of Snapshots
+                let appRunSnapshots = runs.map(\.snapshot)
+                #expect(appRunSnapshots == [AppRun.Snapshot(
+                    info: .init(
+                        appVersion: "1",
+                        operatingSystemVersion: "26.0",
+                        launchDate: .init(timeIntervalSince1970: 2),
+                        device: "iPhone 17 Pro"
+                    ),
+                    logEntries: [
+                        .init(date: .init(timeIntervalSince1970: 1), composedMessage: "Log message"),
+                    ]
+                ), AppRun.Snapshot(
+                    info: .init(
+                        appVersion: "1",
+                        operatingSystemVersion: "26.0",
+                        launchDate: .init(timeIntervalSince1970: 3),
+                        device: "iPhone 17 Pro"
+                    ),
+                    logEntries: [
+                        .init(date: .init(timeIntervalSince1970: 4), composedMessage: "Log message 2"),
+                        .init(date: .init(timeIntervalSince1970: 5), composedMessage: "Log message 3"),
+                    ]
+                )])
+            }
+        }
+    }
 }
 
 // MARK: - Helpers

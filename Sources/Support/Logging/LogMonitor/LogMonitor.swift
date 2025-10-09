@@ -13,6 +13,9 @@ actor LogMonitoringActor {
         logStore: LogStoreProtocol,
         appLaunchDate: Date,
     ) async throws {
+        let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate, order: .reverse)])
+        var lastDate = try context.fetch(descriptor).first?.snapshot.logEntries.last?.date ?? Date.distantPast
+
         let appRun = AppRun(
             appVersion: bundleMetadata.version,
             operatingSystemVersion: deviceMetadata.operatingSystemVersion,
@@ -22,7 +25,6 @@ actor LogMonitoringActor {
         context.insert(appRun)
         try context.save()
 
-        var lastDate = Date.distantPast
         while true {
             let fetchedEntries = try logStore.entries(after: lastDate)
             
