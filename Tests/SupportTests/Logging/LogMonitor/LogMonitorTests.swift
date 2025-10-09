@@ -126,7 +126,7 @@ struct LogMonitorTests {
         let fileManager = FileManager()
         try await fileManager.withTemporaryDirectory { url in
             let logStore = LogStore(entries: [
-                LogEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 1))
+                LogStoreEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 1))
             ])
             
             let logMonitor = try LogMonitor(
@@ -186,7 +186,7 @@ struct LogMonitorTests {
         let fileManager = FileManager()
         try await fileManager.withTemporaryDirectory { url in
             let logStore = LogStore(entries: [
-                LogEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 2))
+                LogStoreEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 2))
             ])
             
             let logMonitor = try LogMonitor(
@@ -242,15 +242,19 @@ struct LogMonitorTests {
             }
 
             do {
-                logStore.log(entry: LogEntry(composedMessage: "Log message 2", date: .init(timeIntervalSince1970: 3)))
-                logStore.log(entry: LogEntry(composedMessage: "Log message 3", date: .init(timeIntervalSince1970: 4)))
+                logStore.log(entry: LogStoreEntry(composedMessage: "Log message 2", date: .init(timeIntervalSince1970: 3)))
+                logStore.log(entry: LogStoreEntry(composedMessage: "Log message 3", date: .init(timeIntervalSince1970: 4)))
 
-                var runs: [AppRun] = []
-                while runs.count == 0 {
+                var logs: [LogEntry] = []
+                while logs.count < 2 {
                     // FIXME: - Remove sleep and listen for the swift data update.
                     try await Task.sleep(for: .seconds(1))
-                    runs = try context.fetch(descriptor)
+                    let descriptor = FetchDescriptor<LogEntry>(predicate: nil, sortBy: [])
+                    logs = try context.fetch(descriptor)
                 }
+    
+                let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
+                let runs = try context.fetch(descriptor)
 
                 // FIXME: - Assert AppRun instead of Snapshots
                 let appRunSnapshots = runs.map(\.snapshot)
@@ -276,7 +280,7 @@ struct LogMonitorTests {
         let fileManager = FileManager()
         try await fileManager.withTemporaryDirectory { url in
             let logStore = LogStore(entries: [
-                LogEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 1))
+                LogStoreEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 1))
             ])
 
             do {
@@ -332,8 +336,8 @@ struct LogMonitorTests {
             }
 
             do {
-                logStore.log(entry: LogEntry(composedMessage: "Log message 2", date: .init(timeIntervalSince1970: 4)))
-                logStore.log(entry: LogEntry(composedMessage: "Log message 3", date: .init(timeIntervalSince1970: 5)))
+                logStore.log(entry: LogStoreEntry(composedMessage: "Log message 2", date: .init(timeIntervalSince1970: 4)))
+                logStore.log(entry: LogStoreEntry(composedMessage: "Log message 3", date: .init(timeIntervalSince1970: 5)))
                 
                 let logMonitor = try LogMonitor(
                     convention: LogStorageConvention(
@@ -365,7 +369,7 @@ struct LogMonitorTests {
                 let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
 
                 var runs: [AppRun] = []
-                while runs.count == 0 {
+                while runs.count < 2 {
                     // FIXME: - Remove sleep and listen for the swift data update.
                     try await Task.sleep(for: .seconds(1))
                     runs = try context.fetch(descriptor)
@@ -405,11 +409,11 @@ struct LogMonitorTests {
 private class LogStore: LogStoreProtocol, @unchecked Sendable {
     private var entries: [LogEntryProtocol]
 
-    init(entries: [LogEntry]) {
+    init(entries: [LogStoreEntry]) {
         self.entries = entries
     }
 
-    func log(entry: LogEntry) {
+    func log(entry: LogStoreEntry) {
         self.entries.append(entry)
     }
 
@@ -418,7 +422,7 @@ private class LogStore: LogStoreProtocol, @unchecked Sendable {
     }
 }
 
-private struct LogEntry: LogEntryProtocol {
+private struct LogStoreEntry: LogEntryProtocol {
     let composedMessage: String
     let date: Date
 }
