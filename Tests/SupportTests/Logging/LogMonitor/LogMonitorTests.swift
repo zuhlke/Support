@@ -165,19 +165,16 @@ struct LogMonitorTests {
                 runs = try context.fetch(descriptor)
             }
             
-            // FIXME: - Assert AppRun instead of Snapshots
-            let appRunSnapshots = runs.map(\.snapshot)
-            #expect(appRunSnapshots == [AppRun.Snapshot(
-                info: .init(
-                    appVersion: "1",
-                    operatingSystemVersion: "26.0",
-                    launchDate: .init(timeIntervalSince1970: 1),
-                    device: "iPhone 17 Pro"
-                ),
-                logEntries: [
-                    .init(date: .init(timeIntervalSince1970: 1), composedMessage: "Log message")
-                ]
-            )])
+            #expect(runs.count == 1)
+            let run = try #require(runs.first)
+            #expect(run.appVersion == "1")
+            #expect(run.operatingSystemVersion == "26.0")
+            #expect(run.launchDate == .init(timeIntervalSince1970: 1))
+            #expect(run.device == "iPhone 17 Pro")
+            #expect(run.logEntries.count == 1)
+            let logEntry = try #require(run.logEntries.first)
+            #expect(logEntry.date == .init(timeIntervalSince1970: 1))
+            #expect(logEntry.composedMessage == "Log message")
         }
     }
 
@@ -225,20 +222,17 @@ struct LogMonitorTests {
                     try await Task.sleep(for: .seconds(1))
                     runs = try context.fetch(descriptor)
                 }
-                
-                // FIXME: - Assert AppRun instead of Snapshots
-                let appRunSnapshots = runs.map(\.snapshot)
-                #expect(appRunSnapshots == [AppRun.Snapshot(
-                    info: .init(
-                        appVersion: "1",
-                        operatingSystemVersion: "26.0",
-                        launchDate: .init(timeIntervalSince1970: 1),
-                        device: "iPhone 17 Pro"
-                    ),
-                    logEntries: [
-                        .init(date: .init(timeIntervalSince1970: 2), composedMessage: "Log message")
-                    ]
-                )])
+
+                #expect(runs.count == 1)
+                let run = try #require(runs.first)
+                #expect(run.appVersion == "1")
+                #expect(run.operatingSystemVersion == "26.0")
+                #expect(run.launchDate == .init(timeIntervalSince1970: 1))
+                #expect(run.device == "iPhone 17 Pro")
+                #expect(run.logEntries.count == 1)
+                let logEntry = try #require(run.logEntries.first)
+                #expect(logEntry.date == .init(timeIntervalSince1970: 2))
+                #expect(logEntry.composedMessage == "Log message")
             }
 
             do {
@@ -256,21 +250,23 @@ struct LogMonitorTests {
                 let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
                 let runs = try context.fetch(descriptor)
 
-                // FIXME: - Assert AppRun instead of Snapshots
-                let appRunSnapshots = runs.map(\.snapshot)
-                #expect(appRunSnapshots == [AppRun.Snapshot(
-                    info: .init(
-                        appVersion: "1",
-                        operatingSystemVersion: "26.0",
-                        launchDate: .init(timeIntervalSince1970: 1),
-                        device: "iPhone 17 Pro"
-                    ),
-                    logEntries: [
-                        .init(date: .init(timeIntervalSince1970: 2), composedMessage: "Log message"),
-                        .init(date: .init(timeIntervalSince1970: 3), composedMessage: "Log message 2"),
-                        .init(date: .init(timeIntervalSince1970: 4), composedMessage: "Log message 3"),
-                    ]
-                )])
+                #expect(runs.count == 1)
+                let run = try #require(runs.first)
+                #expect(run.appVersion == "1")
+                #expect(run.operatingSystemVersion == "26.0")
+                #expect(run.launchDate == .init(timeIntervalSince1970: 1))
+                #expect(run.device == "iPhone 17 Pro")
+                #expect(run.logEntries.count == 3)
+                let sortedLogEntries = run.logEntries.sorted(by: { $0.date < $1.date })
+                let firstLogEntry = try #require(sortedLogEntries.first)
+                #expect(firstLogEntry.date == .init(timeIntervalSince1970: 2))
+                #expect(firstLogEntry.composedMessage == "Log message")
+                let secondLogEntry = try #require(sortedLogEntries.dropFirst().first)
+                #expect(secondLogEntry.date == .init(timeIntervalSince1970: 3))
+                #expect(secondLogEntry.composedMessage == "Log message 2")
+                let thirdLogEntry = try #require(sortedLogEntries.dropFirst(2).first)
+                #expect(thirdLogEntry.date == .init(timeIntervalSince1970: 4))
+                #expect(thirdLogEntry.composedMessage == "Log message 3")
             }
         }
     }
@@ -375,30 +371,31 @@ struct LogMonitorTests {
                     runs = try context.fetch(descriptor)
                 }
                 
-                // FIXME: - Assert AppRun instead of Snapshots
-                let appRunSnapshots = runs.map(\.snapshot)
-                #expect(appRunSnapshots == [AppRun.Snapshot(
-                    info: .init(
-                        appVersion: "1",
-                        operatingSystemVersion: "26.0",
-                        launchDate: .init(timeIntervalSince1970: 2),
-                        device: "iPhone 17 Pro"
-                    ),
-                    logEntries: [
-                        .init(date: .init(timeIntervalSince1970: 1), composedMessage: "Log message"),
-                    ]
-                ), AppRun.Snapshot(
-                    info: .init(
-                        appVersion: "1",
-                        operatingSystemVersion: "26.0",
-                        launchDate: .init(timeIntervalSince1970: 3),
-                        device: "iPhone 17 Pro"
-                    ),
-                    logEntries: [
-                        .init(date: .init(timeIntervalSince1970: 4), composedMessage: "Log message 2"),
-                        .init(date: .init(timeIntervalSince1970: 5), composedMessage: "Log message 3"),
-                    ]
-                )])
+                #expect(runs.count == 2)
+
+                let firstRun = try #require(runs.first)
+                #expect(firstRun.appVersion == "1")
+                #expect(firstRun.operatingSystemVersion == "26.0")
+                #expect(firstRun.launchDate == .init(timeIntervalSince1970: 2))
+                #expect(firstRun.device == "iPhone 17 Pro")
+                #expect(firstRun.logEntries.count == 1)
+                let firstRunLogEntry = try #require(firstRun.logEntries.first)
+                #expect(firstRunLogEntry.date == .init(timeIntervalSince1970: 1))
+                #expect(firstRunLogEntry.composedMessage == "Log message")
+
+                let secondRun = try #require(runs.dropFirst().first)
+                #expect(secondRun.appVersion == "1")
+                #expect(secondRun.operatingSystemVersion == "26.0")
+                #expect(secondRun.launchDate == .init(timeIntervalSince1970: 3))
+                #expect(secondRun.device == "iPhone 17 Pro")
+                #expect(secondRun.logEntries.count == 2)
+                let sortedLogEntries = secondRun.logEntries.sorted(by: { $0.date < $1.date })
+                let secondRunFirstLogEntry = try #require(sortedLogEntries.first)
+                #expect(secondRunFirstLogEntry.date == .init(timeIntervalSince1970: 4))
+                #expect(secondRunFirstLogEntry.composedMessage == "Log message 2")
+                let secondRunSecondLogEntry = try #require(sortedLogEntries.dropFirst().first)
+                #expect(secondRunSecondLogEntry.date == .init(timeIntervalSince1970: 5))
+                #expect(secondRunSecondLogEntry.composedMessage == "Log message 3")
             }
         }
     }

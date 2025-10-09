@@ -40,7 +40,6 @@ public class AppRun {
                 device: self.device,
             ),
             logEntries: self.logEntries.map(\.snapshot)
-                .sorted(by: { $0.date < $1.date }) // FIXME: - Remove sorting here and see it can be sorted when being fetched.
         )
     }
 }
