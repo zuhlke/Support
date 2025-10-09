@@ -121,7 +121,7 @@ struct LogMonitorTests {
         }
     }
 
-    @Test
+    @Test(.timeLimit(.minutes(1)))
     func fetchingInitialLogs_storesLogEntriesInDatabase() async throws {
         let fileManager = FileManager()
         try await fileManager.withTemporaryDirectory { url in
@@ -158,9 +158,12 @@ struct LogMonitorTests {
             let context = ModelContext(modelContainer)
             let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
             
-            // FIXME: - Remove sleep and listen when the change occurred.
-            try await Task.sleep(for: .seconds(1))
-            let runs = try context.fetch(descriptor)
+            var runs: [AppRun] = []
+            while runs.count == 0 {
+                // FIXME: - Remove sleep and listen for the swift data update.
+                try await Task.sleep(for: .seconds(1))
+                runs = try context.fetch(descriptor)
+            }
             
             // FIXME: - Assert AppRun instead of Snapshots
             let appRunSnapshots = runs.map(\.snapshot)
@@ -178,7 +181,7 @@ struct LogMonitorTests {
         }
     }
 
-    @Test
+    @Test(.timeLimit(.minutes(1)))
     func fetchingLogs_afterInit_storesLogEntriesInDatabase() async throws {
         let fileManager = FileManager()
         try await fileManager.withTemporaryDirectory { url in
@@ -216,9 +219,12 @@ struct LogMonitorTests {
             let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
 
             do {
-                // FIXME: - Remove sleep and listen when the change occurred.
-                try await Task.sleep(for: .seconds(2))
-                let runs = try context.fetch(descriptor)
+                var runs: [AppRun] = []
+                while runs.count == 0 {
+                    // FIXME: - Remove sleep and listen for the swift data update.
+                    try await Task.sleep(for: .seconds(1))
+                    runs = try context.fetch(descriptor)
+                }
                 
                 // FIXME: - Assert AppRun instead of Snapshots
                 let appRunSnapshots = runs.map(\.snapshot)
@@ -238,11 +244,14 @@ struct LogMonitorTests {
             do {
                 logStore.log(entry: LogEntry(composedMessage: "Log message 2", date: .init(timeIntervalSince1970: 3)))
                 logStore.log(entry: LogEntry(composedMessage: "Log message 3", date: .init(timeIntervalSince1970: 4)))
-                
-                // FIXME: - Remove sleep and listen when the change occurred.
-                try await Task.sleep(for: .seconds(5))
-                let runs = try context.fetch(descriptor)
-                
+
+                var runs: [AppRun] = []
+                while runs.count == 0 {
+                    // FIXME: - Remove sleep and listen for the swift data update.
+                    try await Task.sleep(for: .seconds(1))
+                    runs = try context.fetch(descriptor)
+                }
+
                 // FIXME: - Assert AppRun instead of Snapshots
                 let appRunSnapshots = runs.map(\.snapshot)
                 #expect(appRunSnapshots == [AppRun.Snapshot(
@@ -262,7 +271,7 @@ struct LogMonitorTests {
         }
     }
 
-    @Test
+    @Test(.timeLimit(.minutes(1)))
     func fetchingLogs_afterRelaunch_storesLogEntriesInDatabase() async throws {
         let fileManager = FileManager()
         try await fileManager.withTemporaryDirectory { url in
@@ -300,9 +309,12 @@ struct LogMonitorTests {
                 let context = ModelContext(modelContainer)
                 let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
 
-                // FIXME: - Remove sleep and listen when the change occurred.
-                try await Task.sleep(for: .seconds(2))
-                let runs = try context.fetch(descriptor)
+                var runs: [AppRun] = []
+                while runs.count == 0 {
+                    // FIXME: - Remove sleep and listen for the swift data update.
+                    try await Task.sleep(for: .seconds(1))
+                    runs = try context.fetch(descriptor)
+                }
                 
                 // FIXME: - Assert AppRun instead of Snapshots
                 let appRunSnapshots = runs.map(\.snapshot)
@@ -352,9 +364,12 @@ struct LogMonitorTests {
                 let context = ModelContext(modelContainer)
                 let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
 
-                // FIXME: - Remove sleep and listen when the change occurred.
-                try await Task.sleep(for: .seconds(5))
-                let runs = try context.fetch(descriptor)
+                var runs: [AppRun] = []
+                while runs.count == 0 {
+                    // FIXME: - Remove sleep and listen for the swift data update.
+                    try await Task.sleep(for: .seconds(1))
+                    runs = try context.fetch(descriptor)
+                }
                 
                 // FIXME: - Assert AppRun instead of Snapshots
                 let appRunSnapshots = runs.map(\.snapshot)
