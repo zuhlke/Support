@@ -121,36 +121,6 @@ public actor LogMonitor {
         monitoringTask.cancel()
     }
 
-    private func monitorOSLog(bundleMetadata: BundleMetadata, deviceMetadata: DeviceMetadata) async throws {
-        let context = ModelContext(modelContainer)
-
-        let appRun = AppRun(
-            appVersion: bundleMetadata.version,
-            operatingSystemVersion: deviceMetadata.operatingSystemVersion,
-            launchDate: appLaunchDate,
-            device: deviceMetadata.deviceModel
-        )
-        context.insert(appRun)
-        try context.save()
-        
-        var lastDate = Date.distantPast
-        while true {
-            let fetchedEntries = try logStore.entries(after: lastDate)
-            
-            let modelEntries = fetchedEntries.map {
-                LogEntry(appRun: appRun, entry: $0)
-            }
-            
-            context.insert(contentsOf: modelEntries)
-            if context.hasChanges {
-                try context.save()
-            }
-            
-            lastDate = modelEntries.last?.date ?? lastDate
-            try await Task.sleep(for: .seconds(1))
-        }
-    }
-
     public func export() throws -> String {
         let context = ModelContext(modelContainer)
         let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
