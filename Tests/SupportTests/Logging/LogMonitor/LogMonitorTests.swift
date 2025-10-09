@@ -316,19 +316,16 @@ struct LogMonitorTests {
                     runs = try context.fetch(descriptor)
                 }
                 
-                // FIXME: - Assert AppRun instead of Snapshots
-                let appRunSnapshots = runs.map(\.snapshot)
-                #expect(appRunSnapshots == [AppRun.Snapshot(
-                    info: .init(
-                        appVersion: "1",
-                        operatingSystemVersion: "26.0",
-                        launchDate: .init(timeIntervalSince1970: 2),
-                        device: "iPhone 17 Pro"
-                    ),
-                    logEntries: [
-                        .init(date: .init(timeIntervalSince1970: 1), composedMessage: "Log message")
-                    ]
-                )])
+                #expect(runs.count == 1)
+                let run = try #require(runs.first)
+                #expect(run.appVersion == "1")
+                #expect(run.operatingSystemVersion == "26.0")
+                #expect(run.launchDate == .init(timeIntervalSince1970: 2))
+                #expect(run.device == "iPhone 17 Pro")
+                #expect(run.logEntries.count == 1)
+                let logEntry = try #require(run.logEntries.first)
+                #expect(logEntry.date == .init(timeIntervalSince1970: 1))
+                #expect(logEntry.composedMessage == "Log message")
             }
 
             do {
