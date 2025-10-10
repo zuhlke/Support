@@ -83,15 +83,15 @@ struct LogMonitorTests {
         }
     }
     
-    @Test
+    @Test(.timeLimit(.minutes(1)))
     func logMonitorDeinitialization_releasesMemoryCorrectly() async throws {
         let fileManager = FileManager()
-        try fileManager.withTemporaryDirectory { url in
-            let logStore = LogStore(entries: [])
-
+        try await fileManager.withTemporaryDirectory { url in
+            weak var weakLogStore: LogStore?
             weak var weakLogMonitor: LogMonitor?
 
             do {
+                let logStore = LogStore(entries: [])
                 let logMonitor = try LogMonitor(
                     convention: LogStorageConvention(
                         baseStorageLocation: .customLocation(url: url),
@@ -111,13 +111,23 @@ struct LogMonitorTests {
                     logStore: logStore,
                     appLaunchDate: .init(timeIntervalSince1970: 1)
                 )
+                
+                // Keeping LogMonitor in memory to monitor the logs until the end of the test.
+                defer { withExtendedLifetime(logMonitor, {}) }
 
                 weakLogMonitor = logMonitor
+                weakLogStore = logStore
                 #expect(weakLogMonitor != nil)
+                #expect(weakLogStore != nil)
+            }
+
+            while weakLogStore != nil {
+                try await Task.sleep(for: .milliseconds(100))
             }
 
             // LogMonitor should be deallocated after leaving the scope
             #expect(weakLogMonitor == nil)
+            #expect(weakLogStore == nil)
         }
     }
 
@@ -129,7 +139,7 @@ struct LogMonitorTests {
                 LogStoreEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 1))
             ])
             
-            let _ = try LogMonitor(
+            let logMonitor = try LogMonitor(
                 convention: LogStorageConvention(
                     baseStorageLocation: .customLocation(url: url),
                     basePathComponents: ["Test"]
@@ -148,7 +158,10 @@ struct LogMonitorTests {
                 logStore: logStore,
                 appLaunchDate: .init(timeIntervalSince1970: 1)
             )
-            
+
+            // Keeping LogMonitor in memory to monitor the logs until the end of the test.
+            defer { withExtendedLifetime(logMonitor, {}) }
+
             let logFile = url.appending(path: "Test/Logs/com.zuhlke.Support.logs")
             let configuration = ModelConfiguration(url: logFile, cloudKitDatabase: .none)
             let modelContainer = try ModelContainer(
@@ -186,7 +199,7 @@ struct LogMonitorTests {
                 LogStoreEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 2))
             ])
             
-            let _ = try LogMonitor(
+            let logMonitor = try LogMonitor(
                 convention: LogStorageConvention(
                     baseStorageLocation: .customLocation(url: url),
                     basePathComponents: ["Test"]
@@ -205,7 +218,10 @@ struct LogMonitorTests {
                 logStore: logStore,
                 appLaunchDate: .init(timeIntervalSince1970: 1)
             )
-            
+
+            // Keeping LogMonitor in memory to monitor the logs until the end of the test.
+            defer { withExtendedLifetime(logMonitor, {}) }
+
             let logFile = url.appending(path: "Test/Logs/com.zuhlke.Support.logs")
             let configuration = ModelConfiguration(url: logFile, cloudKitDatabase: .none)
             let modelContainer = try ModelContainer(
@@ -282,7 +298,7 @@ struct LogMonitorTests {
             ])
 
             do {
-                let _ = try LogMonitor(
+                let logMonitor = try LogMonitor(
                     convention: LogStorageConvention(
                         baseStorageLocation: .customLocation(url: url),
                         basePathComponents: ["Test"]
@@ -301,6 +317,9 @@ struct LogMonitorTests {
                     logStore: logStore,
                     appLaunchDate: .init(timeIntervalSince1970: 2)
                 )
+
+                // Keeping LogMonitor in memory to monitor the logs until the end of the test.
+                defer { withExtendedLifetime(logMonitor, {}) }
                 
                 let logFile = url.appending(path: "Test/Logs/com.zuhlke.Support.logs")
                 let configuration = ModelConfiguration(url: logFile, cloudKitDatabase: .none)
@@ -334,7 +353,7 @@ struct LogMonitorTests {
                 logStore.log(entry: LogStoreEntry(composedMessage: "Log message 2", date: .init(timeIntervalSince1970: 4)))
                 logStore.log(entry: LogStoreEntry(composedMessage: "Log message 3", date: .init(timeIntervalSince1970: 5)))
                 
-                let _ = try LogMonitor(
+                let logMonitor = try LogMonitor(
                     convention: LogStorageConvention(
                         baseStorageLocation: .customLocation(url: url),
                         basePathComponents: ["Test"]
@@ -353,7 +372,10 @@ struct LogMonitorTests {
                     logStore: logStore,
                     appLaunchDate: .init(timeIntervalSince1970: 3)
                 )
-                
+
+                // Keeping LogMonitor in memory to monitor the logs until the end of the test.
+                defer { withExtendedLifetime(logMonitor, {}) }
+
                 let logFile = url.appending(path: "Test/Logs/com.zuhlke.Support.logs")
                 let configuration = ModelConfiguration(url: logFile, cloudKitDatabase: .none)
                 let modelContainer = try ModelContainer(
