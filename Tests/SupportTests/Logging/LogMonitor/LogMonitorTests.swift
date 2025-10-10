@@ -174,7 +174,7 @@ struct LogMonitorTests {
             var runs: [AppRun] = []
             while runs.count == 0 {
                 // FIXME: - Remove sleep and listen for the swift data update.
-                try await Task.sleep(for: .seconds(1))
+                try await Task.sleep(for: .milliseconds(100))
                 runs = try context.fetch(descriptor)
             }
             
@@ -235,7 +235,7 @@ struct LogMonitorTests {
                 var runs: [AppRun] = []
                 while runs.count == 0 {
                     // FIXME: - Remove sleep and listen for the swift data update.
-                    try await Task.sleep(for: .seconds(1))
+                    try await Task.sleep(for: .milliseconds(100))
                     runs = try context.fetch(descriptor)
                 }
 
@@ -260,7 +260,7 @@ struct LogMonitorTests {
                 // We have done total of 3 so far logs and this will wait for them to be written in the SwiftData log file
                 while logs.count < 3 {
                     // FIXME: - Remove sleep and listen for the swift data update.
-                    try await Task.sleep(for: .seconds(1))
+                    try await Task.sleep(for: .milliseconds(100))
                     let descriptor = FetchDescriptor<LogEntry>(predicate: nil, sortBy: [])
                     logs = try context.fetch(descriptor)
                 }
@@ -333,7 +333,7 @@ struct LogMonitorTests {
                 var runs: [AppRun] = []
                 while runs.count == 0 {
                     // FIXME: - Remove sleep and listen for the swift data update.
-                    try await Task.sleep(for: .seconds(1))
+                    try await Task.sleep(for: .milliseconds(100))
                     runs = try context.fetch(descriptor)
                 }
                 
@@ -388,7 +388,7 @@ struct LogMonitorTests {
                 // We have done total of 3 so far logs and this will wait for them to be written in the SwiftData log file
                 while logs.count < 3 {
                     // FIXME: - Remove sleep and listen for the swift data update.
-                    try await Task.sleep(for: .seconds(1))
+                    try await Task.sleep(for: .milliseconds(100))
                     let descriptor = FetchDescriptor<LogEntry>(predicate: nil, sortBy: [])
                     logs = try context.fetch(descriptor)
                 }
