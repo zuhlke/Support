@@ -1,6 +1,8 @@
 #if os(iOS)
+#if canImport(SwiftUI)
 
 import Foundation
+import SwiftUI
 
 extension [LogEntry] {
     func filter(searchText: String, tokens: [SearchToken]) -> [LogEntry] {
@@ -32,4 +34,32 @@ extension [LogEntry] {
     }
 }
 
+extension LogEntry {
+    @ViewBuilder
+    var background: some View {
+        switch level {
+        case .error:
+            Color.yellow.opacity(0.2)
+        case .fault:
+            Color.red.opacity(0.2)
+        default:
+            EmptyView()
+        }
+    }
+    
+    func scope(_ scope: SearchScope) -> String? {
+        switch scope {
+        case .level:
+            return level?.exportDescription
+        case .category:
+            return category
+        case .subsystem:
+            return subsystem
+        case .message:
+            return composedMessage
+        }
+    }
+}
+
+#endif
 #endif

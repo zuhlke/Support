@@ -27,12 +27,43 @@ struct AppRunView: View {
         groupedEntries = Dictionary(grouping: filteredEntries) { $0.appRun }
     }
     
+    @ViewBuilder
+    func similarItem(entry: LogEntry, scope: SearchScope) -> some View {
+        if let text = entry.scope(scope) {
+            Button {
+                if !tokens.contains(where: { token in
+                    token.text == text && token.scope == scope
+                }) {
+                    tokens.append(SearchToken(text, in: scope))
+                }
+            } label: {
+                HStack {
+                    Image(systemName: scope.image)
+                    Text(text)
+                }
+            }
+        } else {
+            EmptyView()
+        }
+    }
+    
     func contextMenu(for entry: LogEntry) -> some View {
-        Button {
-            UIPasteboard.general.string = entry.composedMessage
-        } label: {
-            Image(systemName: "document.on.document")
-            Text("Copy")
+        VStack {
+            Button {
+                UIPasteboard.general.string = entry.composedMessage
+            } label: {
+                Image(systemName: "document.on.document")
+                Text("Copy")
+            }
+            Menu {
+                similarItem(entry: entry, scope: .message)
+                similarItem(entry: entry, scope: .level)
+                similarItem(entry: entry, scope: .subsystem)
+                similarItem(entry: entry, scope: .category)
+            } label: {
+                Image(systemName: "eye")
+                Text("Show Similar Items")
+            }
         }
     }
         
@@ -133,21 +164,6 @@ struct AppRunView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 menu
             }
-        }
-    }
-}
-
-
-extension LogEntry {
-    @ViewBuilder
-    var background: some View {
-        switch level {
-        case .error:
-            Color.yellow.opacity(0.2)
-        case .fault:
-            Color.red.opacity(0.2)
-        default:
-            EmptyView()
         }
     }
 }
