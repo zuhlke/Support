@@ -13,7 +13,8 @@ actor LogMonitoringActor {
         logStore: LogStoreProtocol,
         appLaunchDate: Date,
     ) async throws {
-        let descriptor = FetchDescriptor<LogEntry>(predicate: nil, sortBy: [SortDescriptor(\.date, order: .reverse)])
+        var descriptor = FetchDescriptor<LogEntry>(predicate: nil, sortBy: [SortDescriptor(\.date, order: .reverse)])
+        descriptor.fetchLimit = 1
         var lastDate = try context.fetch(descriptor).first?.date ?? Date.distantPast
 
         let appRun = AppRun(
