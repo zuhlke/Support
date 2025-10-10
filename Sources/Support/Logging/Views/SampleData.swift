@@ -12,7 +12,7 @@ struct SampleData: PreviewModifier {
     ) {
         let appRun = AppRun(appVersion: "1.0.0", operatingSystemVersion: "14.0.0", launchDate: launchDate, device: "iPhone 12 Pro Max")
         let logEntries = [
-            LogEntry(appRun: appRun, date: launchDate.advanced(by: 1 * 60), composedMessage: "This is an info level message", level: .info, category: category, subsystem: subsystem),
+            LogEntry(appRun: appRun, date: launchDate.advanced(by: 1 * 60), composedMessage: "This is a really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really long info level message", level: .info, category: category, subsystem: subsystem),
             LogEntry(appRun: appRun, date: launchDate.advanced(by: 2 * 60), composedMessage: "This is a debug level message", level: .debug, category: category, subsystem: subsystem),
             LogEntry(appRun: appRun, date: launchDate.advanced(by: 3 * 60), composedMessage: "This is a error level message", level: .error, category: category, subsystem: subsystem),
             LogEntry(appRun: appRun, date: launchDate.advanced(by: 4 * 60), composedMessage: "This is a fault level message", level: .fault, category: category, subsystem: subsystem),
