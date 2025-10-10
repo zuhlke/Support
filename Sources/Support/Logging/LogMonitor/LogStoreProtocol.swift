@@ -5,7 +5,7 @@ protocol LogEntryProtocol {
     var date: Date { get }
 }
 
-protocol LogStoreProtocol {
+protocol LogStoreProtocol: Sendable {
     func entries(after date: Date) throws -> any Sequence<any LogEntryProtocol>
 }
 

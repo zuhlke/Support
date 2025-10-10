@@ -296,8 +296,9 @@ extension LogRetrieverTests {
 #if os(macOS)
         // TODO: (P3) - Review the URL prefix on macOS.
         return URL(string: "file:///private")!.appending(path: url.path())
-#endif
+#else
         return url
+#endif
     }
 }
 
