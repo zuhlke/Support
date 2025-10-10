@@ -12,7 +12,7 @@ struct LogMonitorTests {
         try fileManager.withTemporaryDirectory { url in
             let logStore = LogStore(entries: [])
             
-            let logMonitor = try LogMonitor(
+            let _ = try LogMonitor(
                 convention: LogStorageConvention(
                     baseStorageLocation: .customLocation(url: url),
                     basePathComponents: ["Test"]
@@ -55,7 +55,7 @@ struct LogMonitorTests {
         try fileManager.withTemporaryDirectory { url in
             let logStore = LogStore(entries: [])
             
-            let logMonitor = try LogMonitor(
+            let _ = try LogMonitor(
                 convention: LogStorageConvention(
                     baseStorageLocation: .customLocation(url: url),
                     basePathComponents: ["Test"]
@@ -129,7 +129,7 @@ struct LogMonitorTests {
                 LogStoreEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 1))
             ])
             
-            let logMonitor = try LogMonitor(
+            let _ = try LogMonitor(
                 convention: LogStorageConvention(
                     baseStorageLocation: .customLocation(url: url),
                     basePathComponents: ["Test"]
@@ -186,7 +186,7 @@ struct LogMonitorTests {
                 LogStoreEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 2))
             ])
             
-            let logMonitor = try LogMonitor(
+            let _ = try LogMonitor(
                 convention: LogStorageConvention(
                     baseStorageLocation: .customLocation(url: url),
                     basePathComponents: ["Test"]
@@ -282,7 +282,7 @@ struct LogMonitorTests {
             ])
 
             do {
-                let logMonitor = try LogMonitor(
+                let _ = try LogMonitor(
                     convention: LogStorageConvention(
                         baseStorageLocation: .customLocation(url: url),
                         basePathComponents: ["Test"]
@@ -334,7 +334,7 @@ struct LogMonitorTests {
                 logStore.log(entry: LogStoreEntry(composedMessage: "Log message 2", date: .init(timeIntervalSince1970: 4)))
                 logStore.log(entry: LogStoreEntry(composedMessage: "Log message 3", date: .init(timeIntervalSince1970: 5)))
                 
-                let logMonitor = try LogMonitor(
+                let _ = try LogMonitor(
                     convention: LogStorageConvention(
                         baseStorageLocation: .customLocation(url: url),
                         basePathComponents: ["Test"]
