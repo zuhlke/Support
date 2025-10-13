@@ -5,52 +5,10 @@ import OSLog
 import SwiftData
 import UniformTypeIdentifiers
 
-actor LogMonitoringActor {
-    func startMonitoring(
-        context: ModelContext,
-        bundleMetadata: BundleMetadata,
-        deviceMetadata: DeviceMetadata,
-        logStore: LogStoreProtocol,
-        appLaunchDate: Date,
-    ) async throws {
-        var descriptor = FetchDescriptor<LogEntry>(predicate: nil, sortBy: [SortDescriptor(\.date, order: .reverse)])
-        descriptor.fetchLimit = 1
-        var lastDate = try context.fetch(descriptor).first?.date ?? Date.distantPast
-
-        let appRun = AppRun(
-            appVersion: bundleMetadata.version,
-            operatingSystemVersion: deviceMetadata.operatingSystemVersion,
-            launchDate: appLaunchDate,
-            device: deviceMetadata.deviceModel
-        )
-        context.insert(appRun)
-        try context.save()
-
-        while true {
-            let fetchedEntries = try logStore.entries(after: lastDate)
-            
-            let modelEntries = fetchedEntries.map {
-                LogEntry(appRun: appRun, entry: $0)
-            }
-            
-            context.insert(contentsOf: modelEntries)
-            if context.hasChanges {
-                try context.save()
-            }
-            
-            lastDate = modelEntries.last?.date ?? lastDate
-            try await Task.sleep(for: .seconds(1))
-        }
-    }
-}
-
-public actor LogMonitor {
+public class LogMonitor {
     private static let logger = Logger(subsystem: "com.zuhlke.Support", category: "LogMonitor")
 
-    private let appLaunchDate: Date
-    private let logStore: LogStoreProtocol
     private let modelContainer: ModelContainer
-    private let monitoringActor: LogMonitoringActor
     private let monitoringTask: Task<Void, Never>
 
     init(
@@ -60,9 +18,6 @@ public actor LogMonitor {
         logStore: LogStoreProtocol,
         appLaunchDate: Date
     ) throws {
-        self.appLaunchDate = appLaunchDate
-        self.logStore = logStore
-        
         let fileManager = FileManager()
         
         let diagnosticsDirectory = try fileManager.url(for: convention.baseStorageLocation)
@@ -101,11 +56,9 @@ public actor LogMonitor {
         )
         self.modelContainer = modelContainer
 
-        let monitoringActor = LogMonitoringActor()
-        self.monitoringActor = monitoringActor
         self.monitoringTask = Task.detached(name: "LogMonitorTask") {
             do {
-                try await monitoringActor.startMonitoring(
+                try await LogMonitor.startMonitoring(
                     context: ModelContext(modelContainer),
                     bundleMetadata: bundleMetadata,
                     deviceMetadata: deviceMetadata,
@@ -118,10 +71,48 @@ public actor LogMonitor {
         }
     }
 
+    static func startMonitoring(
+        context: ModelContext,
+        bundleMetadata: BundleMetadata,
+        deviceMetadata: DeviceMetadata,
+        logStore: LogStoreProtocol,
+        appLaunchDate: Date,
+    ) async throws {
+        var descriptor = FetchDescriptor<LogEntry>(predicate: nil, sortBy: [SortDescriptor(\.date, order: .reverse)])
+        descriptor.fetchLimit = 1
+        var lastDate = try context.fetch(descriptor).first?.date ?? Date.distantPast
+
+        let appRun = AppRun(
+            appVersion: bundleMetadata.version,
+            operatingSystemVersion: deviceMetadata.operatingSystemVersion,
+            launchDate: appLaunchDate,
+            device: deviceMetadata.deviceModel
+        )
+        context.insert(appRun)
+        try context.save()
+
+        while true {
+            let fetchedEntries = try logStore.entries(after: lastDate)
+            
+            let modelEntries = fetchedEntries.map {
+                LogEntry(appRun: appRun, entry: $0)
+            }
+            
+            context.insert(contentsOf: modelEntries)
+            if context.hasChanges {
+                try context.save()
+            }
+            
+            lastDate = modelEntries.last?.date ?? lastDate
+            try await Task.sleep(for: .seconds(1))
+        }
+    }
+
     deinit {
         monitoringTask.cancel()
     }
 
+    // TODO: - Design export format and test this function
     public func export() throws -> String {
         let context = ModelContext(modelContainer)
         let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
@@ -139,7 +130,7 @@ public actor LogMonitor {
 
 #if canImport(OSLog)
 public extension LogMonitor {
-    init(
+    convenience init(
         convention: LogStorageConvention,
         bundleMetadata: BundleMetadata = .main,
         appLaunchDate: Date = .now
