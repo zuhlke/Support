@@ -7,9 +7,13 @@ import SwiftData
 @available(iOS 26.0, *)
 @available(macOS, unavailable)
 struct AppRunView: View {
-    @Query(filter: #Predicate<LogEntry> { entry in
-        entry.subsystem != nil && entry.subsystem != "" && !(entry.subsystem?.contains("com.apple.") ?? false)
-    }) var logEntries: [LogEntry]
+    @Query(
+        filter: #Predicate<LogEntry> { entry in
+            entry.subsystem != nil && entry.subsystem != "" && !(entry.subsystem?.contains("com.apple.") ?? false)
+        },
+        sort: \.date,
+        order: .reverse
+    ) var logEntries: [LogEntry]
     
     @State var isShowingMetadata = Set<Metadata>(Metadata.allCases)
     
@@ -24,51 +28,73 @@ struct AppRunView: View {
     }
     
     @ViewBuilder
-    func appRunLogs(_ logs: [LogEntry]) -> some View {
-        ForEach(logs) { entry in
-            VStack(alignment: .leading) {
-                Text(entry.composedMessage.highlighted(
-                    matching: [searchText] + tokens.filter { $0.scope == .message }.map { $0.text }
-                ))
+    func similarItem(entry: LogEntry, scope: SearchScope) -> some View {
+        if let text = entry.scope(scope) {
+            Button {
+                if !tokens.contains(where: { token in
+                    token.text == text && token.scope == scope
+                }) {
+                    tokens.append(SearchToken(text, in: scope))
+                }
+            } label: {
                 HStack {
-                    if let level = entry.level, isShowingMetadata.contains(.level) {
-                        Text(level.exportDescription.highlighted(
-                            matching: [searchText] + tokens.filter { $0.scope == .level }.map { $0.text }
-                        ))
-                    }
-                    
-                    if isShowingMetadata.contains(.date) {
-                        Text(entry.date.formatted())
-                    }
-                    
-                    if let subsystem = entry.subsystem, isShowingMetadata.contains(.subsystem) {
-                        Text(subsystem.highlighted(
-                            matching: [searchText] + tokens.filter { $0.scope == .subsystem }.map { $0.text }
-                        ))
-                    }
-                    
-                    if let category = entry.category, isShowingMetadata.contains(.category) {
-                        Text(category.highlighted(
-                            matching: [searchText] + tokens.filter { $0.scope == .category }.map { $0.text }
-                        ))
-                    }
+                    Image(systemName: scope.image)
+                    Text(text)
                 }
-                .font(.caption)
             }
+        } else {
+            EmptyView()
         }
     }
     
-    var appRunsList: some View {
-        List {
-            ForEach(groupedEntries.keys.sorted { $0.launchDate > $1.launchDate }, id: \.self) { appRun in
-                Section(appRun.launchDate.formatted()) {
-                    appRunLogs(groupedEntries[appRun]!.sorted { $0.date < $1.date })
+    func contextMenu(for entry: LogEntry) -> some View {
+        VStack {
+            Button {
+                UIPasteboard.general.string = entry.composedMessage
+            } label: {
+                Image(systemName: "document.on.document")
+                Text("Copy")
+            }
+            Menu {
+                similarItem(entry: entry, scope: .message)
+                similarItem(entry: entry, scope: .level)
+                similarItem(entry: entry, scope: .subsystem)
+                similarItem(entry: entry, scope: .category)
+            } label: {
+                Image(systemName: "eye")
+                Text("Show Similar Items")
+            }
+        }
+    }
+        
+    var appRuns: some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 0, pinnedViews: .sectionHeaders) {
+                ForEach(groupedEntries.keys.sorted(by: { $0.launchDate < $1.launchDate }), id: \.self) { appRun in
+                    Section {
+                        ForEach(groupedEntries[appRun]!.sorted(by: { $0.date < $1.date })) { entry in
+                            LogEntryView(entry: entry, searchText: searchText, tokens: tokens, isShowingMetadata: isShowingMetadata)
+                            .padding(16)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(entry.background)
+                            .overlay(Divider().padding(.horizontal, 16), alignment: .bottom)
+                            .contextMenu { contextMenu(for: entry) }
+                        }
+                    } header: {
+                        Text(appRun.launchDate.formatted())
+                            .font(.headline)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(.ultraThinMaterial)
+                            .overlay(Divider().padding(.horizontal, 16), alignment: .bottom)
+                    }
                 }
             }
         }
-        .listStyle(.plain)
+        .defaultScrollAnchor(.bottom)
     }
-    
+
     func suggestionText(for scope: SearchScope) -> some View {
         HStack {
             Text("\(Image(systemName: scope.image))").bold().foregroundStyle(.blue).frame(width: 30)
@@ -78,8 +104,8 @@ struct AppRunView: View {
         .searchCompletion(SearchToken(searchText, in: scope))
     }
     
-    var appRuns: some View {
-        appRunsList
+    var searchableAppRuns: some View {
+        appRuns
         .searchable(text: $searchText, tokens: $tokens) { token in
             HStack {
                 Image(systemName: token.scope.filledImage)
@@ -95,7 +121,11 @@ struct AppRunView: View {
                     suggestionText(for: .category)
                 }
                 Section("Results") {
-                    appRunLogs(filteredEntries)
+                    ForEach(filteredEntries, id: \.self) { entry in
+                        LogEntryView(entry: entry, searchText: searchText, tokens: tokens, isShowingMetadata: isShowingMetadata)
+                            .listRowBackground(entry.background)
+                            .contextMenu { contextMenu(for: entry) }
+                    }
                 }
             }
         }
@@ -125,14 +155,8 @@ struct AppRunView: View {
     }
     
     var body: some View {
-        appRuns
-        .onChange(of: logEntries, initial: true) {
-            filterEntries()
-        }
-        .onChange(of: tokens) {
-            filterEntries()
-        }
-        .onChange(of: searchText) {
+        searchableAppRuns
+            .onChange(of: [logEntries.description, tokens.description, searchText], initial: true) {
             filterEntries()
         }
         .toolbar {
