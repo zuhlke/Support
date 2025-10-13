@@ -99,6 +99,9 @@ public class LogMonitor {
             }
             
             context.insert(contentsOf: modelEntries)
+
+            try Task.checkCancellation()
+
             if context.hasChanges {
                 try context.save()
             }
