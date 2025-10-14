@@ -4,6 +4,32 @@
 import SwiftUI
 import SwiftData
 
+struct ExportView: View {
+    var file: URL
+    
+    init(logEntry: LogEntry) {
+        let jsonData = try! JSONEncoder().encode(logEntry.snapshot)
+        file = FileManager.default.temporaryDirectory.appendingPathComponent("logEntry.json")
+        try! jsonData.write(to: file, options: .atomic)
+    }
+    
+    init(logEntries: [LogEntry]) {
+        let jsonData = try! JSONEncoder().encode(logEntries.map(\.snapshot))
+        file = FileManager.default.temporaryDirectory.appendingPathComponent("logEntries.json")
+        try! jsonData.write(to: file, options: .atomic)
+    }
+    
+    var body: some View {
+        ShareLink(item: file, preview: SharePreview("Log Entries", image: Image(systemName: "text.document"))) {
+            Image(systemName: "square.and.arrow.up")
+            HStack {
+                Image(systemName: "square.and.arrow.up")
+                Text("Export")
+            }
+        }
+    }
+}
+
 @available(iOS 26.0, *)
 @available(macOS, unavailable)
 struct AppRunView: View {
@@ -55,6 +81,7 @@ struct AppRunView: View {
                 Image(systemName: "document.on.document")
                 Text("Copy")
             }
+            ExportView(logEntry: entry)
             Menu {
                 similarItem(entry: entry, scope: .message)
                 similarItem(entry: entry, scope: .level)
@@ -66,7 +93,30 @@ struct AppRunView: View {
             }
         }
     }
-        
+    
+    func appRunHeader(appRun: AppRun) -> some View {
+        HStack(alignment: .center) {
+            Text(appRun.launchDate.formatted())
+                .font(.headline)
+            Spacer()
+            Menu {
+                ExportView(logEntries: groupedEntries[appRun]!)
+                Section {
+                    Text("App version: \(appRun.appVersion)")
+                    Text("Operating System Version: \(appRun.operatingSystemVersion)")
+                    Text("Launch Date: \(appRun.launchDate.formatted())")
+                    Text("Device: \(appRun.device)")
+                }
+            } label: {
+                Image(systemName: "info.circle")
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .glassEffect()
+    }
+    
     var appRuns: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 0, pinnedViews: .sectionHeaders) {
@@ -81,13 +131,7 @@ struct AppRunView: View {
                             .contextMenu { contextMenu(for: entry) }
                         }
                     } header: {
-                        Text(appRun.launchDate.formatted())
-                            .font(.headline)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(.ultraThinMaterial)
-                            .overlay(Divider().padding(.horizontal, 16), alignment: .bottom)
+                        appRunHeader(appRun: appRun)
                     }
                 }
             }
@@ -133,19 +177,20 @@ struct AppRunView: View {
     
     var menu: some View {
         Menu {
+            Section {
+                ExportView(logEntries: filteredEntries)
+            }
             ForEach(Metadata.allCases, id: \.self) { metadata in
-                Section {
-                    Toggle(isOn: .init(get: { isShowingMetadata.contains(metadata) }, set: {
-                        if $0 {
-                            isShowingMetadata.insert(metadata)
-                        } else {
-                            isShowingMetadata.remove(metadata)
-                        }
-                    })) {
-                        HStack {
-                            Image(systemName: metadata.image)
-                            Text("Show \(metadata.rawValue.capitalized)")
-                        }
+                Toggle(isOn: .init(get: { isShowingMetadata.contains(metadata) }, set: {
+                    if $0 {
+                        isShowingMetadata.insert(metadata)
+                    } else {
+                        isShowingMetadata.remove(metadata)
+                    }
+                })) {
+                    HStack {
+                        Image(systemName: metadata.image)
+                        Text("Show \(metadata.rawValue.capitalized)")
                     }
                 }
             }

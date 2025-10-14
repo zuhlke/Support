@@ -16,10 +16,10 @@ public class AppRun {
         var logEntries: [LogEntry.Snapshot]
     }
     
-    var appVersion: String
-    var operatingSystemVersion: String
+    public var appVersion: String
+    public var operatingSystemVersion: String
     public var launchDate: Date
-    var device: String
+    public var device: String
     
     @Relationship(deleteRule: .cascade, inverse: \LogEntry.appRun)
     public var logEntries = [LogEntry]()
