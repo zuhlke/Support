@@ -293,11 +293,11 @@ struct LogMonitorTests {
     func fetchingLogs_afterRelaunch_storesLogEntriesInDatabase() async throws {
         let fileManager = FileManager()
         try await fileManager.withTemporaryDirectory { url in
-            let logStore = LogStore(entries: [
-                LogStoreEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 1))
-            ])
-
             do {
+                let logStore = LogStore(entries: [
+                    LogStoreEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 1))
+                ])
+
                 let logMonitor = try LogMonitor(
                     convention: LogStorageConvention(
                         baseStorageLocation: .customLocation(url: url),
@@ -350,6 +350,8 @@ struct LogMonitorTests {
             }
 
             do {
+                let logStore = LogStore(entries: [])
+
                 logStore.log(entry: LogStoreEntry(composedMessage: "Log message 2", date: .init(timeIntervalSince1970: 4)))
                 logStore.log(entry: LogStoreEntry(composedMessage: "Log message 3", date: .init(timeIntervalSince1970: 5)))
                 

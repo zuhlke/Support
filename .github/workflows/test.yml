@@ -2,18 +2,23 @@ name: Test Packages
 
 on:
   push:
-    branches:    
+    branches:
       - main
       - log-monitoring
-      
+
   pull_request:
-    branches:    
+    branches:
       - main
       - log-monitoring
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test-on-host:
     name: Test on Host
+    timeout-minutes: 10
 
     # See available software: https://github.com/actions/runner-images/blob/main/images/macos/macos-26-arm64-Readme.md
     strategy:
@@ -21,15 +26,16 @@ jobs:
         os: [macos-26, ubuntu-latest]
 
     runs-on: ${{ matrix.os }}
-    
-    steps:
-    - uses: actions/checkout@v4
 
-    - name: Run tests
-      run: swift test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run tests
+        run: swift test
 
   test-on-simulator:
     name: Test on Simulator
+    timeout-minutes: 10
 
     # Wait for test on host
     needs: test-on-host
@@ -40,9 +46,9 @@ jobs:
         device: [iPhone 17 Pro, Apple Watch Ultra 3 (49mm)]
 
     runs-on: macos-26
-    
-    steps:
-    - uses: actions/checkout@v4
 
-    - name: Run tests
-      run: xcodebuild test -scheme Support-Package -destination 'name=${{ matrix.device }}'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run tests
+        run: xcodebuild test -scheme Support-Package -destination 'name=${{ matrix.device }}'
