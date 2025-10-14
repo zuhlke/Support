@@ -16,6 +16,7 @@ struct AppRunView: View {
     ) var logEntries: [LogEntry]
     
     @State var isShowingMetadata = Set<Metadata>(Metadata.allCases)
+    @State var shouldShowExpandedMessages = false
     @State private var searchText = ""
     @State private var tokens: [SearchToken] = []
     @State private var filteredEntries: [LogEntry] = []
@@ -96,7 +97,7 @@ struct AppRunView: View {
                 ForEach(groupedEntries.keys.sorted(by: { $0.launchDate < $1.launchDate }), id: \.self) { appRun in
                     Section {
                         ForEach(groupedEntries[appRun]!.sorted(by: { $0.date < $1.date })) { entry in
-                            LogEntryView(entry: entry, searchText: searchText, tokens: tokens, isShowingMetadata: isShowingMetadata)
+                            LogEntryView(entry: entry, searchText: searchText, tokens: tokens, isShowingMetadata: isShowingMetadata, shouldShowExpandedMessages: shouldShowExpandedMessages)
                             .padding(16)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(entry.background)
@@ -139,7 +140,7 @@ struct AppRunView: View {
                 }
                 Section("Results") {
                     ForEach(filteredEntries, id: \.self) { entry in
-                        LogEntryView(entry: entry, searchText: searchText, tokens: tokens, isShowingMetadata: isShowingMetadata)
+                        LogEntryView(entry: entry, searchText: searchText, tokens: tokens, isShowingMetadata: isShowingMetadata, shouldShowExpandedMessages: shouldShowExpandedMessages)
                             .listRowBackground(entry.background)
                             .contextMenu { contextMenu(for: entry) }
                     }
@@ -164,6 +165,14 @@ struct AppRunView: View {
                     HStack {
                         Image(systemName: metadata.image)
                         Text("Show \(metadata.rawValue.capitalized)")
+                    }
+                }
+            }
+            Section {
+                Toggle(isOn: $shouldShowExpandedMessages) {
+                    HStack {
+                        Image(systemName: "rectangle.expand.vertical")
+                        Text("Expand log messages")
                     }
                 }
             }
