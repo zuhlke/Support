@@ -71,7 +71,7 @@ public class LogMonitor {
         }
     }
 
-    static func startMonitoring(
+    private static func startMonitoring(
         context: ModelContext,
         bundleMetadata: BundleMetadata,
         deviceMetadata: DeviceMetadata,
@@ -99,8 +99,6 @@ public class LogMonitor {
             }
             
             context.insert(contentsOf: modelEntries)
-
-            try Task.checkCancellation()
 
             if context.hasChanges {
                 try context.save()
