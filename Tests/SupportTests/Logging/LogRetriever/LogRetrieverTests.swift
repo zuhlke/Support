@@ -5,7 +5,7 @@ import Foundation
 @testable import Support
 
 struct LogRetrieverTests {
-    @Test
+    @Test(.timeLimit(.minutes(1)))
     func testInitWithValidConvention_withEmptyDirectory() async throws {
         let fileManager = FileManager()
         try await fileManager.withTemporaryDirectory { url in
@@ -21,7 +21,7 @@ struct LogRetrieverTests {
         }
     }
     
-    @Test
+    @Test(.timeLimit(.minutes(1)))
     func testInitWithValidConvention_withLogsForApp() async throws {
         try await FileManager().withTemporaryDirectory { url in
             let fileManager = FileManager()
@@ -72,7 +72,7 @@ struct LogRetrieverTests {
         }
     }
     
-    @Test
+    @Test(.timeLimit(.minutes(1)))
     func testInitWithValidConvention_withLogsForAppAndExtension() async throws {
         try await FileManager().withTemporaryDirectory { url in
             let fileManager = FileManager()
@@ -137,7 +137,7 @@ struct LogRetrieverTests {
         }
     }
     
-    @Test
+    @Test(.timeLimit(.minutes(1)))
     func testInitWithValidConvention_withLogsForAppAndExtension_withoutLogFile() async throws {
         try await FileManager().withTemporaryDirectory { url in
             let fileManager = FileManager()
@@ -192,8 +192,8 @@ struct LogRetrieverTests {
             )
         }
     }
-
-    @Test
+    
+    @Test(.timeLimit(.minutes(1)))
     func testInitWithValidConvention_withFilesCreated_afterInit() async throws {
         let fileManager = FileManager()
         try await fileManager.withTemporaryDirectory { url in
