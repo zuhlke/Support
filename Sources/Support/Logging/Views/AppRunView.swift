@@ -4,32 +4,6 @@
 import SwiftUI
 import SwiftData
 
-struct ExportView: View {
-    var file: URL
-    
-    init(logEntry: LogEntry) {
-        let jsonData = try! JSONEncoder().encode(logEntry.snapshot)
-        file = FileManager.default.temporaryDirectory.appendingPathComponent("logEntry.json")
-        try! jsonData.write(to: file, options: .atomic)
-    }
-    
-    init(logEntries: [LogEntry]) {
-        let jsonData = try! JSONEncoder().encode(logEntries.map(\.snapshot))
-        file = FileManager.default.temporaryDirectory.appendingPathComponent("logEntries.json")
-        try! jsonData.write(to: file, options: .atomic)
-    }
-    
-    var body: some View {
-        ShareLink(item: file, preview: SharePreview("Log Entries", image: Image(systemName: "text.document"))) {
-            Image(systemName: "square.and.arrow.up")
-            HStack {
-                Image(systemName: "square.and.arrow.up")
-                Text("Export")
-            }
-        }
-    }
-}
-
 @available(iOS 26.0, *)
 @available(macOS, unavailable)
 struct AppRunView: View {
@@ -42,7 +16,6 @@ struct AppRunView: View {
     ) var logEntries: [LogEntry]
     
     @State var isShowingMetadata = Set<Metadata>(Metadata.allCases)
-    
     @State private var searchText = ""
     @State private var tokens: [SearchToken] = []
     @State private var filteredEntries: [LogEntry] = []
