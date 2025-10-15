@@ -2,35 +2,38 @@
 
 import Foundation
 
-class FileWatcher: NSObject {
-    private var presenters: [FilePresenter] = []
-    private let onChange: () -> Void
+class FileWatcher {
+    private var presenter: FilePresenter
 
-    init(urls: [URL], onChange: @escaping () -> Void) {
-        self.onChange = onChange
-        super.init()
-
-        presenters = urls.map { url in
-            FilePresenter(url: url) { [weak self] in
-                self?.onChange()
-            }
+    init(url: URL, onChange: @escaping () -> Void) {
+        self.presenter = FilePresenter(url: url) {
+            onChange()
         }
     }
 
-    func startWatching() throws {
-        for presenter in presenters {
-            try presenter.startWatching()
-        }
+    func startWatching() async {
+        await presenter.startWatching()
     }
 
     func stopWatching() {
-        for presenter in presenters {
-            presenter.stopWatching()
-        }
+        presenter.stopWatching()
     }
 
     deinit {
         stopWatching()
+    }
+}
+
+extension FileWatcher {
+    static func asynStream(url: URL) async -> AsyncStream<Void> {
+        let (stream, continuation) = AsyncStream.makeStream(of: Void.self)
+        let watcher = FileWatcher(url: url) {
+            continuation.yield()
+        }
+
+        await watcher.startWatching()
+
+        return stream
     }
 }
 
@@ -46,8 +49,16 @@ private class FilePresenter: NSObject, NSFilePresenter {
         presentedItemOperationQueue.maxConcurrentOperationCount = 1
     }
 
-    func startWatching() throws {
+    func startWatching() async {
         NSFileCoordinator.addFilePresenter(self)
+        await withCheckedContinuation { continuation in
+            NSFileCoordinator(filePresenter: self).coordinate(
+                readingItemAt: presentedItemURL!,
+                error: nil,
+                byAccessor: { _ in }
+            )
+            continuation.resume(returning: ())
+        }
     }
 
     func stopWatching() {
