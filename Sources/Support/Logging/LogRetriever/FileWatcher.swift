@@ -1,76 +1,94 @@
 #if canImport(Darwin)
 
 import Foundation
+import OSLog
 
-class FileWatcher {
-    private var presenter: FilePresenter
-
-    init(url: URL, onChange: @escaping () -> Void) {
-        self.presenter = FilePresenter(url: url) {
-            onChange()
-        }
+class FileWatcher: AsyncSequence {
+    private static let logger = Logger(subsystem: "com.zuhlke.Support", category: "FileWatcher")
+    
+    enum Event {
+        case changed
     }
-
-    func startWatching() async {
-        await presenter.startWatching()
+    
+    private let url: URL
+    
+    init(url: URL) {
+        self.url = url
     }
-
-    func stopWatching() {
-        presenter.stopWatching()
-    }
-
-    deinit {
-        stopWatching()
+    
+    func makeAsyncIterator() -> AsyncIterator {
+        return AsyncIterator(url: url)
     }
 }
 
 extension FileWatcher {
-    static func asynStream(url: URL) async -> AsyncStream<Void> {
-        let (stream, continuation) = AsyncStream.makeStream(of: Void.self)
-        let watcher = FileWatcher(url: url) {
-            continuation.yield()
-        }
+    class AsyncIterator: AsyncIteratorProtocol {
+        private let filePresenter: FilePresenter
 
-        await watcher.startWatching()
+        init(url: URL) {
+            FileWatcher.logger.trace("Initializing FileWatcher Iterator at url: \(url)")
+            filePresenter = FilePresenter(url: url)
+            NSFileCoordinator.addFilePresenter(filePresenter)
 
-        return stream
-    }
-}
-
-private class FilePresenter: NSObject, NSFilePresenter {
-    let presentedItemURL: URL?
-    let presentedItemOperationQueue = OperationQueue()
-    private let onChange: () -> Void
-
-    init(url: URL, onChange: @escaping () -> Void) {
-        self.presentedItemURL = url
-        self.onChange = onChange
-        super.init()
-        presentedItemOperationQueue.maxConcurrentOperationCount = 1
-    }
-
-    func startWatching() async {
-        NSFileCoordinator.addFilePresenter(self)
-        await withCheckedContinuation { continuation in
-            NSFileCoordinator(filePresenter: self).coordinate(
-                readingItemAt: presentedItemURL!,
+            // We call this to ensure that the NSFileCoordinator has registered the presenter
+            // Any changes to this file will notify the presenter after this is called.
+            NSFileCoordinator(filePresenter: filePresenter).coordinate(
+                readingItemAt: filePresenter.presentedItemURL!,
                 error: nil,
                 byAccessor: { _ in }
             )
-            continuation.resume(returning: ())
+        }
+
+        func next() async -> FileWatcher.Event? {
+            FileWatcher.logger.trace("Awaiting change at url: \(self.filePresenter.presentedItemURL!)")
+            return await withTaskCancellationHandler {
+                if Task.isCancelled { return nil }
+                return await withCheckedContinuation { continuation in
+                    filePresenter.setContinuation(continuation: continuation)
+                }
+            } onCancel: { [filePresenter] in
+                filePresenter.cancelContinuation()
+            }
+        }
+
+        deinit {
+            FileWatcher.logger.trace("Deinitializing FileWatcher Iterator at url: \(self.filePresenter.presentedItemURL!)")
+            NSFileCoordinator.removeFilePresenter(filePresenter)
         }
     }
+}
 
-    func stopWatching() {
-        NSFileCoordinator.removeFilePresenter(self)
-    }
+extension FileWatcher {
+    private final class FilePresenter: NSObject, NSFilePresenter, @unchecked Sendable {
+        private var continuation: CheckedContinuation<Event?, Never>?
 
-    func presentedItemDidChange() {
-        onChange()
-    }
+        let presentedItemURL: URL?
+        let presentedItemOperationQueue = OperationQueue()
 
-    deinit {
-        stopWatching()
+        init(url: URL) {
+            self.presentedItemURL = url
+            super.init()
+            presentedItemOperationQueue.maxConcurrentOperationCount = 1
+        }
+
+        func setContinuation(continuation: CheckedContinuation<Event?, Never>) {
+            presentedItemOperationQueue.addOperation {
+                self.continuation = continuation
+            }
+        }
+
+        func presentedItemDidChange() {
+            FileWatcher.logger.trace("Presented item did change at url: \(self.presentedItemURL!)")
+            continuation?.resume(returning: .changed)
+            continuation = nil
+        }
+        
+        func cancelContinuation() {
+            presentedItemOperationQueue.addOperation {
+                self.continuation?.resume(returning: nil)
+                self.continuation = nil
+            }
+        }
     }
 }
 

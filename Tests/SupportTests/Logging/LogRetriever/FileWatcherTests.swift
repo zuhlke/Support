@@ -1,125 +1,82 @@
-#if canImport(SwiftData)
+#if swift(>=6.2)
 
 import Testing
 import Foundation
-import SwiftData
+import OSLog
 @testable import Support
 
 struct FileWatcherTests {
+    static let logger = Logger(subsystem: "com.zuhlke.support.tests", category: "FileWatcherTests")
+
     @Test(.timeLimit(.minutes(1)))
-    func testFileWatcher_detectsFileChanges() async throws {
+    func `Sends a file changed event when existing file is modified`() async throws {
         let fileManager = FileManager()
         try await fileManager.withTemporaryDirectory { tempDir in
-            // Create a test file
             let testFile = tempDir.appendingPathComponent("test.txt")
             try "initial content".write(to: testFile, atomically: true, encoding: .utf8)
 
-            let (stream, continuation) = AsyncStream.makeStream(of: Void.self)
+            let stream = FileWatcher(url: testFile)
+            let iterator = stream.makeAsyncIterator()
+            async let asyncEvent = iterator.next()
 
-            let watcher = FileWatcher(url: tempDir) {
-                let contents = try? FileManager.default.contentsOfDirectory(atPath: tempDir.path())
-                print(contents?.description ?? "")
-                continuation.yield()
-            }
-
-            await watcher.startWatching()
-
-            do {
-                // Modify the file
-                try "modified content"
-                    .write(to: testFile, atomically: true, encoding: .utf8)
-
-                // Wait for the change to be detected
-                let changeDetected = try await Task {
-                    var iterator = stream.makeAsyncIterator()
-                    await iterator.next()
-                    return try String(contentsOf: testFile, encoding: .utf8)
-                }.value
-
-                #expect(changeDetected == "modified content")
-            }
-
-            do {
-                // Modify the file again
-                try "modified contents again"
-                    .write(to: testFile, atomically: true, encoding: .utf8)
-
-                // Wait for the change to be detected
-                let changeDetected = try await Task {
-                    var iterator = stream.makeAsyncIterator()
-                    await iterator.next()
-                    return try String(contentsOf: testFile, encoding: .utf8)
-                }.value
-
-                #expect(changeDetected == "modified contents again")
-            }
-
-            watcher.stopWatching()
-            continuation.finish()
+            FileWatcherTests.logger.trace("Modifying file at url: \(testFile)")
+            try "modified content".write(to: testFile, atomically: true, encoding: .utf8)
+    
+            let event = await asyncEvent
+            #expect(event == .changed)
         }
     }
 
     @Test(.timeLimit(.minutes(1)))
-    func testFileWatcher_detectsSwiftDataChanges() async throws {
+    func `Returns nil when cancelled immediately listening to file changes`() async throws {
         let fileManager = FileManager()
         try await fileManager.withTemporaryDirectory { tempDir in
-            // Create SwiftData model container with custom storage location
-            let storeURL = tempDir.appendingPathComponent("test.store")
-            let config = ModelConfiguration(url: storeURL)
-            let schema = Schema([TestItem.self])
-            let container = try ModelContainer(for: schema, configurations: config)
+            let testFile = tempDir.appendingPathComponent("test.txt")
+            try "initial content".write(to: testFile, atomically: true, encoding: .utf8)
 
-            let (stream, continuation) = AsyncStream.makeStream(of: Void.self)
-
-            // Watch the store file
-            let watcher = FileWatcher(url: tempDir) {
-                let contents = try? FileManager.default.contentsOfDirectory(atPath: tempDir.path())
-                print(contents?.description ?? "")
-                continuation.yield()
+            let stream = FileWatcher(url: testFile)
+            let iterator = stream.makeAsyncIterator()
+            let asyncEvent = Task {
+                #expect(Task.isCancelled)
+                return await iterator.next()
             }
+            asyncEvent.cancel()
 
-            await watcher.startWatching()
-
-            // Insert first item into SwiftData
-            let context = ModelContext(container)
-            let item1 = TestItem(name: "First Item")
-            context.insert(item1)
-            try context.save()
-
-            // Wait for file change to be detected
-            var iterator = stream.makeAsyncIterator()
-            await iterator.next()
-
-            // Verify the item was saved
-            let descriptor = FetchDescriptor<TestItem>()
-            let items = try context.fetch(descriptor)
-            #expect(items.count == 1)
-            #expect(items.first?.name == "First Item")
-
-            // Insert second item
-            let item2 = TestItem(name: "Second Item")
-            context.insert(item2)
-            try context.save()
-
-            // Wait for second file change
-            await iterator.next()
-
-            // Verify both items are present
-            let updatedItems = try context.fetch(descriptor)
-            #expect(updatedItems.count == 2)
-
-            watcher.stopWatching()
-            continuation.finish()
+            let event = await asyncEvent.value
+            #expect(event == nil)
         }
     }
-}
 
-@Model
-private class TestItem {
-    var name: String
+    @Test(.timeLimit(.minutes(1)))
+    func `Returns nil when cancelled listening to file changes`() async throws {
+        actor ShouldContinue {
+            var flag: Bool = false
 
-    init(name: String) {
-        self.name = name
+            func toggle() { flag.toggle() }
+        }
+
+        let fileManager = FileManager()
+        try await fileManager.withTemporaryDirectory { tempDir in
+            let testFile = tempDir.appendingPathComponent("test.txt")
+            try "initial content".write(to: testFile, atomically: true, encoding: .utf8)
+
+            let shouldContinue = ShouldContinue()
+            let asyncEvent = Task {
+                let stream = FileWatcher(url: testFile)
+                let iterator = stream.makeAsyncIterator()
+                async let asyncEvent = iterator.next()
+                #expect(!Task.isCancelled)
+                await shouldContinue.toggle()
+                return await asyncEvent
+            }
+
+            while await !shouldContinue.flag {}
+
+            asyncEvent.cancel()
+
+            let event = await asyncEvent.value
+            #expect(event == nil)
+        }
     }
 }
 
