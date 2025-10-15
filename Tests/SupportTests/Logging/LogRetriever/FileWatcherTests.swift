@@ -1,3 +1,4 @@
+#if canImport(Darwin)
 #if swift(>=6.2)
 
 import Testing
@@ -80,4 +81,5 @@ struct FileWatcherTests {
     }
 }
 
+#endif
 #endif
