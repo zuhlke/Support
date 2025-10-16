@@ -8,6 +8,7 @@ struct LogEntryView: View {
     var searchText: String
     var tokens: [SearchToken]
     var isShowingMetadata: Set<Metadata>
+    var shouldShowExpandedMessages: Bool
     
     @State private var isCollapsed: Bool = true
     
@@ -57,6 +58,9 @@ struct LogEntryView: View {
         }
         .buttonStyle(.plain)
         .animation(.linear, value: isCollapsed)
+        .onChange(of: shouldShowExpandedMessages) {
+            isCollapsed = !$0
+        }
     }
 }
 
@@ -68,7 +72,7 @@ struct LogEntryView: View {
     
     let logEntry = LogEntry(appRun: appRun, date: launchDate.advanced(by: 1 * 60), composedMessage: "This is a really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really really long message", level: .info, category: "App", subsystem: "com.zuhlke.test")
     
-    LogEntryView(entry: logEntry, searchText: "", tokens: [], isShowingMetadata: .init(Metadata.allCases))
+    LogEntryView(entry: logEntry, searchText: "", tokens: [], isShowingMetadata: .init(Metadata.allCases), shouldShowExpandedMessages: false)
         .padding(16)
 }
 

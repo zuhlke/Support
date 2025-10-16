@@ -16,7 +16,7 @@ struct AppRunView: View {
     ) var logEntries: [LogEntry]
     
     @State var isShowingMetadata = Set<Metadata>(Metadata.allCases)
-    
+    @State var shouldShowExpandedMessages = false
     @State private var searchText = ""
     @State private var tokens: [SearchToken] = []
     @State private var filteredEntries: [LogEntry] = []
@@ -55,6 +55,7 @@ struct AppRunView: View {
                 Image(systemName: "document.on.document")
                 Text("Copy")
             }
+            ExportView(logEntry: entry)
             Menu {
                 similarItem(entry: entry, scope: .message)
                 similarItem(entry: entry, scope: .level)
@@ -66,14 +67,37 @@ struct AppRunView: View {
             }
         }
     }
-        
+    
+    func appRunHeader(appRun: AppRun) -> some View {
+        HStack(alignment: .center) {
+            Text(appRun.launchDate.formatted())
+                .font(.headline)
+            Spacer()
+            Menu {
+                ExportView(logEntries: groupedEntries[appRun]!)
+                Section {
+                    Text("App version: \(appRun.appVersion)")
+                    Text("Operating System Version: \(appRun.operatingSystemVersion)")
+                    Text("Launch Date: \(appRun.launchDate.formatted())")
+                    Text("Device: \(appRun.device)")
+                }
+            } label: {
+                Image(systemName: "info.circle")
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .glassEffect()
+    }
+    
     var appRuns: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 0, pinnedViews: .sectionHeaders) {
                 ForEach(groupedEntries.keys.sorted(by: { $0.launchDate < $1.launchDate }), id: \.self) { appRun in
                     Section {
                         ForEach(groupedEntries[appRun]!.sorted(by: { $0.date < $1.date })) { entry in
-                            LogEntryView(entry: entry, searchText: searchText, tokens: tokens, isShowingMetadata: isShowingMetadata)
+                            LogEntryView(entry: entry, searchText: searchText, tokens: tokens, isShowingMetadata: isShowingMetadata, shouldShowExpandedMessages: shouldShowExpandedMessages)
                             .padding(16)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(entry.background)
@@ -81,13 +105,7 @@ struct AppRunView: View {
                             .contextMenu { contextMenu(for: entry) }
                         }
                     } header: {
-                        Text(appRun.launchDate.formatted())
-                            .font(.headline)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(.ultraThinMaterial)
-                            .overlay(Divider().padding(.horizontal, 16), alignment: .bottom)
+                        appRunHeader(appRun: appRun)
                     }
                 }
             }
@@ -122,7 +140,7 @@ struct AppRunView: View {
                 }
                 Section("Results") {
                     ForEach(filteredEntries, id: \.self) { entry in
-                        LogEntryView(entry: entry, searchText: searchText, tokens: tokens, isShowingMetadata: isShowingMetadata)
+                        LogEntryView(entry: entry, searchText: searchText, tokens: tokens, isShowingMetadata: isShowingMetadata, shouldShowExpandedMessages: shouldShowExpandedMessages)
                             .listRowBackground(entry.background)
                             .contextMenu { contextMenu(for: entry) }
                     }
@@ -133,19 +151,28 @@ struct AppRunView: View {
     
     var menu: some View {
         Menu {
+            Section {
+                ExportView(logEntries: filteredEntries)
+            }
             ForEach(Metadata.allCases, id: \.self) { metadata in
-                Section {
-                    Toggle(isOn: .init(get: { isShowingMetadata.contains(metadata) }, set: {
-                        if $0 {
-                            isShowingMetadata.insert(metadata)
-                        } else {
-                            isShowingMetadata.remove(metadata)
-                        }
-                    })) {
-                        HStack {
-                            Image(systemName: metadata.image)
-                            Text("Show \(metadata.rawValue.capitalized)")
-                        }
+                Toggle(isOn: .init(get: { isShowingMetadata.contains(metadata) }, set: {
+                    if $0 {
+                        isShowingMetadata.insert(metadata)
+                    } else {
+                        isShowingMetadata.remove(metadata)
+                    }
+                })) {
+                    HStack {
+                        Image(systemName: metadata.image)
+                        Text("Show \(metadata.rawValue.capitalized)")
+                    }
+                }
+            }
+            Section {
+                Toggle(isOn: $shouldShowExpandedMessages) {
+                    HStack {
+                        Image(systemName: "rectangle.expand.vertical")
+                        Text("Expand log messages")
                     }
                 }
             }
