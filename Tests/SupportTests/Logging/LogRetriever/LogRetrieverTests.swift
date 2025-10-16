@@ -5,7 +5,7 @@ import Foundation
 @testable import Support
 
 struct LogRetrieverTests {
-    @Test
+    @Test(.timeLimit(.minutes(1)))
     func testInitWithValidConvention_withEmptyDirectory() async throws {
         let fileManager = FileManager()
         try await fileManager.withTemporaryDirectory { url in
@@ -21,7 +21,7 @@ struct LogRetrieverTests {
         }
     }
     
-    @Test
+    @Test(.timeLimit(.minutes(1)))
     func testInitWithValidConvention_withLogsForApp() async throws {
         try await FileManager().withTemporaryDirectory { url in
             let fileManager = FileManager()
@@ -48,7 +48,7 @@ struct LogRetrieverTests {
             let logsDir = url.appending(path: "Test/Logs")
             try fileManager.createDirectory(at: logsDir, withIntermediateDirectories: true)
             let logFile = logsDir.appending(path: "com.zuhlke.Support.logs")
-            try "<none>".write(to: logFile, atomically: true, encoding: .utf8)
+            try "<none>".write(to: logFile, atomically: false, encoding: .utf8)
             
             let retriever = try LogRetriever(convention: convention)
             
@@ -72,7 +72,7 @@ struct LogRetrieverTests {
         }
     }
     
-    @Test
+    @Test(.timeLimit(.minutes(1)))
     func testInitWithValidConvention_withLogsForAppAndExtension() async throws {
         try await FileManager().withTemporaryDirectory { url in
             let fileManager = FileManager()
@@ -104,10 +104,10 @@ struct LogRetrieverTests {
             let logsDir = url.appending(path: "Test/Logs")
             try fileManager.createDirectory(at: logsDir, withIntermediateDirectories: true)
             let logFile = logsDir.appending(path: "com.zuhlke.Support.logs")
-            try "<none>".write(to: logFile, atomically: true, encoding: .utf8)
+            try "<none>".write(to: logFile, atomically: false, encoding: .utf8)
             
             let extensionLogFile = logsDir.appending(path: "com.zuhlke.Support.extension.logs")
-            try "<none>".write(to: extensionLogFile, atomically: true, encoding: .utf8)
+            try "<none>".write(to: extensionLogFile, atomically: false, encoding: .utf8)
             
             let retriever = try LogRetriever(convention: convention)
             
@@ -137,7 +137,7 @@ struct LogRetrieverTests {
         }
     }
     
-    @Test
+    @Test(.timeLimit(.minutes(1)))
     func testInitWithValidConvention_withLogsForAppAndExtension_withoutLogFile() async throws {
         try await FileManager().withTemporaryDirectory { url in
             let fileManager = FileManager()
@@ -169,7 +169,7 @@ struct LogRetrieverTests {
             let logsDir = url.appending(path: "Test/Logs")
             try fileManager.createDirectory(at: logsDir, withIntermediateDirectories: true)
             let logFile = logsDir.appending(path: "com.zuhlke.Support.logs")
-            try "<none>".write(to: logFile, atomically: true, encoding: .utf8)
+            try "<none>".write(to: logFile, atomically: false, encoding: .utf8)
             
             let retriever = try LogRetriever(convention: convention)
             
@@ -192,8 +192,8 @@ struct LogRetrieverTests {
             )
         }
     }
-
-    @Test
+    
+    @Test(.timeLimit(.minutes(1)))
     func testInitWithValidConvention_withFilesCreated_afterInit() async throws {
         let fileManager = FileManager()
         try await fileManager.withTemporaryDirectory { url in
