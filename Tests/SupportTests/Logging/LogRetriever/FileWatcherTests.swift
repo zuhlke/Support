@@ -50,29 +50,25 @@ struct FileWatcherTests {
 
     @Test(.timeLimit(.minutes(1)))
     func `Returns nil when cancelled listening to file changes`() async throws {
-        actor ShouldContinue {
-            var flag: Bool = false
-
-            func toggle() { flag.toggle() }
-        }
-
         let fileManager = FileManager()
         try await fileManager.withTemporaryDirectory { tempDir in
             let testFile = tempDir.appendingPathComponent("test.txt")
             try "initial content".write(to: testFile, atomically: true, encoding: .utf8)
 
-            let shouldContinue = ShouldContinue()
+            let (waiter, signaller) = AsyncStream.makeStream(of: Void.self)
+            
             let asyncEvent = Task {
                 let stream = FileWatcher(url: testFile)
                 let iterator = stream.makeAsyncIterator()
                 async let asyncEvent = iterator.next()
                 #expect(!Task.isCancelled)
-                await shouldContinue.toggle()
+                signaller.yield()
                 return await asyncEvent
             }
 
-            while await !shouldContinue.flag {}
-
+            var signals = waiter.makeAsyncIterator()
+            _ = await signals.next()
+            
             asyncEvent.cancel()
 
             let event = await asyncEvent.value
