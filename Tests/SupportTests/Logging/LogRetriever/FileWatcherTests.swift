@@ -19,6 +19,8 @@ struct FileWatcherTests {
             let stream = FileWatcher(url: testFile)
             let iterator = stream.makeAsyncIterator()
             async let asyncEvent = iterator.next()
+            
+            try await Task.sleep(for: .milliseconds(100))
 
             NSFileCoordinator().coordinate(writingItemAt: testFile, error: nil) { url in
                 FileWatcherTests.logger.trace("Modifying file at url: \(url)")
