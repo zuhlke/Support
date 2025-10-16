@@ -29,14 +29,6 @@ extension FileWatcher {
             FileWatcher.logger.trace("Initializing FileWatcher Iterator at url: \(url)")
             filePresenter = FilePresenter(url: url)
             NSFileCoordinator.addFilePresenter(filePresenter)
-
-            // We call this to ensure that the NSFileCoordinator has registered the presenter
-            // Any changes to this file will notify the presenter after this is called.
-            NSFileCoordinator(filePresenter: filePresenter).coordinate(
-                readingItemAt: filePresenter.presentedItemURL!,
-                error: nil,
-                byAccessor: { _ in }
-            )
         }
 
         func next() async -> FileWatcher.Event? {

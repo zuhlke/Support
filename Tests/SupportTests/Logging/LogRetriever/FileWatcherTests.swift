@@ -20,9 +20,11 @@ struct FileWatcherTests {
             let iterator = stream.makeAsyncIterator()
             async let asyncEvent = iterator.next()
 
-            FileWatcherTests.logger.trace("Modifying file at url: \(testFile)")
-            try "modified content".write(to: testFile, atomically: true, encoding: .utf8)
-    
+            NSFileCoordinator().coordinate(writingItemAt: testFile, error: nil) { url in
+                FileWatcherTests.logger.trace("Modifying file at url: \(url)")
+                try? "modified content".write(to: url, atomically: true, encoding: .utf8)
+            }
+
             let event = await asyncEvent
             #expect(event == .changed)
         }
