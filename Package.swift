@@ -26,6 +26,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-http-types.git", from: "1.3.0"),
+        .package(url: "https://github.com/apple/swift-atomics.git", from: "1.3.0"),
     ],
     targets: [
         .target(
@@ -41,7 +42,11 @@ let package = Package(
         ),
         .target(
             name: "TestingSupport",
-            dependencies: ["YAMLBuilder", "Support"]
+            dependencies: [
+                "YAMLBuilder",
+                "Support",
+                .product(name: "Atomics", package: "swift-atomics")
+            ]
         ),
         .target(
             name: "YAMLBuilder",
