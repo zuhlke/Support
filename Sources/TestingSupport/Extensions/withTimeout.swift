@@ -2,10 +2,13 @@ import Foundation
 import Testing
 
 public func withKnownIssueAndTimeLimit(
+    _ comment: Comment? = nil,
+    isIntermittent: Bool = false,
+    sourceLocation: SourceLocation = #_sourceLocation,
     duration: Duration,
-    body: @Sendable @escaping () async throws -> Void?
+    body: @Sendable @escaping () async throws -> Void
 ) async {
-    await withKnownIssue {
+    await withKnownIssue(isIntermittent: true) {
         try await withTimeout(duration: duration, operation: body)
     }
 }
