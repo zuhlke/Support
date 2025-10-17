@@ -2,6 +2,7 @@
 
 import Testing
 import Foundation
+import TestingSupport
 @testable import Support
 
 struct LogRetrieverTests {
@@ -195,7 +196,7 @@ struct LogRetrieverTests {
     
     @Test(.timeLimit(.minutes(1)))
     func testInitWithValidConvention_withFilesCreated_afterInit() async throws {
-        await withKnownIssue {
+        await withKnownIssueAndTimeLimit(duration: .seconds(10)) {
             let fileManager = FileManager()
             try await fileManager.withTemporaryDirectory { url in
                 let convention = LogStorageConvention(
