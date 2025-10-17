@@ -4,8 +4,13 @@ import SwiftUI
 struct ExportView: View {
     var file: URL
     
+    var encoder = mutating(JSONEncoder()) {
+        $0.outputFormatting = [.prettyPrinted, .sortedKeys]
+        $0.dateEncodingStrategy = .iso8601
+    }
+    
     init(logEntry: LogEntry) {
-        let jsonData = try? JSONEncoder().encode(logEntry.snapshot)
+        let jsonData = try? encoder.encode(logEntry.snapshot)
         file = FileManager.default.temporaryDirectory.appendingPathComponent("logEntry.json")
         if let data = jsonData {
             try? data.write(to: file, options: .atomic)
@@ -13,7 +18,7 @@ struct ExportView: View {
     }
     
     init(logEntries: [LogEntry]) {
-        let jsonData = try? JSONEncoder().encode(logEntries.map(\.snapshot))
+        let jsonData = try? encoder.encode(logEntries.map(\.snapshot))
         file = FileManager.default.temporaryDirectory.appendingPathComponent("logEntries.json")
         if let data = jsonData {
             try? data.write(to: file, options: .atomic)
