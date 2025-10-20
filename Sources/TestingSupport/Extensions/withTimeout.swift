@@ -8,7 +8,7 @@ public func withKnownIssueAndTimeLimit(
     duration: Duration,
     body: @Sendable @escaping () async throws -> Void
 ) async {
-    await withKnownIssue(isIntermittent: true) {
+    await withKnownIssue(isIntermittent: isIntermittent) {
         try await withTimeout(duration: duration, operation: body)
     }
 }
