@@ -112,21 +112,6 @@ public class LogMonitor {
     deinit {
         monitoringTask.cancel()
     }
-
-    // TODO: - Design export format and test this function
-    public func export() throws -> String {
-        let context = ModelContext(modelContainer)
-        let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
-        let runs = try context.fetch(descriptor)
-        let logs = Logs(runs: runs.map(\.snapshot))
-        let encoder = mutating(JSONEncoder()) {
-            $0.outputFormatting = [.prettyPrinted, .sortedKeys]
-            $0.dateEncodingStrategy = .iso8601
-        }
-        let data = try encoder.encode(logs)
-        return String(data: data, encoding: .utf8)!
-    }
-    
 }
 
 #if canImport(OSLog)
