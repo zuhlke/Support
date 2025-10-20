@@ -3,7 +3,6 @@
 
 import SwiftUI
 import SwiftData
-@preconcurrency import Combine
 
 // TODO: P3 - Review Unchecked Sendable and if we can make it safe
 @Observable

@@ -18,6 +18,7 @@ public class LogRetriever {
 
     private var directoryWatcher: MultiDirectoryWatcher?
     
+    // TODO: P1 - Change this to use Observable instead of Combine.
     private let appsSubject: CurrentValueSubject<[AppLogContainer], Error> = .init([])
     public var appsStream: AsyncThrowingStream<[AppLogContainer], Error> {
         AsyncThrowingStream<[AppLogContainer], Error> { continuation in

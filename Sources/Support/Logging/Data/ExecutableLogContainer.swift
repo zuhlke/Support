@@ -8,8 +8,7 @@ public struct ExecutableLogContainer: Hashable, Identifiable, Sendable {
         case `extension`(extensionPointIdentifier: String)
     }
 
-    // TODO: P2 – Review public exposure of the URL.
-    public var url: URL
+    var url: URL
     
     /// Identifier of the bundle associated with the executable
     ///

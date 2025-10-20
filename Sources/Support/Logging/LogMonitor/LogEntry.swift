@@ -5,8 +5,8 @@ import OSLog
 import SwiftData
 
 @Model
-public class LogEntry {
-    public struct Snapshot: Codable, Equatable {
+class LogEntry {
+    struct Snapshot: Codable, Equatable {
         var date: Date
         var composedMessage: String
         var level: String?
@@ -16,13 +16,13 @@ public class LogEntry {
         var signpostType: String?
     }
     
-    public var appRun: AppRun
+    var appRun: AppRun
     
-    public var date: Date
-    public var composedMessage: String
+    var date: Date
+    var composedMessage: String
     
     private var _level: Int?
-    public var level: OSLogEntryLog.Level? {
+    var level: OSLogEntryLog.Level? {
         get {
             guard let _level else { return nil }
             return .init(rawValue: _level)
@@ -32,13 +32,13 @@ public class LogEntry {
         }
     }
     
-    public var category: String?
-    public var subsystem: String?
+    var category: String?
+    var subsystem: String?
     
-    public var signpostName: String?
+    var signpostName: String?
     
     private var _signpostType: Int?
-    public var signpostType: OSLogEntrySignpost.SignpostType? {
+    var signpostType: OSLogEntrySignpost.SignpostType? {
         get {
             guard let _signpostType else { return nil }
             return .init(rawValue: _signpostType)
@@ -103,7 +103,7 @@ private extension OSLogEntrySignpost.SignpostType {
     }
 }
 
-public extension OSLogEntryLog.Level {
+extension OSLogEntryLog.Level {
     var exportDescription: String {
         switch self {
         case .undefined: "undefined"
