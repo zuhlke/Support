@@ -42,7 +42,7 @@ struct SampleData: PreviewModifier {
 extension PreviewTrait where T == Preview.ViewTraits {
 
     @available(iOS 26.0, *)
-    @MainActor public static var sampleData: PreviewTrait<Preview.ViewTraits> {
+    @MainActor static var sampleData: PreviewTrait<Preview.ViewTraits> {
         return .modifier(SampleData())
     }
 }

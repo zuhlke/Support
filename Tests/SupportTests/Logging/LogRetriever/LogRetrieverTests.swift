@@ -9,22 +9,20 @@ struct LogRetrieverTests {
     @Test(.timeLimit(.minutes(1)))
     func testInitWithValidConvention_withEmptyDirectory() async throws {
         let fileManager = FileManager()
-        try await fileManager.withTemporaryDirectory { url in
+        try fileManager.withTemporaryDirectory { url in
             let convention = LogStorageConvention(
                 baseStorageLocation: .customLocation(url: url),
                 basePathComponents: ["Test"]
             )
             
             let retriever = try LogRetriever(convention: convention)
-            
-            let apps = try await retriever.appsStream.first { _ in true }
-            #expect(apps?.isEmpty == true)
+            #expect(retriever.apps.isEmpty)
         }
     }
-    
+
     @Test(.timeLimit(.minutes(1)))
     func testInitWithValidConvention_withLogsForApp() async throws {
-        try await FileManager().withTemporaryDirectory { url in
+        try FileManager().withTemporaryDirectory { url in
             let fileManager = FileManager()
             let convention = LogStorageConvention(
                 baseStorageLocation: .customLocation(url: url),
@@ -52,10 +50,9 @@ struct LogRetrieverTests {
             try "<none>".write(to: logFile, atomically: false, encoding: .utf8)
             
             let retriever = try LogRetriever(convention: convention)
-            
-            let apps = try await retriever.appsStream.first { _ in true }
+
             #expect(
-                apps == [
+                retriever.apps == [
                     AppLogContainer(
                         id: "com.zuhlke.Support",
                         displayName: "Support",
@@ -75,7 +72,7 @@ struct LogRetrieverTests {
     
     @Test(.timeLimit(.minutes(1)))
     func testInitWithValidConvention_withLogsForAppAndExtension() async throws {
-        try await FileManager().withTemporaryDirectory { url in
+        try FileManager().withTemporaryDirectory { url in
             let fileManager = FileManager()
             let convention = LogStorageConvention(
                 baseStorageLocation: .customLocation(url: url),
@@ -111,10 +108,9 @@ struct LogRetrieverTests {
             try "<none>".write(to: extensionLogFile, atomically: false, encoding: .utf8)
             
             let retriever = try LogRetriever(convention: convention)
-            
-            let apps = try await retriever.appsStream.first { _ in true }
+
             #expect(
-                apps == [
+                retriever.apps == [
                     AppLogContainer(
                         id: "com.zuhlke.Support",
                         displayName: "Support",
@@ -137,10 +133,10 @@ struct LogRetrieverTests {
             )
         }
     }
-    
+
     @Test(.timeLimit(.minutes(1)))
     func testInitWithValidConvention_withLogsForAppAndExtension_withoutLogFile() async throws {
-        try await FileManager().withTemporaryDirectory { url in
+        try FileManager().withTemporaryDirectory { url in
             let fileManager = FileManager()
             let convention = LogStorageConvention(
                 baseStorageLocation: .customLocation(url: url),
@@ -173,10 +169,9 @@ struct LogRetrieverTests {
             try "<none>".write(to: logFile, atomically: false, encoding: .utf8)
             
             let retriever = try LogRetriever(convention: convention)
-            
-            let apps = try await retriever.appsStream.first { _ in true }
+
             #expect(
-                apps == [
+                retriever.apps == [
                     AppLogContainer(
                         id: "com.zuhlke.Support",
                         displayName: "Support",
@@ -205,10 +200,7 @@ struct LogRetrieverTests {
                 )
                 
                 let retriever = try LogRetriever(convention: convention)
-                
-                var appsStream = retriever.appsStream.makeAsyncIterator()
-                let apps = try await appsStream.next()
-                #expect(apps?.isEmpty == true)
+                #expect(retriever.apps.isEmpty)
                 
                 // Create manifest file
                 let manifestsDir = url.appending(path: "Test/Manifests")
@@ -228,9 +220,13 @@ struct LogRetrieverTests {
                 let manifestFile = manifestsDir.appending(path: "com.zuhlke.Support.json")
                 try manifestData.write(to: manifestFile)
                 
-                let appsAfterManifest = try await appsStream.next()
+                while retriever.apps.count != 1 {
+                    // FIXME: - Remove sleep and listen for the directory changes.
+                    try await Task.sleep(for: .milliseconds(100))
+                }
+            
                 #expect(
-                    appsAfterManifest == [
+                    retriever.apps == [
                         AppLogContainer(
                             id: "com.zuhlke.Support",
                             displayName: "Support",
@@ -244,9 +240,13 @@ struct LogRetrieverTests {
                 let logFile = logsDir.appending(path: "com.zuhlke.Support.logs")
                 try "<none>".write(to: logFile, atomically: false, encoding: .utf8)
                 
-                let appsAfterManifestAndLogfile = try await appsStream.next()
+                while let app = retriever.apps.first, app.executables.count != 1 {
+                    // FIXME: - Remove sleep and listen for the directory changes.
+                    try await Task.sleep(for: .milliseconds(100))
+                }
+
                 #expect(
-                    appsAfterManifestAndLogfile == [
+                    retriever.apps == [
                         AppLogContainer(
                             id: "com.zuhlke.Support",
                             displayName: "Support",
@@ -265,10 +265,14 @@ struct LogRetrieverTests {
                 // Create extension log file
                 let extensionLogFile = logsDir.appending(path: "com.zuhlke.Support.extension.logs")
                 try "<none>".write(to: extensionLogFile, atomically: false, encoding: .utf8)
+                
+                while let app = retriever.apps.first, app.executables.count != 2 {
+                    // FIXME: - Remove sleep and listen for the directory changes.
+                    try await Task.sleep(for: .milliseconds(100))
+                }
 
-                let appsAfterManifestAndLogfileAndExtension = try await appsStream.next()
                 #expect(
-                    appsAfterManifestAndLogfileAndExtension == [
+                    retriever.apps == [
                         AppLogContainer(
                             id: "com.zuhlke.Support",
                             displayName: "Support",

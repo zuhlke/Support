@@ -1,13 +1,16 @@
 #if canImport(SwiftData)
 
 import Foundation
-@preconcurrency import Combine
+import OSLog
 
+@Observable
 public class LogRetriever {
+    private static let logger = Logger(subsystem: "com.zuhlke.Support", category: "LogRetriever")
+
     private let fileManager = FileManager()
     private let convention: LogStorageConvention
     private let diagnosticsDirectory: URL
-    
+
     private var logsDirectory: URL {
         diagnosticsDirectory.appending(component: convention.logsDirectory)
     }
@@ -17,30 +20,8 @@ public class LogRetriever {
     }
 
     private var directoryWatcher: MultiDirectoryWatcher?
-    
-    private let appsSubject: CurrentValueSubject<[AppLogContainer], Error> = .init([])
-    public var appsStream: AsyncThrowingStream<[AppLogContainer], Error> {
-        AsyncThrowingStream<[AppLogContainer], Error> { continuation in
-            let cancellable = appsSubject
-                .sink(
-                    receiveCompletion: { completion in
-                        switch completion {
-                        case .finished:
-                            continuation.finish()
-                        case .failure(let error):
-                            continuation.finish(throwing: error)
-                        }
-                    },
-                    receiveValue: { value in
-                        continuation.yield(value)
-                    }
-                )
 
-            continuation.onTermination = { _ in
-                cancellable.cancel()
-            }
-        }
-    }
+    public private(set) var apps: [AppLogContainer] = []
 
     public init(convention: LogStorageConvention) throws {
         self.convention = convention
@@ -100,9 +81,9 @@ public class LogRetriever {
 
     private func refreshApps() {
         do {
-            try appsSubject.send(loadApps())
+            self.apps = try loadApps()
         } catch {
-            appsSubject.send(completion: .failure(error))
+            LogRetriever.logger.error("Error loading apps: \(error.localizedDescription)")
         }
     }
 

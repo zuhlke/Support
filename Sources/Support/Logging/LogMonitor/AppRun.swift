@@ -4,7 +4,7 @@ import Foundation
 import SwiftData
 
 @Model
-public class AppRun {
+class AppRun {
     struct Snapshot: Codable, Equatable {
         struct Info: Codable, Equatable {
             var appVersion: String
@@ -16,13 +16,13 @@ public class AppRun {
         var logEntries: [LogEntry.Snapshot]
     }
     
-    public var appVersion: String
-    public var operatingSystemVersion: String
-    public var launchDate: Date
-    public var device: String
+    var appVersion: String
+    var operatingSystemVersion: String
+    var launchDate: Date
+    var device: String
     
     @Relationship(deleteRule: .cascade, inverse: \LogEntry.appRun)
-    public var logEntries = [LogEntry]()
+    var logEntries = [LogEntry]()
     
     init(appVersion: String, operatingSystemVersion: String, launchDate: Date, device: String) {
         self.appVersion = appVersion

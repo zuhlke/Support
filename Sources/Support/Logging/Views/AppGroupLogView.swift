@@ -3,43 +3,21 @@
 
 import SwiftUI
 import SwiftData
-@preconcurrency import Combine
-
-// TODO: P3 - Review Unchecked Sendable and if we can make it safe
-@Observable
-class AppGroupLogViewModel: @unchecked Sendable {
-    let logRetriever: LogRetriever
-
-    var apps: [AppLogContainer] = []
-
-    init(convention: LogStorageConvention) {
-        let logRetriever = try! LogRetriever(convention: convention)
-        self.logRetriever = logRetriever
-        Task {
-            do {
-                for try await value in logRetriever.appsStream {
-                    self.apps = value
-                }
-            } catch {
-                // TODO: P3 - Handle error here
-            }
-        }
-    }
-}
 
 @available(iOS 26.0, *)
 @available(macOS, unavailable)
 public struct AppGroupLogView: View {
-    let viewModel: AppGroupLogViewModel
+    let logRetriever: LogRetriever
     
     public init(convention: LogStorageConvention) {
-        self.viewModel = AppGroupLogViewModel(convention: convention)
+        // TODO: (P2) This force unwrap.
+        self.logRetriever = try! LogRetriever(convention: convention)
     }
     
     public var body: some View {
         NavigationStack {
             List {
-                ForEach(viewModel.apps) { app in
+                ForEach(logRetriever.apps) { app in
                     Section(app.displayName) {
                         ForEach(app.executables) { executable in
                             NavigationLink(value: executable) {

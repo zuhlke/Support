@@ -118,8 +118,7 @@ public class LogMonitor {
 public extension LogMonitor {
     convenience init(
         convention: LogStorageConvention,
-        bundleMetadata: BundleMetadata = .main,
-        appLaunchDate: Date = .now
+        bundleMetadata: BundleMetadata = .main
     ) throws {
         let logStore = try OSLogStore(scope: .currentProcessIdentifier)
         try self.init(
@@ -127,7 +126,7 @@ public extension LogMonitor {
             bundleMetadata: bundleMetadata,
             deviceMetadata: DeviceMetadata.main,
             logStore: logStore,
-            appLaunchDate: appLaunchDate
+            appLaunchDate: .now
         )
     }
 }
