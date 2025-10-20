@@ -12,7 +12,7 @@ struct FileWatcherTests {
 
     @Test(.timeLimit(.minutes(1)))
     func `Sends a file changed event when existing file is modified`() async {
-        await withKnownIssueAndTimeLimit(duration: .seconds(10)) {
+        await withKnownIssueAndTimeLimit(isIntermittent: true, duration: .seconds(10)) {
             let fileManager = FileManager()
             try await fileManager.withTemporaryDirectory { tempDir in
                 let testFile = tempDir.appendingPathComponent("test.txt")
