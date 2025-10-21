@@ -1,3 +1,4 @@
+#if LoggingFeature
 #if canImport(Darwin)
 
 import Foundation
@@ -84,4 +85,5 @@ extension FileWatcher {
     }
 }
 
+#endif
 #endif

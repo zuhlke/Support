@@ -1,3 +1,4 @@
+#if LoggingFeature
 #if canImport(SwiftData)
 
 import Foundation
@@ -126,4 +127,5 @@ public class LogRetriever {
     }
 }
 
+#endif
 #endif

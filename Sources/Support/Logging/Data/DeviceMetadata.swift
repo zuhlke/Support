@@ -1,3 +1,4 @@
+#if LoggingFeature
 #if canImport(SwiftData)
 
 import Foundation
@@ -30,4 +31,5 @@ extension DeviceMetadata {
     }
 }
 
+#endif
 #endif

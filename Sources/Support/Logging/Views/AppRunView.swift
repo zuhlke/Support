@@ -1,3 +1,4 @@
+#if LoggingFeature
 #if os(iOS)
 #if canImport(SwiftUI)
 
@@ -202,5 +203,6 @@ struct AppRunView: View {
     }
 }
 
+#endif
 #endif
 #endif

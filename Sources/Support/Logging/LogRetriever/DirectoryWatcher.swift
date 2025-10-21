@@ -1,3 +1,4 @@
+#if LoggingFeature
 #if canImport(Darwin)
 
 import Foundation
@@ -85,4 +86,5 @@ class DirectoryWatcher {
     }
 }
 
+#endif
 #endif

@@ -1,3 +1,4 @@
+#if LoggingFeature
 #if canImport(SwiftData)
 
 import Testing
@@ -450,4 +451,5 @@ private struct LogStoreEntry: LogEntryProtocol {
     let date: Date
 }
 
+#endif
 #endif

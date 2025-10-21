@@ -1,3 +1,4 @@
+#if LoggingFeature
 #if os(iOS)
 
 import Foundation
@@ -21,4 +22,5 @@ extension Metadata {
     }
 }
 
+#endif
 #endif

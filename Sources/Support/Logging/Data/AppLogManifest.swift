@@ -1,4 +1,4 @@
-
+#if LoggingFeature
 #if canImport(SwiftData)
 
 /// A codable type used for storing information about the app for the purpose of re-consituting logging information.
@@ -72,4 +72,5 @@ extension AppLogManifest {
     }
 }
 
+#endif
 #endif

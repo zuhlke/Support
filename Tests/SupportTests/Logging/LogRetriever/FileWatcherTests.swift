@@ -1,3 +1,4 @@
+#if LoggingFeature
 #if canImport(Darwin)
 #if swift(>=6.2)
 
@@ -80,5 +81,6 @@ struct FileWatcherTests {
     }
 }
 
+#endif
 #endif
 #endif

@@ -1,4 +1,4 @@
-// swift-tools-version:6.0
+// swift-tools-version:6.2
 
 import PackageDescription
 
@@ -23,6 +23,10 @@ let package = Package(
             name: "TestingSupport",
             targets: ["TestingSupport"]
         ),
+    ],
+    traits: [
+        .trait(name: "LoggingFeature"),
+        .default(enabledTraits: ["LoggingFeature"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-http-types.git", from: "1.3.0"),

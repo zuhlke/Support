@@ -1,3 +1,4 @@
+#if LoggingFeature
 #if os(iOS)
 #if canImport(SwiftUI)
 
@@ -61,5 +62,6 @@ extension LogEntry {
     }
 }
 
+#endif
 #endif
 #endif

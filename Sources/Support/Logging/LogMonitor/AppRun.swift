@@ -1,3 +1,4 @@
+#if LoggingFeature
 #if canImport(SwiftData)
 
 import Foundation
@@ -44,4 +45,5 @@ class AppRun {
     }
 }
 
+#endif
 #endif

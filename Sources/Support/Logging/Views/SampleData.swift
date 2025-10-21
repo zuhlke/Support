@@ -1,3 +1,4 @@
+#if LoggingFeature
 #if os(iOS)
 
 import SwiftData
@@ -46,4 +47,5 @@ extension PreviewTrait where T == Preview.ViewTraits {
         return .modifier(SampleData())
     }
 }
+#endif
 #endif

@@ -1,3 +1,4 @@
+#if LoggingFeature
 #if canImport(SwiftData)
 import Foundation
 
@@ -23,4 +24,5 @@ public struct ExecutableLogContainer: Hashable, Identifiable, Sendable {
     public var packageType: PackageType
 }
 
+#endif
 #endif

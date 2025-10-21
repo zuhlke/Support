@@ -1,3 +1,4 @@
+#if LoggingFeature
 #if canImport(SwiftData)
 
 import Foundation
@@ -147,4 +148,5 @@ extension ModelContext {
 }
 
 
+#endif
 #endif

@@ -1,3 +1,4 @@
+#if LoggingFeature
 #if canImport(SwiftData)
 
 import Testing
@@ -42,4 +43,5 @@ struct AppRunTests {
     }
 }
 
+#endif
 #endif

@@ -1,3 +1,4 @@
+#if LoggingFeature
 #if os(iOS)
 
 import Foundation
@@ -55,4 +56,5 @@ extension LogEntry {
     }
 }
 
+#endif
 #endif

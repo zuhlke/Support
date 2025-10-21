@@ -1,4 +1,4 @@
-
+#if LoggingFeature
 #if canImport(SwiftData)
 
 import Foundation
@@ -110,4 +110,5 @@ extension BundleMetadata {
     
 }
 
+#endif
 #endif

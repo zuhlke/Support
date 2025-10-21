@@ -1,3 +1,4 @@
+#if LoggingFeature
 #if canImport(SwiftData)
 #if swift(>=6.2) // Required for the raw identifier in test method names.
 
@@ -191,5 +192,6 @@ private extension Bundle {
     
 }
 
+#endif
 #endif
 #endif

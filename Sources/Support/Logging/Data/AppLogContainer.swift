@@ -1,3 +1,4 @@
+#if LoggingFeature
 #if canImport(SwiftData)
 
 /// Log container for an app
@@ -12,4 +13,5 @@ public struct AppLogContainer: Identifiable, Equatable, Sendable {
     public var executables: [ExecutableLogContainer]
 }
 
+#endif
 #endif

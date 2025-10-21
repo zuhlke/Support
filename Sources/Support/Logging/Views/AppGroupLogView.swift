@@ -1,3 +1,4 @@
+#if LoggingFeature
 #if os(iOS)
 #if canImport(SwiftUI)
 
@@ -50,5 +51,6 @@ private extension ModelContainer {
     }
 }
 
+#endif
 #endif
 #endif

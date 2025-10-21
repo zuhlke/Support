@@ -1,3 +1,4 @@
+#if LoggingFeature
 #if canImport(SwiftData)
 
 import Testing
@@ -309,4 +310,5 @@ extension LogRetrieverTests {
     }
 }
 
+#endif
 #endif

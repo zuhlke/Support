@@ -1,3 +1,4 @@
+#if LoggingFeature
 #if canImport(SwiftUI)
 import SwiftUI
 
@@ -35,4 +36,5 @@ struct ExportView: View {
         }
     }
 }
+#endif
 #endif

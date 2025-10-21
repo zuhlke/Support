@@ -1,3 +1,4 @@
+#if LoggingFeature
 #if os(iOS)
 #if canImport(SwiftUI)
 
@@ -77,5 +78,6 @@ struct LogEntryView: View {
 }
 
 
+#endif
 #endif
 #endif

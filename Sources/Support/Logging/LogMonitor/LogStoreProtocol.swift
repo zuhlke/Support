@@ -1,3 +1,5 @@
+#if LoggingFeature
+
 import Foundation
 
 protocol LogEntryProtocol {
@@ -23,4 +25,5 @@ extension OSLogStore: LogStoreProtocol {
     }
 }
 
+#endif
 #endif

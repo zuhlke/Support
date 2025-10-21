@@ -1,3 +1,4 @@
+#if LoggingFeature
 #if os(iOS)
 import SwiftUI
 
@@ -21,4 +22,5 @@ extension String {
         return attributed
     }
 }
+#endif
 #endif
