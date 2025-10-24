@@ -7,13 +7,13 @@ import SwiftData
 public class AppRun {
     public struct Snapshot: Codable, Equatable {
         public struct Info: Codable, Equatable {
-            public private(set) var appVersion: String
-            public private(set) var operatingSystemVersion: String
-            public private(set) var launchDate: Date
-            public private(set) var device: String
+            public let appVersion: String
+            public let operatingSystemVersion: String
+            public let launchDate: Date
+            public let device: String
         }
-        public private(set) var info: Info
-        public private(set) var logEntries: [LogEntry.Snapshot]
+        public let info: Info
+        public let logEntries: [LogEntry.Snapshot]
     }
     
     public private(set) var appVersion: String

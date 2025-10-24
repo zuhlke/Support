@@ -7,10 +7,10 @@ public struct ExecutableLogContainer: Hashable, Identifiable, Sendable {
         case mainApp
         case `extension`(extensionPointIdentifier: String)
     }
-
-    // TODO: - Expose model configuration directly
-    public var url: URL
     
+    /// The url where logs are stored.
+    var url: URL
+
     /// Identifier of the bundle associated with the executable
     ///
     /// The bundle identifier for the main executable of an app is the same as the app bundle identifier.
@@ -22,6 +22,6 @@ public struct ExecutableLogContainer: Hashable, Identifiable, Sendable {
 
     /// The type of package
     public var packageType: PackageType
+    
 }
-
 #endif

@@ -136,8 +136,8 @@ struct Logs: Codable {
     var runs: [AppRun.Snapshot]
 }
 
-public extension ModelContext {
-    func insert<S>(contentsOf sequence: S) where S: Sequence, S.Element: PersistentModel {
+extension ModelContext {
+    fileprivate func insert<S>(contentsOf sequence: S) where S: Sequence, S.Element: PersistentModel {
         for model in sequence {
             self.insert(model)
         }

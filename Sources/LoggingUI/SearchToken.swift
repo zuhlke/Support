@@ -1,6 +1,7 @@
 #if os(iOS)
 
 import Foundation
+import OSLog
 import Support
 
 struct SearchToken: Identifiable, Equatable {
@@ -52,8 +53,22 @@ extension LogEntry {
         case .category:
             return category
         }
-        return nil
     }
 }
 
+// TODO: (P3) - This was duplicated from `LogEntry` so we don't expose it to public.
+// Review if we can remove one of these.
+extension OSLogEntryLog.Level {
+    var exportDescription: String {
+        switch self {
+        case .undefined: "undefined"
+        case .debug: "debug"
+        case .info: "info"
+        case .notice: "notice"
+        case .error: "error"
+        case .fault: "fault"
+        @unknown default: "unknown: \(rawValue)"
+        }
+    }
+}
 #endif

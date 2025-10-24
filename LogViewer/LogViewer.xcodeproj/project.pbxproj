@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		133F5F5C2E6AE4A900CCBFBB /* Support in Frameworks */ = {isa = PBXBuildFile; productRef = 133F5F5B2E6AE4A900CCBFBB /* Support */; };
 		133F5FAC2E6F1EEF00CCBFBB /* Support in Frameworks */ = {isa = PBXBuildFile; productRef = 133F5FAB2E6F1EEF00CCBFBB /* Support */; };
+		358B39172EAB919200FDCFEC /* LoggingUI in Frameworks */ = {isa = PBXBuildFile; productRef = 358B39162EAB919200FDCFEC /* LoggingUI */; };
 		35F3E20C2E7309830041E30D /* Support in Frameworks */ = {isa = PBXBuildFile; productRef = 35F3E20B2E7309830041E30D /* Support */; };
 /* End PBXBuildFile section */
 
@@ -59,6 +60,7 @@
 			files = (
 				35F3E20C2E7309830041E30D /* Support in Frameworks */,
 				133F5FAC2E6F1EEF00CCBFBB /* Support in Frameworks */,
+				358B39172EAB919200FDCFEC /* LoggingUI in Frameworks */,
 				133F5F5C2E6AE4A900CCBFBB /* Support in Frameworks */,
 			);
 		};
@@ -116,6 +118,7 @@
 				133F5F5B2E6AE4A900CCBFBB /* Support */,
 				133F5FAB2E6F1EEF00CCBFBB /* Support */,
 				35F3E20B2E7309830041E30D /* Support */,
+				358B39162EAB919200FDCFEC /* LoggingUI */,
 			);
 			productName = LogViewer;
 			productReference = 135E236D2E69C787001C5CA5 /* LogViewer.app */;
@@ -196,7 +199,7 @@
 			mainGroup = 135E23642E69C787001C5CA5;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				35F3E20A2E7309830041E30D /* XCLocalSwiftPackageReference "../." */,
+				358B39152EAB919200FDCFEC /* XCLocalSwiftPackageReference "../." */,
 			);
 			preferredProjectObjectVersion = 90;
 			productRefGroup = 135E236E2E69C787001C5CA5 /* Products */;
@@ -569,7 +572,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		35F3E20A2E7309830041E30D /* XCLocalSwiftPackageReference "../." */ = {
+		358B39152EAB919200FDCFEC /* XCLocalSwiftPackageReference "../." */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../.;
 		};
@@ -583,6 +586,10 @@
 		133F5FAB2E6F1EEF00CCBFBB /* Support */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Support;
+		};
+		358B39162EAB919200FDCFEC /* LoggingUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LoggingUI;
 		};
 		35F3E20B2E7309830041E30D /* Support */ = {
 			isa = XCSwiftPackageProductDependency;

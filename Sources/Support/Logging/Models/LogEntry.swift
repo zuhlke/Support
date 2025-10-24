@@ -7,13 +7,13 @@ import SwiftData
 @Model
 public class LogEntry {
     public struct Snapshot: Codable, Equatable {
-        public private(set) var date: Date
-        public private(set) var composedMessage: String
-        public private(set) var level: String?
-        public private(set) var category: String?
-        public private(set) var subsystem: String?
-        public private(set) var signpostName: String?
-        public private(set) var signpostType: String?
+        public let date: Date
+        public let composedMessage: String
+        public let level: String?
+        public let category: String?
+        public let subsystem: String?
+        public let signpostName: String?
+        public let signpostType: String?
     }
     
     public private(set) var appRun: AppRun
@@ -104,7 +104,7 @@ private extension OSLogEntrySignpost.SignpostType {
 }
 
 extension OSLogEntryLog.Level {
-    public var exportDescription: String {
+    var exportDescription: String {
         switch self {
         case .undefined: "undefined"
         case .debug: "debug"
