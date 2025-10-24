@@ -16,6 +16,10 @@ let package = Package(
             targets: ["Support"]
         ),
         .library(
+            name: "LoggingUI",
+            targets: ["LoggingUI"]
+        ),
+        .library(
             name: "ScenariosSupport",
             targets: ["ScenariosSupport"]
         ),
@@ -34,6 +38,10 @@ let package = Package(
                 .product(name: "HTTPTypes", package: "swift-http-types"),
                 .product(name: "HTTPTypesFoundation", package: "swift-http-types"),
             ]
+        ),
+        .target(
+            name: "LoggingUI",
+            dependencies: ["Support"]
         ),
         .target(
             name: "ScenariosSupport",

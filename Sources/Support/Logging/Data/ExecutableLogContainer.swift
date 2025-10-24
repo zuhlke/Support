@@ -8,7 +8,8 @@ public struct ExecutableLogContainer: Hashable, Identifiable, Sendable {
         case `extension`(extensionPointIdentifier: String)
     }
 
-    var url: URL
+    // TODO: - Expose model configuration directly
+    public var url: URL
     
     /// Identifier of the bundle associated with the executable
     ///

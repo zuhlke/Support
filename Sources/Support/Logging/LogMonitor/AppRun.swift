@@ -4,34 +4,34 @@ import Foundation
 import SwiftData
 
 @Model
-class AppRun {
-    struct Snapshot: Codable, Equatable {
-        struct Info: Codable, Equatable {
-            var appVersion: String
-            var operatingSystemVersion: String
-            var launchDate: Date
-            var device: String
+public class AppRun {
+    public struct Snapshot: Codable, Equatable {
+        public struct Info: Codable, Equatable {
+            public private(set) var appVersion: String
+            public private(set) var operatingSystemVersion: String
+            public private(set) var launchDate: Date
+            public private(set) var device: String
         }
-        var info: Info
-        var logEntries: [LogEntry.Snapshot]
+        public private(set) var info: Info
+        public private(set) var logEntries: [LogEntry.Snapshot]
     }
     
-    var appVersion: String
-    var operatingSystemVersion: String
-    var launchDate: Date
-    var device: String
+    public private(set) var appVersion: String
+    public private(set) var operatingSystemVersion: String
+    public private(set) var launchDate: Date
+    public private(set) var device: String
     
     @Relationship(deleteRule: .cascade, inverse: \LogEntry.appRun)
-    var logEntries = [LogEntry]()
+    public private(set) var logEntries = [LogEntry]()
     
-    init(appVersion: String, operatingSystemVersion: String, launchDate: Date, device: String) {
+    public init(appVersion: String, operatingSystemVersion: String, launchDate: Date, device: String) {
         self.appVersion = appVersion
         self.operatingSystemVersion = operatingSystemVersion
         self.launchDate = launchDate
         self.device = device
     }
     
-    var snapshot: Snapshot {
+    public var snapshot: Snapshot {
         .init(
             info: Snapshot.Info(
                 appVersion: self.appVersion,

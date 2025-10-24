@@ -3,6 +3,7 @@
 
 import SwiftUI
 import SwiftData
+import Support
 
 @available(iOS 26.0, *)
 @available(macOS, unavailable)

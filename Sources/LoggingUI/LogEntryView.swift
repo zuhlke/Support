@@ -2,6 +2,7 @@
 #if canImport(SwiftUI)
 
 import SwiftUI
+import Support
 
 struct LogEntryView: View {
     var entry: LogEntry

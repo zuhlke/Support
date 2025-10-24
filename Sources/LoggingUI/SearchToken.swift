@@ -1,6 +1,7 @@
 #if os(iOS)
 
 import Foundation
+import Support
 
 struct SearchToken: Identifiable, Equatable {
     var text: String
