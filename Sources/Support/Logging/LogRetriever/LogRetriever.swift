@@ -1,4 +1,4 @@
-#if canImport(SwiftData)
+#if canImport(OSLog)
 
 import Foundation
 import OSLog

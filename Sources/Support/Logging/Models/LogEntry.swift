@@ -5,24 +5,24 @@ import OSLog
 import SwiftData
 
 @Model
-class LogEntry {
-    struct Snapshot: Codable, Equatable {
-        var date: Date
-        var composedMessage: String
-        var level: String?
-        var category: String?
-        var subsystem: String?
-        var signpostName: String?
-        var signpostType: String?
+public class LogEntry {
+    public struct Snapshot: Codable, Equatable {
+        public let date: Date
+        public let composedMessage: String
+        public let level: String?
+        public let category: String?
+        public let subsystem: String?
+        public let signpostName: String?
+        public let signpostType: String?
     }
     
-    var appRun: AppRun
+    public private(set) var appRun: AppRun
     
-    var date: Date
-    var composedMessage: String
+    public private(set) var date: Date
+    public private(set) var composedMessage: String
     
     private var _level: Int?
-    var level: OSLogEntryLog.Level? {
+    public private(set) var level: OSLogEntryLog.Level? {
         get {
             guard let _level else { return nil }
             return .init(rawValue: _level)
@@ -32,13 +32,13 @@ class LogEntry {
         }
     }
     
-    var category: String?
-    var subsystem: String?
+    public private(set) var category: String?
+    public private(set) var subsystem: String?
     
-    var signpostName: String?
+    public private(set) var signpostName: String?
     
     private var _signpostType: Int?
-    var signpostType: OSLogEntrySignpost.SignpostType? {
+    public private(set) var signpostType: OSLogEntrySignpost.SignpostType? {
         get {
             guard let _signpostType else { return nil }
             return .init(rawValue: _signpostType)
@@ -48,7 +48,7 @@ class LogEntry {
         }
     }
     
-    init(appRun: AppRun, date: Date, composedMessage: String, level: OSLogEntryLog.Level? = nil, category: String? = nil, subsystem: String? = nil) {
+    public init(appRun: AppRun, date: Date, composedMessage: String, level: OSLogEntryLog.Level? = nil, category: String? = nil, subsystem: String? = nil) {
         self.appRun = appRun
         self.date = date
         self.composedMessage = composedMessage
@@ -57,7 +57,7 @@ class LogEntry {
         self.subsystem = subsystem
     }
     
-    var snapshot: Snapshot {
+    public var snapshot: Snapshot {
         .init(
             date: self.date,
             composedMessage: self.composedMessage,

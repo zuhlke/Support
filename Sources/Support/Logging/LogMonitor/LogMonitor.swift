@@ -137,13 +137,11 @@ struct Logs: Codable {
 }
 
 extension ModelContext {
-    
-    func insert<S>(contentsOf sequence: S) where S: Sequence, S.Element: PersistentModel {
+    fileprivate func insert<S>(contentsOf sequence: S) where S: Sequence, S.Element: PersistentModel {
         for model in sequence {
             self.insert(model)
         }
     }
-    
 }
 
 

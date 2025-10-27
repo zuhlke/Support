@@ -2,6 +2,7 @@
 
 import SwiftData
 import SwiftUI
+import Support
 
 struct SampleData: PreviewModifier {
     static func makeAppRun(
@@ -20,7 +21,9 @@ struct SampleData: PreviewModifier {
         ]
         
         context.insert(appRun)
-        context.insert(contentsOf: logEntries)
+        for model in logEntries {
+            context.insert(model)
+        }
     }
     
     static func makeSharedContext() throws -> ModelContainer {

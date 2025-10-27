@@ -3,6 +3,7 @@
 
 import Foundation
 import SwiftUI
+import Support
 
 extension [LogEntry] {
     func filter(searchText: String, tokens: [SearchToken]) -> [LogEntry] {

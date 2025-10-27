@@ -3,6 +3,7 @@
 
 import SwiftUI
 import SwiftData
+import Support
 
 @available(iOS 26.0, *)
 @available(macOS, unavailable)
@@ -41,12 +42,6 @@ public struct AppGroupLogView: View {
                     .modelContainer(try! ModelContainer(from: executable))
             }
         }
-    }
-}
-
-private extension ModelContainer {
-    convenience init(from executable: ExecutableLogContainer) throws {
-        try self.init(for: AppRun.self, configurations: ModelConfiguration(url: executable.url))
     }
 }
 
