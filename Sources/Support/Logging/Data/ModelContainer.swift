@@ -6,8 +6,8 @@ public extension ModelContainer {
         try self.init(
             for: AppRun.self,
             configurations: ModelConfiguration(
-                url: executable.url
-            )
+                url: executable.url,
+            ),
         )
     }
 }

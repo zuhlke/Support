@@ -3,8 +3,8 @@
 
 import Foundation
 import Testing
-@testable import Support
 import TestingSupport
+@testable import Support
 
 @Suite
 struct AppLogManifestTests {
@@ -15,7 +15,7 @@ struct AppLogManifestTests {
             name: .random(),
             version: .random(),
             shortVersionString: .random(),
-            packageType: .extension(.init(extensionPointIdentifier: .random()))
+            packageType: .extension(.init(extensionPointIdentifier: .random())),
         )
         try #require(throws: AppLogManifest.NotAnAppBundle.self) {
             try AppLogManifest(from: metadata)
@@ -28,7 +28,7 @@ struct AppLogManifestTests {
             name: .random(),
             version: .random(),
             shortVersionString: .random(),
-            packageType: .other(typeIdentifier: .random())
+            packageType: .other(typeIdentifier: .random()),
         )
         try #require(throws: AppLogManifest.NotAnAppBundle.self) {
             try AppLogManifest(from: metadata)
@@ -49,9 +49,9 @@ struct AppLogManifestTests {
             packageType: .app(
                 BundleMetadata.AppMetadata(
                     plugins: [],
-                    watchCompanionAppBundleIdentifier: watchCompanionAppBundleIdentifier
-                )
-            )
+                    watchCompanionAppBundleIdentifier: watchCompanionAppBundleIdentifier,
+                ),
+            ),
         )
         let manifest = try AppLogManifest(from: metadata)
         #expect(manifest.manifestVersion == 1)
@@ -86,11 +86,11 @@ struct AppLogManifestTests {
                         nonLocalisedDisplayName: extension_nonLocalisedDisplayName,
                         version: .random(),
                         shortVersionString: .random(),
-                        packageType: .extension(.init(extensionPointIdentifier: extension_extensionPointIdentifier))
+                        packageType: .extension(.init(extensionPointIdentifier: extension_extensionPointIdentifier)),
                     )],
-                    watchCompanionAppBundleIdentifier: watchCompanionAppBundleIdentifier
-                )
-            )
+                    watchCompanionAppBundleIdentifier: watchCompanionAppBundleIdentifier,
+                ),
+            ),
         )
         
         let manifest = try AppLogManifest(from: metadata)
@@ -108,7 +108,6 @@ struct AppLogManifestTests {
     }
     
 }
-
 
 #endif
 #endif

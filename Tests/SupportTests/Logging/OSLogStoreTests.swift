@@ -1,9 +1,9 @@
 #if canImport(OSLog)
 
 import Foundation
+import OSLog
 import Support
 import Testing
-import OSLog
 
 // TODO: P3 – Provide suitable environment for `OSLogStore` tests.
 // We can’t read `OSLogStore` from package tests in all environments (currently, this is failing locally but not on the CI).
@@ -31,7 +31,7 @@ struct OSLogStoreTests {
         let returnedMessages = entries
             .compactMap { $0 as? OSLogEntryLog }
             .filter { $0.subsystem == subsystem }
-            .map { $0.composedMessage }
+            .map(\.composedMessage)
         
         #expect(returnedMessages == ["Second", "Third"])
     }

@@ -15,7 +15,7 @@ struct DeviceMetadata: Equatable, Sendable {
 extension DeviceMetadata {
     static let main = DeviceMetadata(
         operatingSystemVersion: ProcessInfo.processInfo.operatingSystemVersionString,
-        deviceModel: deviceModel()
+        deviceModel: deviceModel(),
     )
     
     private static func deviceModel() -> String {

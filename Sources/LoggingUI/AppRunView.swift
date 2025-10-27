@@ -1,9 +1,9 @@
 #if os(iOS)
 #if canImport(SwiftUI)
 
-import SwiftUI
-import SwiftData
 import Support
+import SwiftData
+import SwiftUI
 
 @available(iOS 26.0, *)
 @available(macOS, unavailable)
@@ -13,7 +13,7 @@ struct AppRunView: View {
             entry.subsystem != nil && entry.subsystem != "" && !(entry.subsystem?.contains("com.apple.") ?? false)
         },
         sort: \.date,
-        order: .reverse
+        order: .reverse,
     ) var logEntries: [LogEntry]
     
     @State var isShowingMetadata = Set<Metadata>(Metadata.allCases)
@@ -99,11 +99,11 @@ struct AppRunView: View {
                     Section {
                         ForEach(groupedEntries[appRun]!.sorted(by: { $0.date < $1.date })) { entry in
                             LogEntryView(entry: entry, searchText: searchText, tokens: tokens, isShowingMetadata: isShowingMetadata, shouldShowExpandedMessages: shouldShowExpandedMessages)
-                            .padding(16)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(entry.background)
-                            .overlay(Divider().padding(.horizontal, 16), alignment: .bottom)
-                            .contextMenu { contextMenu(for: entry) }
+                                .padding(16)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(entry.background)
+                                .overlay(Divider().padding(.horizontal, 16), alignment: .bottom)
+                                .contextMenu { contextMenu(for: entry) }
                         }
                     } header: {
                         appRunHeader(appRun: appRun)
@@ -125,29 +125,29 @@ struct AppRunView: View {
     
     var searchableAppRuns: some View {
         appRuns
-        .searchable(text: $searchText, tokens: $tokens) { token in
-            HStack {
-                Image(systemName: token.scope.filledImage)
-                Text(token.text.lowercased())
-            }
-        }
-        .searchSuggestions {
-            if !searchText.isEmpty {
-                Section("Suggestions") {
-                    suggestionText(for: .message)
-                    suggestionText(for: .level)
-                    suggestionText(for: .subsystem)
-                    suggestionText(for: .category)
+            .searchable(text: $searchText, tokens: $tokens) { token in
+                HStack {
+                    Image(systemName: token.scope.filledImage)
+                    Text(token.text.lowercased())
                 }
-                Section("Results") {
-                    ForEach(filteredEntries, id: \.self) { entry in
-                        LogEntryView(entry: entry, searchText: searchText, tokens: tokens, isShowingMetadata: isShowingMetadata, shouldShowExpandedMessages: shouldShowExpandedMessages)
-                            .listRowBackground(entry.background)
-                            .contextMenu { contextMenu(for: entry) }
+            }
+            .searchSuggestions {
+                if !searchText.isEmpty {
+                    Section("Suggestions") {
+                        suggestionText(for: .message)
+                        suggestionText(for: .level)
+                        suggestionText(for: .subsystem)
+                        suggestionText(for: .category)
+                    }
+                    Section("Results") {
+                        ForEach(filteredEntries, id: \.self) { entry in
+                            LogEntryView(entry: entry, searchText: searchText, tokens: tokens, isShowingMetadata: isShowingMetadata, shouldShowExpandedMessages: shouldShowExpandedMessages)
+                                .listRowBackground(entry.background)
+                                .contextMenu { contextMenu(for: entry) }
+                        }
                     }
                 }
             }
-        }
     }
     
     var menu: some View {
@@ -185,14 +185,14 @@ struct AppRunView: View {
     var body: some View {
         searchableAppRuns
             .onChange(of: [logEntries.description, tokens.description, searchText], initial: true) {
-            filterEntries()
-        }
-        .toolbar {
-            DefaultToolbarItem(kind: .search, placement: .bottomBar)
-            ToolbarItem(placement: .topBarTrailing) {
-                menu
+                filterEntries()
             }
-        }
+            .toolbar {
+                DefaultToolbarItem(kind: .search, placement: .bottomBar)
+                ToolbarItem(placement: .topBarTrailing) {
+                    menu
+                }
+            }
     }
 }
 

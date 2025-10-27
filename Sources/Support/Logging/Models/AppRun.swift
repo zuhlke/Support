@@ -12,6 +12,7 @@ public class AppRun {
             public let launchDate: Date
             public let device: String
         }
+
         public let info: Info
         public let logEntries: [LogEntry.Snapshot]
     }
@@ -34,12 +35,12 @@ public class AppRun {
     public var snapshot: Snapshot {
         .init(
             info: Snapshot.Info(
-                appVersion: self.appVersion,
-                operatingSystemVersion: self.operatingSystemVersion,
-                launchDate: self.launchDate,
-                device: self.device,
+                appVersion: appVersion,
+                operatingSystemVersion: operatingSystemVersion,
+                launchDate: launchDate,
+                device: device,
             ),
-            logEntries: self.logEntries.map(\.snapshot)
+            logEntries: logEntries.map(\.snapshot),
         )
     }
 }

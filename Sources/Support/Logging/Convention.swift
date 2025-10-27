@@ -29,7 +29,7 @@ extension LogStorageConvention {
     public static func commonAppGroup(identifier: String) -> LogStorageConvention {
         LogStorageConvention(
             baseStorageLocation: .appGroup(identifier: identifier),
-            basePathComponents: []
+            basePathComponents: [],
         )
     }
 }

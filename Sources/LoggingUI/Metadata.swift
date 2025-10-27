@@ -10,13 +10,13 @@ extension Metadata {
     var image: String {
         switch self {
         case .level:
-            return "flag"
+            "flag"
         case .timestamp:
-            return "clock"
+            "clock"
         case .subsystem:
-            return "gearshape.2"
+            "gearshape.2"
         case .category:
-            return "square.grid.3x3"
+            "square.grid.3x3"
         }
     }
 }

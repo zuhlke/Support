@@ -1,18 +1,18 @@
 #if canImport(SwiftData)
 
-import Testing
 import Foundation
+import Testing
 import TestingSupport
 @testable import Support
 
 struct LogRetrieverTests {
     @Test(.timeLimit(.minutes(1)))
-    func testInitWithValidConvention_withEmptyDirectory() async throws {
+    func initWithValidConvention_withEmptyDirectory() async throws {
         let fileManager = FileManager()
         try fileManager.withTemporaryDirectory { url in
             let convention = LogStorageConvention(
                 baseStorageLocation: .customLocation(url: url),
-                basePathComponents: ["Test"]
+                basePathComponents: ["Test"],
             )
             
             let retriever = try LogRetriever(convention: convention)
@@ -21,12 +21,12 @@ struct LogRetrieverTests {
     }
 
     @Test(.timeLimit(.minutes(1)))
-    func testInitWithValidConvention_withLogsForApp() async throws {
+    func initWithValidConvention_withLogsForApp() async throws {
         try FileManager().withTemporaryDirectory { url in
             let fileManager = FileManager()
             let convention = LogStorageConvention(
                 baseStorageLocation: .customLocation(url: url),
-                basePathComponents: ["Test"]
+                basePathComponents: ["Test"],
             )
             
             // Create manifest file
@@ -37,7 +37,7 @@ struct LogRetrieverTests {
                 manifestVersion: 1,
                 id: "com.zuhlke.Support",
                 name: "Support",
-                extensions: [:]
+                extensions: [:],
             )
             let manifestData = try JSONEncoder().encode(manifest)
             let manifestFile = manifestsDir.appending(path: "com.zuhlke.Support.json")
@@ -61,22 +61,22 @@ struct LogRetrieverTests {
                                 url: expectedURL(with: logFile),
                                 id: "com.zuhlke.Support",
                                 displayName: "Support",
-                                packageType: .mainApp
-                            )
-                        ]
-                    )
-                ]
+                                packageType: .mainApp,
+                            ),
+                        ],
+                    ),
+                ],
             )
         }
     }
     
     @Test(.timeLimit(.minutes(1)))
-    func testInitWithValidConvention_withLogsForAppAndExtension() async throws {
+    func initWithValidConvention_withLogsForAppAndExtension() async throws {
         try FileManager().withTemporaryDirectory { url in
             let fileManager = FileManager()
             let convention = LogStorageConvention(
                 baseStorageLocation: .customLocation(url: url),
-                basePathComponents: ["Test"]
+                basePathComponents: ["Test"],
             )
             
             // Create manifest file
@@ -90,9 +90,9 @@ struct LogRetrieverTests {
                 extensions: [
                     "com.zuhlke.Support.extension": .init(
                         name: "SupportExtension",
-                        extensionPointIdentifier: "com.apple.widgetkit-extension"
-                    )
-                ]
+                        extensionPointIdentifier: "com.apple.widgetkit-extension",
+                    ),
+                ],
             )
             let manifestData = try JSONEncoder().encode(manifest)
             let manifestFile = manifestsDir.appending(path: "com.zuhlke.Support.json")
@@ -119,28 +119,28 @@ struct LogRetrieverTests {
                                 url: expectedURL(with: logFile),
                                 id: "com.zuhlke.Support",
                                 displayName: "Support",
-                                packageType: .mainApp
+                                packageType: .mainApp,
                             ),
                             ExecutableLogContainer(
                                 url: expectedURL(with: extensionLogFile),
                                 id: "com.zuhlke.Support.extension",
                                 displayName: "SupportExtension",
-                                packageType: .extension(extensionPointIdentifier: "com.apple.widgetkit-extension")
-                            )
-                        ]
-                    )
-                ]
+                                packageType: .extension(extensionPointIdentifier: "com.apple.widgetkit-extension"),
+                            ),
+                        ],
+                    ),
+                ],
             )
         }
     }
 
     @Test(.timeLimit(.minutes(1)))
-    func testInitWithValidConvention_withLogsForAppAndExtension_withoutLogFile() async throws {
+    func initWithValidConvention_withLogsForAppAndExtension_withoutLogFile() async throws {
         try FileManager().withTemporaryDirectory { url in
             let fileManager = FileManager()
             let convention = LogStorageConvention(
                 baseStorageLocation: .customLocation(url: url),
-                basePathComponents: ["Test"]
+                basePathComponents: ["Test"],
             )
             
             // Create manifest file
@@ -154,9 +154,9 @@ struct LogRetrieverTests {
                 extensions: [
                     "com.zuhlke.Support.extension": .init(
                         name: "SupportExtension",
-                        extensionPointIdentifier: "com.apple.widgetkit-extension"
-                    )
-                ]
+                        extensionPointIdentifier: "com.apple.widgetkit-extension",
+                    ),
+                ],
             )
             let manifestData = try JSONEncoder().encode(manifest)
             let manifestFile = manifestsDir.appending(path: "com.zuhlke.Support.json")
@@ -180,23 +180,23 @@ struct LogRetrieverTests {
                                 url: expectedURL(with: logFile),
                                 id: "com.zuhlke.Support",
                                 displayName: "Support",
-                                packageType: .mainApp
-                            )
-                        ]
-                    )
-                ]
+                                packageType: .mainApp,
+                            ),
+                        ],
+                    ),
+                ],
             )
         }
     }
     
     @Test(.timeLimit(.minutes(1)))
-    func testInitWithValidConvention_withFilesCreated_afterInit() async throws {
+    func initWithValidConvention_withFilesCreated_afterInit() async throws {
         await withKnownIssueAndTimeLimit(isIntermittent: true, duration: .seconds(10)) {
             let fileManager = FileManager()
             try await fileManager.withTemporaryDirectory { url in
                 let convention = LogStorageConvention(
                     baseStorageLocation: .customLocation(url: url),
-                    basePathComponents: ["Test"]
+                    basePathComponents: ["Test"],
                 )
                 
                 let retriever = try LogRetriever(convention: convention)
@@ -212,9 +212,9 @@ struct LogRetrieverTests {
                     extensions: [
                         "com.zuhlke.Support.extension": .init(
                             name: "SupportExtension",
-                            extensionPointIdentifier: "com.apple.widgetkit-extension"
-                        )
-                    ]
+                            extensionPointIdentifier: "com.apple.widgetkit-extension",
+                        ),
+                    ],
                 )
                 let manifestData = try JSONEncoder().encode(manifest)
                 let manifestFile = manifestsDir.appending(path: "com.zuhlke.Support.json")
@@ -230,9 +230,9 @@ struct LogRetrieverTests {
                         AppLogContainer(
                             id: "com.zuhlke.Support",
                             displayName: "Support",
-                            executables: []
-                        )
-                    ]
+                            executables: [],
+                        ),
+                    ],
                 )
                 
                 // Create log file
@@ -255,11 +255,11 @@ struct LogRetrieverTests {
                                     url: expectedURL(with: logFile),
                                     id: "com.zuhlke.Support",
                                     displayName: "Support",
-                                    packageType: .mainApp
-                                )
-                            ]
-                        )
-                    ]
+                                    packageType: .mainApp,
+                                ),
+                            ],
+                        ),
+                    ],
                 )
                 
                 // Create extension log file
@@ -281,17 +281,17 @@ struct LogRetrieverTests {
                                     url: expectedURL(with: logFile),
                                     id: "com.zuhlke.Support",
                                     displayName: "Support",
-                                    packageType: .mainApp
+                                    packageType: .mainApp,
                                 ),
                                 ExecutableLogContainer(
                                     url: expectedURL(with: extensionLogFile),
                                     id: "com.zuhlke.Support.extension",
                                     displayName: "SupportExtension",
-                                    packageType: .extension(extensionPointIdentifier: "com.apple.widgetkit-extension")
-                                )
-                            ]
-                        )
-                    ]
+                                    packageType: .extension(extensionPointIdentifier: "com.apple.widgetkit-extension"),
+                                ),
+                            ],
+                        ),
+                    ],
                 )
             }
         }
@@ -300,12 +300,12 @@ struct LogRetrieverTests {
 
 extension LogRetrieverTests {
     private func expectedURL(with url: URL) -> URL {
-#if os(macOS)
+        #if os(macOS)
         // TODO: (P3) - Review the URL prefix on macOS.
         return URL(string: "file:///private")!.appending(path: url.path())
-#else
+        #else
         return url
-#endif
+        #endif
     }
 }
 

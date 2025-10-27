@@ -1,9 +1,9 @@
 #if canImport(Darwin)
 #if swift(>=6.2)
 
-import Testing
 import Foundation
 import OSLog
+import Testing
 import TestingSupport
 @testable import Support
 

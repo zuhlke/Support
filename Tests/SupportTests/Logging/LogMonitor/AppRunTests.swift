@@ -1,7 +1,7 @@
 #if canImport(SwiftData)
 
-import Testing
 import Foundation
+import Testing
 @testable import Support
 
 struct AppRunTests {
@@ -11,7 +11,7 @@ struct AppRunTests {
             appVersion: "1.0.0",
             operatingSystemVersion: "26.0",
             launchDate: Date(timeIntervalSince1970: 10),
-            device: "iPhone 17 Pro"
+            device: "iPhone 17 Pro",
         )
 
         #expect(appRun.appVersion == "1.0.0")
@@ -27,7 +27,7 @@ struct AppRunTests {
             appVersion: "1.0.0",
             operatingSystemVersion: "26.0",
             launchDate: Date(timeIntervalSince1970: 10),
-            device: "iPhone 17 Pro"
+            device: "iPhone 17 Pro",
         ).snapshot
 
         #expect(appRunSnapshot.logEntries.isEmpty)
@@ -36,8 +36,8 @@ struct AppRunTests {
                 appVersion: "1.0.0",
                 operatingSystemVersion: "26.0",
                 launchDate: Date(timeIntervalSince1970: 10),
-                device: "iPhone 17 Pro"
-            )
+                device: "iPhone 17 Pro",
+            ),
         )
     }
 }
