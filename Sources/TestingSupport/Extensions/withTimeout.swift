@@ -6,7 +6,7 @@ public func withKnownIssueAndTimeLimit(
     isIntermittent: Bool = false,
     sourceLocation: SourceLocation = #_sourceLocation,
     duration: Duration,
-    body: @Sendable @escaping () async throws -> Void
+    body: @Sendable @escaping () async throws -> Void,
 ) async {
     await withKnownIssue(isIntermittent: isIntermittent) {
         try await withTimeout(duration: duration, operation: body)
@@ -15,7 +15,7 @@ public func withKnownIssueAndTimeLimit(
 
 public func withTimeout<Result: Sendable>(
     duration: Duration,
-    operation: @Sendable @escaping () async -> Result?
+    operation: @Sendable @escaping () async -> Result?,
 ) async -> Result? {
     await withTaskGroup(of: Result?.self, returning: Result?.self) { group in
         group.addTask(operation: operation)
@@ -31,7 +31,7 @@ public func withTimeout<Result: Sendable>(
 
 public func withTimeout<Output: Sendable>(
     duration: Duration,
-    operation: @Sendable @escaping () async throws -> Output?
+    operation: @Sendable @escaping () async throws -> Output?,
 ) async throws -> Output? {
     let result = await withTimeout(duration: duration) { () -> Result<Output, Error>? in
         do {

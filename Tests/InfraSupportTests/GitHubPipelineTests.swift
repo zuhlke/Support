@@ -9,7 +9,7 @@ class GitHubPipelineTests: XCTestCase {
         let pipeline = MockPipeline()
         let expected = GitHub.Pipeline(
             actions: [.init(pipeline.action)],
-            workflows: [pipeline.workflow]
+            workflows: [pipeline.workflow],
         )
         let encoder = GitHub.MetadataEncoder()
         try TS.assert(encoder.projectFiles(for: pipeline), equals: encoder.projectFiles(for: expected))

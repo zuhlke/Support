@@ -1,7 +1,7 @@
 #if canImport(SwiftUI)
 
-import SwiftUI
 import OSLog
+import SwiftUI
 
 struct LevelView: View {
     var size: CGFloat = 24

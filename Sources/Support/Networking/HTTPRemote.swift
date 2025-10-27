@@ -53,7 +53,7 @@ public struct HTTPRemote {
         user: String? = nil,
         password: String? = nil,
         queryParameters: [String: String] = [:],
-        headerFields: HTTPFields = HTTPFields()
+        headerFields: HTTPFields = HTTPFields(),
     ) {
         
         guard path.isEmpty || path.starts(with: "/") else {
@@ -165,7 +165,7 @@ extension HTTPRemote.QueryParametersMergePolicy {
             throw Errors.requestOverridesQueryParameters(overriddenParameters)
         }
         
-        return Dictionary(uniqueKeysWithValues: [remoteParameters, requestParameters].lazy.flatMap { $0 }.map { $0 })
+        return Dictionary(uniqueKeysWithValues: [remoteParameters, requestParameters].lazy.flatMap(\.self).map(\.self))
     }
     
     /// A custom header policy that accepts a closure to determine the behaviour.

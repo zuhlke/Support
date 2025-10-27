@@ -20,7 +20,7 @@ extension HTTPRequest.Body {
     public static func plain(_ data: Data) -> HTTPRequest.Body {
         .init(
             content: data,
-            type: "text/plain"
+            type: "text/plain",
         )
     }
     
@@ -33,7 +33,7 @@ extension HTTPRequest.Body {
     public static func json(_ data: Data) -> HTTPRequest.Body {
         .init(
             content: data,
-            type: "application/json"
+            type: "application/json",
         )
     }
     

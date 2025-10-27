@@ -16,7 +16,7 @@ public class LogMonitor {
         bundleMetadata: BundleMetadata,
         deviceMetadata: DeviceMetadata,
         logStore: LogStoreProtocol,
-        appLaunchDate: Date
+        appLaunchDate: Date,
     ) throws {
         let fileManager = FileManager()
         
@@ -52,11 +52,11 @@ public class LogMonitor {
         let configuration = ModelConfiguration(url: logFile, cloudKitDatabase: .none)
         let modelContainer = try ModelContainer(
             for: AppRun.self,
-            configurations: configuration
+            configurations: configuration,
         )
         self.modelContainer = modelContainer
 
-        self.monitoringTask = Task.detached(name: "LogMonitorTask") {
+        monitoringTask = Task.detached(name: "LogMonitorTask") {
             do {
                 try await LogMonitor.startMonitoring(
                     context: ModelContext(modelContainer),
@@ -86,7 +86,7 @@ public class LogMonitor {
             appVersion: bundleMetadata.version,
             operatingSystemVersion: deviceMetadata.operatingSystemVersion,
             launchDate: appLaunchDate,
-            device: deviceMetadata.deviceModel
+            device: deviceMetadata.deviceModel,
         )
         context.insert(appRun)
         try context.save()
@@ -118,7 +118,7 @@ public class LogMonitor {
 public extension LogMonitor {
     convenience init(
         convention: LogStorageConvention,
-        bundleMetadata: BundleMetadata = .main
+        bundleMetadata: BundleMetadata = .main,
     ) throws {
         let logStore = try OSLogStore(scope: .currentProcessIdentifier)
         try self.init(
@@ -126,7 +126,7 @@ public extension LogMonitor {
             bundleMetadata: bundleMetadata,
             deviceMetadata: DeviceMetadata.main,
             logStore: logStore,
-            appLaunchDate: .now
+            appLaunchDate: .now,
         )
     }
 }
@@ -139,10 +139,9 @@ struct Logs: Codable {
 extension ModelContext {
     fileprivate func insert<S>(contentsOf sequence: S) where S: Sequence, S.Element: PersistentModel {
         for model in sequence {
-            self.insert(model)
+            insert(model)
         }
     }
 }
-
 
 #endif

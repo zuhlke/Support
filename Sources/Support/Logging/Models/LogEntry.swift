@@ -59,13 +59,13 @@ public class LogEntry {
     
     public var snapshot: Snapshot {
         .init(
-            date: self.date,
-            composedMessage: self.composedMessage,
-            level: self.level.map { $0.exportDescription },
-            category: self.category,
-            subsystem: self.subsystem,
-            signpostName: self.signpostName,
-            signpostType: self.signpostType.map { $0.exportDescription },
+            date: date,
+            composedMessage: composedMessage,
+            level: level.map(\.exportDescription),
+            category: category,
+            subsystem: subsystem,
+            signpostName: signpostName,
+            signpostType: signpostType.map(\.exportDescription),
         )
     }
 }
@@ -78,15 +78,15 @@ extension LogEntry {
             composedMessage: entry.composedMessage,
         )
         if let entry = entry as? OSLogEntryLog {
-            self.level = entry.level
+            level = entry.level
         }
         if let entry = entry as? OSLogEntrySignpost {
-            self.signpostName = entry.signpostName
-            self.signpostType = entry.signpostType
+            signpostName = entry.signpostName
+            signpostType = entry.signpostType
         }
         if let entry = entry as? OSLogEntryWithPayload {
-            self.category = entry.category
-            self.subsystem = entry.subsystem
+            category = entry.category
+            subsystem = entry.subsystem
         }
     }
 }

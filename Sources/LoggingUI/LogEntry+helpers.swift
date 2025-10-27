@@ -2,8 +2,8 @@
 #if canImport(SwiftUI)
 
 import Foundation
-import SwiftUI
 import Support
+import SwiftUI
 
 extension [LogEntry] {
     func filter(searchText: String, tokens: [SearchToken]) -> [LogEntry] {
@@ -16,8 +16,8 @@ extension [LogEntry] {
                     logEntry.composedMessage,
                     logEntry.level?.exportDescription,
                     logEntry.subsystem,
-                    logEntry.category
-                ].compactMap { $0 }
+                    logEntry.category,
+                ].compactMap(\.self)
                 
                 return fields.contains { $0.localizedCaseInsensitiveContains(trimmedSearchText) }
             }
@@ -51,13 +51,13 @@ extension LogEntry {
     func scope(_ scope: SearchScope) -> String? {
         switch scope {
         case .level:
-            return level?.exportDescription
+            level?.exportDescription
         case .category:
-            return category
+            category
         case .subsystem:
-            return subsystem
+            subsystem
         case .message:
-            return composedMessage
+            composedMessage
         }
     }
 }

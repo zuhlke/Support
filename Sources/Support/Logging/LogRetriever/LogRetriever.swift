@@ -38,7 +38,7 @@ public class LogRetriever {
         try? fileManager.createDirectory(at: manifestDirectory, withIntermediateDirectories: true)
 
         directoryWatcher = MultiDirectoryWatcher(
-            urls: [logsDirectory, manifestDirectory]
+            urls: [logsDirectory, manifestDirectory],
         ) { [weak self] in
             self?.refreshApps()
         }
@@ -81,7 +81,7 @@ public class LogRetriever {
 
     private func refreshApps() {
         do {
-            self.apps = try loadApps()
+            apps = try loadApps()
         } catch {
             LogRetriever.logger.error("Error loading apps: \(error.localizedDescription)")
         }
@@ -102,7 +102,7 @@ public class LogRetriever {
                     url: url,
                     id: ext.key,
                     displayName: ext.value.displayName ?? ext.value.name,
-                    packageType: .extension(extensionPointIdentifier: ext.value.extensionPointIdentifier)
+                    packageType: .extension(extensionPointIdentifier: ext.value.extensionPointIdentifier),
                 )
             }
             
@@ -111,7 +111,7 @@ public class LogRetriever {
                     url: appExectuableUrl,
                     id: $0.id,
                     displayName: $0.displayName ?? $0.name,
-                    packageType: .mainApp
+                    packageType: .mainApp,
                 )
 
                 executables.insert(appExecutable, at: 0)
@@ -120,7 +120,7 @@ public class LogRetriever {
             return AppLogContainer(
                 id: $0.id,
                 displayName: $0.displayName ?? $0.name,
-                executables: executables
+                executables: executables,
             )
         }
     }

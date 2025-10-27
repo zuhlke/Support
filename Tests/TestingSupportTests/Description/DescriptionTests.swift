@@ -37,7 +37,7 @@ class DescriptionTests: XCTestCase {
         TS.assert(actual, equals: .dictionary(
             [
                 "someKey": .string(value.someKey),
-            ]
+            ],
         ))
     }
     
@@ -52,7 +52,7 @@ class DescriptionTests: XCTestCase {
         TS.assert(actual, equals: .dictionary(
             [
                 "someKey": .string(value.someKey),
-            ]
+            ],
         ))
     }
     

@@ -20,7 +20,7 @@ public struct HTTPResponse: Equatable, Sendable {
     public init(
         status: Status,
         body: Body,
-        headerFields: HTTPFields = HTTPFields()
+        headerFields: HTTPFields = HTTPFields(),
     ) {
         self.status = status
         self.body = body
@@ -42,9 +42,9 @@ extension HTTPResponse {
             status: response.status,
             body: HTTPResponse.Body(
                 content: bodyContent,
-                type: contentType
+                type: contentType,
             ),
-            headerFields: headerFields
+            headerFields: headerFields,
         )
     }
     

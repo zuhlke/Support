@@ -19,14 +19,14 @@ public struct DownloadArtifactAction: GitHubAction {
         @ActionInput(
             "name",
             description: "Artifact name",
-            optionality: .optional(defaultValue: "")
+            optionality: .optional(defaultValue: ""),
         )
         public var name: String
         
         @ActionInput(
             "path",
             description: "Destination path",
-            optionality: .optional(defaultValue: "")
+            optionality: .optional(defaultValue: ""),
         )
         public var path: String
         

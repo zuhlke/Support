@@ -1,7 +1,7 @@
-import SwiftUI
-import SwiftData
 import LoggingUI
 import Support
+import SwiftData
+import SwiftUI
 
 @main
 struct LogViewerApp: App {

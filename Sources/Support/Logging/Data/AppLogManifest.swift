@@ -64,10 +64,10 @@ extension AppLogManifest {
                     let ext = Extension(
                         name: plugin.name,
                         displayName: plugin.nonLocalisedDisplayName,
-                        extensionPointIdentifier: extensionMetadata.extensionPointIdentifier
+                        extensionPointIdentifier: extensionMetadata.extensionPointIdentifier,
                     )
                     return (plugin.id, ext)
-            })
+                }),
         )
     }
 }

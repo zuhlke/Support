@@ -13,7 +13,7 @@ class URLSessionHTTPClientTests: XCTestCase {
         let data = Data.random()
         let session = MockURLSession(
             data: data,
-            response: HTTPURLResponse(url: try! remote.url(for: .get(""), scheme: .https), statusCode: 200, httpVersion: nil, headerFields: nil)!
+            response: HTTPURLResponse(url: try! remote.url(for: .get(""), scheme: .https), statusCode: 200, httpVersion: nil, headerFields: nil)!,
         )
         let client = URLSessionHTTPClient(remote: remote, session: session)
         

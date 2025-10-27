@@ -48,14 +48,14 @@ extension GitHub.MetadataEncoder {
     func projectFile(for action: GitHub.Action) -> ProjectFile {
         .init(
             pathInRepository: action.projectFilePath,
-            contents: actionEncoder.encode(action.yamlRepresentation)
+            contents: actionEncoder.encode(action.yamlRepresentation),
         )
     }
     
     func projectFile(for workflow: GitHub.Workflow) -> ProjectFile {
         .init(
             pathInRepository: workflow.projectFilePath,
-            contents: workflowEncoder.encode(workflow.yamlRepresentation)
+            contents: workflowEncoder.encode(workflow.yamlRepresentation),
         )
     }
     

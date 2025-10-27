@@ -18,7 +18,7 @@ extension BidirectionalCollection where Element: Equatable {
         
         var lines = other.map { CombinedDifference(element: $0, change: .none) }
         
-        var indexes = (0 ..< lines.count).map { $0 }
+        var indexes = (0 ..< lines.count).map(\.self)
         for removal in difference.removals.reversed() {
             indexes.remove(at: removal.offset)
             lines[removal.offset].change = .removed

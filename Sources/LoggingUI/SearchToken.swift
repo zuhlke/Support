@@ -26,13 +26,13 @@ extension SearchScope {
     var image: String {
         switch self {
         case .message:
-            return "bubble"
+            "bubble"
         case .level:
-            return "flag"
+            "flag"
         case .subsystem:
-            return "gearshape.2"
+            "gearshape.2"
         case .category:
-            return "square.grid.3x3"
+            "square.grid.3x3"
         }
     }
     
@@ -45,13 +45,13 @@ extension LogEntry {
     func with(scope: SearchScope) -> String? {
         switch scope {
         case .message:
-            return composedMessage
+            composedMessage
         case .level:
-            return level?.exportDescription
+            level?.exportDescription
         case .subsystem:
-            return subsystem
+            subsystem
         case .category:
-            return category
+            category
         }
     }
 }

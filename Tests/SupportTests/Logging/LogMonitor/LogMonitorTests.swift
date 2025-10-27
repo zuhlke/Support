@@ -1,8 +1,8 @@
 #if canImport(SwiftData)
 
-import Testing
 import Foundation
 import SwiftData
+import Testing
 @testable import Support
 
 struct LogMonitorTests {
@@ -12,24 +12,24 @@ struct LogMonitorTests {
         try fileManager.withTemporaryDirectory { url in
             let logStore = LogStore(entries: [])
             
-            let _ = try LogMonitor(
+            _ = try LogMonitor(
                 convention: LogStorageConvention(
                     baseStorageLocation: .customLocation(url: url),
-                    basePathComponents: ["Test"]
+                    basePathComponents: ["Test"],
                 ),
                 bundleMetadata: BundleMetadata(
                     id: "com.zuhlke.Support",
                     name: "Support",
                     version: "1",
                     shortVersionString: "1",
-                    packageType: .app(.init(plugins: []))
+                    packageType: .app(.init(plugins: [])),
                 ),
                 deviceMetadata: DeviceMetadata(
                     operatingSystemVersion: "26.0",
-                    deviceModel: "iPhone 17 Pro"
+                    deviceModel: "iPhone 17 Pro",
                 ),
                 logStore: logStore,
-                appLaunchDate: .init(timeIntervalSince1970: 1)
+                appLaunchDate: .init(timeIntervalSince1970: 1),
             )
             
             let manifestFile = url.appending(path: "Test/Manifests/com.zuhlke.Support.json")
@@ -40,8 +40,8 @@ struct LogMonitorTests {
                     manifestVersion: 1,
                     id: "com.zuhlke.Support",
                     name: "Support",
-                    extensions: [:]
-                )
+                    extensions: [:],
+                ),
             )
             
             let logFile = url.appending(path: "Test/Logs/com.zuhlke.Support.logs")
@@ -55,24 +55,24 @@ struct LogMonitorTests {
         try fileManager.withTemporaryDirectory { url in
             let logStore = LogStore(entries: [])
             
-            let _ = try LogMonitor(
+            _ = try LogMonitor(
                 convention: LogStorageConvention(
                     baseStorageLocation: .customLocation(url: url),
-                    basePathComponents: ["Test"]
+                    basePathComponents: ["Test"],
                 ),
                 bundleMetadata: BundleMetadata(
                     id: "com.zuhlke.Support.extension",
                     name: "Support",
                     version: "1",
                     shortVersionString: "1",
-                    packageType: .extension(.init(extensionPointIdentifier: "com.apple.widgetkit-extension"))
+                    packageType: .extension(.init(extensionPointIdentifier: "com.apple.widgetkit-extension")),
                 ),
                 deviceMetadata: DeviceMetadata(
                     operatingSystemVersion: "26.0",
-                    deviceModel: "iPhone 17 Pro"
+                    deviceModel: "iPhone 17 Pro",
                 ),
                 logStore: logStore,
-                appLaunchDate: .init(timeIntervalSince1970: 1)
+                appLaunchDate: .init(timeIntervalSince1970: 1),
             )
             
             let manifestFile = url.appending(path: "Test/Manifests")
@@ -95,25 +95,25 @@ struct LogMonitorTests {
                 let logMonitor = try LogMonitor(
                     convention: LogStorageConvention(
                         baseStorageLocation: .customLocation(url: url),
-                        basePathComponents: ["Test"]
+                        basePathComponents: ["Test"],
                     ),
                     bundleMetadata: BundleMetadata(
                         id: "com.zuhlke.Support",
                         name: "Support",
                         version: "1",
                         shortVersionString: "1",
-                        packageType: .app(.init(plugins: []))
+                        packageType: .app(.init(plugins: [])),
                     ),
                     deviceMetadata: DeviceMetadata(
                         operatingSystemVersion: "26.0",
-                        deviceModel: "iPhone 17 Pro"
+                        deviceModel: "iPhone 17 Pro",
                     ),
                     logStore: logStore,
-                    appLaunchDate: .init(timeIntervalSince1970: 1)
+                    appLaunchDate: .init(timeIntervalSince1970: 1),
                 )
                 
                 // Keeping LogMonitor in memory to monitor the logs until the end of the test.
-                defer { withExtendedLifetime(logMonitor, {}) }
+                defer { withExtendedLifetime(logMonitor) {} }
 
                 weakLogMonitor = logMonitor
                 weakLogStore = logStore
@@ -136,37 +136,37 @@ struct LogMonitorTests {
         let fileManager = FileManager()
         try await fileManager.withTemporaryDirectory { url in
             let logStore = LogStore(entries: [
-                LogStoreEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 1))
+                LogStoreEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 1)),
             ])
             
             let logMonitor = try LogMonitor(
                 convention: LogStorageConvention(
                     baseStorageLocation: .customLocation(url: url),
-                    basePathComponents: ["Test"]
+                    basePathComponents: ["Test"],
                 ),
                 bundleMetadata: BundleMetadata(
                     id: "com.zuhlke.Support",
                     name: "Support",
                     version: "1",
                     shortVersionString: "1",
-                    packageType: .app(.init(plugins: []))
+                    packageType: .app(.init(plugins: [])),
                 ),
                 deviceMetadata: DeviceMetadata(
                     operatingSystemVersion: "26.0",
-                    deviceModel: "iPhone 17 Pro"
+                    deviceModel: "iPhone 17 Pro",
                 ),
                 logStore: logStore,
-                appLaunchDate: .init(timeIntervalSince1970: 1)
+                appLaunchDate: .init(timeIntervalSince1970: 1),
             )
 
             // Keeping LogMonitor in memory to monitor the logs until the end of the test.
-            defer { withExtendedLifetime(logMonitor, {}) }
+            defer { withExtendedLifetime(logMonitor) {} }
 
             let logFile = url.appending(path: "Test/Logs/com.zuhlke.Support.logs")
             let configuration = ModelConfiguration(url: logFile, cloudKitDatabase: .none)
             let modelContainer = try ModelContainer(
                 for: AppRun.self,
-                configurations: configuration
+                configurations: configuration,
             )
             let context = ModelContext(modelContainer)
             let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
@@ -196,37 +196,37 @@ struct LogMonitorTests {
         let fileManager = FileManager()
         try await fileManager.withTemporaryDirectory { url in
             let logStore = LogStore(entries: [
-                LogStoreEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 2))
+                LogStoreEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 2)),
             ])
             
             let logMonitor = try LogMonitor(
                 convention: LogStorageConvention(
                     baseStorageLocation: .customLocation(url: url),
-                    basePathComponents: ["Test"]
+                    basePathComponents: ["Test"],
                 ),
                 bundleMetadata: BundleMetadata(
                     id: "com.zuhlke.Support",
                     name: "Support",
                     version: "1",
                     shortVersionString: "1",
-                    packageType: .app(.init(plugins: []))
+                    packageType: .app(.init(plugins: [])),
                 ),
                 deviceMetadata: DeviceMetadata(
                     operatingSystemVersion: "26.0",
-                    deviceModel: "iPhone 17 Pro"
+                    deviceModel: "iPhone 17 Pro",
                 ),
                 logStore: logStore,
-                appLaunchDate: .init(timeIntervalSince1970: 1)
+                appLaunchDate: .init(timeIntervalSince1970: 1),
             )
 
             // Keeping LogMonitor in memory to monitor the logs until the end of the test.
-            defer { withExtendedLifetime(logMonitor, {}) }
+            defer { withExtendedLifetime(logMonitor) {} }
 
             let logFile = url.appending(path: "Test/Logs/com.zuhlke.Support.logs")
             let configuration = ModelConfiguration(url: logFile, cloudKitDatabase: .none)
             let modelContainer = try ModelContainer(
                 for: AppRun.self,
-                configurations: configuration
+                configurations: configuration,
             )
             let context = ModelContext(modelContainer)
             let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
@@ -295,37 +295,37 @@ struct LogMonitorTests {
         try await fileManager.withTemporaryDirectory { url in
             do {
                 let logStore = LogStore(entries: [
-                    LogStoreEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 1))
+                    LogStoreEntry(composedMessage: "Log message", date: .init(timeIntervalSince1970: 1)),
                 ])
 
                 let logMonitor = try LogMonitor(
                     convention: LogStorageConvention(
                         baseStorageLocation: .customLocation(url: url),
-                        basePathComponents: ["Test"]
+                        basePathComponents: ["Test"],
                     ),
                     bundleMetadata: BundleMetadata(
                         id: "com.zuhlke.Support",
                         name: "Support",
                         version: "1",
                         shortVersionString: "1",
-                        packageType: .app(.init(plugins: []))
+                        packageType: .app(.init(plugins: [])),
                     ),
                     deviceMetadata: DeviceMetadata(
                         operatingSystemVersion: "26.0",
-                        deviceModel: "iPhone 17 Pro"
+                        deviceModel: "iPhone 17 Pro",
                     ),
                     logStore: logStore,
-                    appLaunchDate: .init(timeIntervalSince1970: 2)
+                    appLaunchDate: .init(timeIntervalSince1970: 2),
                 )
 
                 // Keeping LogMonitor in memory to monitor the logs until the end of the test.
-                defer { withExtendedLifetime(logMonitor, {}) }
+                defer { withExtendedLifetime(logMonitor) {} }
                 
                 let logFile = url.appending(path: "Test/Logs/com.zuhlke.Support.logs")
                 let configuration = ModelConfiguration(url: logFile, cloudKitDatabase: .none)
                 let modelContainer = try ModelContainer(
                     for: AppRun.self,
-                    configurations: configuration
+                    configurations: configuration,
                 )
                 let context = ModelContext(modelContainer)
                 let descriptor = FetchDescriptor<AppRun>(predicate: nil, sortBy: [SortDescriptor(\.launchDate)])
@@ -358,31 +358,31 @@ struct LogMonitorTests {
                 let logMonitor = try LogMonitor(
                     convention: LogStorageConvention(
                         baseStorageLocation: .customLocation(url: url),
-                        basePathComponents: ["Test"]
+                        basePathComponents: ["Test"],
                     ),
                     bundleMetadata: BundleMetadata(
                         id: "com.zuhlke.Support",
                         name: "Support",
                         version: "1",
                         shortVersionString: "1",
-                        packageType: .app(.init(plugins: []))
+                        packageType: .app(.init(plugins: [])),
                     ),
                     deviceMetadata: DeviceMetadata(
                         operatingSystemVersion: "26.0",
-                        deviceModel: "iPhone 17 Pro"
+                        deviceModel: "iPhone 17 Pro",
                     ),
                     logStore: logStore,
-                    appLaunchDate: .init(timeIntervalSince1970: 3)
+                    appLaunchDate: .init(timeIntervalSince1970: 3),
                 )
 
                 // Keeping LogMonitor in memory to monitor the logs until the end of the test.
-                defer { withExtendedLifetime(logMonitor, {}) }
+                defer { withExtendedLifetime(logMonitor) {} }
 
                 let logFile = url.appending(path: "Test/Logs/com.zuhlke.Support.logs")
                 let configuration = ModelConfiguration(url: logFile, cloudKitDatabase: .none)
                 let modelContainer = try ModelContainer(
                     for: AppRun.self,
-                    configurations: configuration
+                    configurations: configuration,
                 )
                 let context = ModelContext(modelContainer)
 
@@ -437,11 +437,11 @@ private class LogStore: LogStoreProtocol, @unchecked Sendable {
     }
 
     func log(entry: LogStoreEntry) {
-        self.entries.append(entry)
+        entries.append(entry)
     }
 
     func entries(after date: Date) throws -> any Sequence<any LogEntryProtocol> {
-        return entries.filter { $0.date > date }
+        entries.filter { $0.date > date }
     }
 }
 

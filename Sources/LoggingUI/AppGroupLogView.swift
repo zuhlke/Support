@@ -1,9 +1,9 @@
 #if os(iOS)
 #if canImport(SwiftUI)
 
-import SwiftUI
-import SwiftData
 import Support
+import SwiftData
+import SwiftUI
 
 @available(iOS 26.0, *)
 @available(macOS, unavailable)
@@ -12,7 +12,7 @@ public struct AppGroupLogView: View {
     
     public init(convention: LogStorageConvention) {
         // TODO: (P2) This force unwrap.
-        self.logRetriever = try! LogRetriever(convention: convention)
+        logRetriever = try! LogRetriever(convention: convention)
     }
     
     public var body: some View {
@@ -25,7 +25,7 @@ public struct AppGroupLogView: View {
                                 let systemImage = switch executable.packageType {
                                 case .mainApp: "app"
                                 case .extension(extensionPointIdentifier: "com.apple.intents-service"),
-                                    .extension(extensionPointIdentifier: "com.apple.intents-ui-service"): "siri"
+                                     .extension(extensionPointIdentifier: "com.apple.intents-ui-service"): "siri"
                                 case .extension(extensionPointIdentifier: "com.apple.widgetkit-extension"): "widget.small"
                                 case .extension: "puzzlepiece.extension"
                                 }

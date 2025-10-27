@@ -3,8 +3,8 @@
 
 import Foundation
 import Testing
-@testable import Support
 import TestingSupport
+@testable import Support
 
 @Suite
 struct BundleMetadataTests {
@@ -92,14 +92,14 @@ struct BundleMetadataTests {
         ]
         let extensionName = String.random()
         let extensionId = String.random()
-        let extensionInfos: [String : [String : String]] = [
+        let extensionInfos: [String: [String: String]] = [
             extensionName: [
                 "CFBundleIdentifier": extensionId,
                 "CFBundleName": String.random(),
                 "CFBundleVersion": String.random(),
                 "CFBundleShortVersionString": String.random(),
                 "CFBundlePackageType": String.random(),
-            ]
+            ],
         ]
         try Bundle.withTemporaryBundle(info: info, extensionInfos: extensionInfos) { bundle in
             let metadata = try #require(BundleMetadata(from: bundle))
@@ -146,8 +146,8 @@ struct BundleMetadataTests {
             "CFBundleShortVersionString": String.random(),
             "CFBundlePackageType": "XPC!",
             "NSExtension": [
-                "NSExtensionPointIdentifier": extensionPointIdentifier
-            ]
+                "NSExtensionPointIdentifier": extensionPointIdentifier,
+            ],
         ] as NSDictionary
         try Bundle.withTemporaryBundle(info: info) { bundle in
             let metadata = try #require(BundleMetadata(from: bundle))
@@ -158,7 +158,6 @@ struct BundleMetadataTests {
             #expect(extensionMetadata.extensionPointIdentifier == extensionPointIdentifier)
         }
     }
-    
     
 }
 

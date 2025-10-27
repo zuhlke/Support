@@ -123,7 +123,7 @@ extension Xcode {
                     
                     kind = .assignment(
                         selector: .init(variable: contents[startIndex ..< variableEndIndex].trimmingCharacters(in: .whitespaces), conditions: conditions),
-                        value: contents[rhsStartIndex ..< scanner.currentIndex].trimmingCharacters(in: .whitespaces.union(CharacterSet(charactersIn: ";")))
+                        value: contents[rhsStartIndex ..< scanner.currentIndex].trimmingCharacters(in: .whitespaces.union(CharacterSet(charactersIn: ";"))),
                     )
                 } else {
                     kind = .empty

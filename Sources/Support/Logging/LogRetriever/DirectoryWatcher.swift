@@ -1,7 +1,7 @@
 #if canImport(Darwin)
 
-import Foundation
 import Dispatch
+import Foundation
 
 class MultiDirectoryWatcher {
     private var watchers: [DirectoryWatcher] = []
@@ -60,12 +60,12 @@ class DirectoryWatcher {
         source = DispatchSource.makeFileSystemObjectSource(
             fileDescriptor: descriptor,
             eventMask: [.write],
-            queue: queue
+            queue: queue,
         )
 
         source?.setEventHandler { [weak self] in
-            guard let self = self else { return }
-            self.onDirectoryChange?()
+            guard let self else { return }
+            onDirectoryChange?()
         }
 
         source?.setCancelHandler {

@@ -23,7 +23,7 @@ final class GitHubActionPredefinedValuesTests: XCTestCase {
               xcodebuild -version
               swift --version
             shell: bash
-        
+            
         """
         
         let projectFile = encoder.projectFile(for: action)
@@ -56,7 +56,7 @@ final class GitHubActionPredefinedValuesTests: XCTestCase {
               echo "https://${{ inputs.github-actor }}:${{ inputs.github-access-token }}@github.com" > ~/.git-credentials
               git config --global credential.helper store
             shell: bash
-        
+            
         """
         
         let projectFile = encoder.projectFile(for: action)

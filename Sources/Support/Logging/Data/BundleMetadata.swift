@@ -79,14 +79,15 @@ extension BundleMetadata {
             
             let appMetadata = AppMetadata(
                 plugins: plugins,
-                watchCompanionAppBundleIdentifier: infoDictionary["WKCompanionAppBundleIdentifier"] as? String
+                watchCompanionAppBundleIdentifier: infoDictionary["WKCompanionAppBundleIdentifier"] as? String,
             )
             packageType = .app(appMetadata)
             
         case "XPC!":
             guard
                 let extensionInfo = infoDictionary["NSExtension"] as? NSDictionary,
-                let extensionPointIdentifier = extensionInfo["NSExtensionPointIdentifier"] as? String else {
+                let extensionPointIdentifier = extensionInfo["NSExtensionPointIdentifier"] as? String
+            else {
                 return nil
             }
             packageType = .extension(ExtensionMetadata(extensionPointIdentifier: extensionPointIdentifier))
@@ -101,7 +102,7 @@ extension BundleMetadata {
             nonLocalisedDisplayName: infoDictionary["CFBundleDisplayName"] as? String,
             version: version,
             shortVersionString: shortVersionString,
-            packageType: packageType
+            packageType: packageType,
         )
     }
     

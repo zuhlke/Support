@@ -1,15 +1,15 @@
 #if os(iOS)
 
+import Support
 import SwiftData
 import SwiftUI
-import Support
 
 struct SampleData: PreviewModifier {
     static func makeAppRun(
         context: ModelContext,
         launchDate: Date,
         category: String,
-        subsystem: String
+        subsystem: String,
     ) {
         let appRun = AppRun(appVersion: "1.0.0", operatingSystemVersion: "14.0.0", launchDate: launchDate, device: "iPhone 12 Pro Max")
         let logEntries = [
@@ -17,7 +17,7 @@ struct SampleData: PreviewModifier {
             LogEntry(appRun: appRun, date: launchDate.advanced(by: 2 * 60), composedMessage: "This is a debug level message", level: .debug, category: category, subsystem: subsystem),
             LogEntry(appRun: appRun, date: launchDate.advanced(by: 3 * 60), composedMessage: "This is a error level message", level: .error, category: category, subsystem: subsystem),
             LogEntry(appRun: appRun, date: launchDate.advanced(by: 4 * 60), composedMessage: "This is a fault level message", level: .fault, category: category, subsystem: subsystem),
-            LogEntry(appRun: appRun, date: launchDate.advanced(by: 5 * 60), composedMessage: "This is a notice level message", level: .notice, category: category, subsystem: subsystem)
+            LogEntry(appRun: appRun, date: launchDate.advanced(by: 5 * 60), composedMessage: "This is a notice level message", level: .notice, category: category, subsystem: subsystem),
         ]
         
         context.insert(appRun)
@@ -36,7 +36,6 @@ struct SampleData: PreviewModifier {
         return container
     }
     
-    
     func body(content: Content, context: ModelContainer) -> some View {
         content.modelContainer(context)
     }
@@ -46,7 +45,7 @@ extension PreviewTrait where T == Preview.ViewTraits {
 
     @available(iOS 26.0, *)
     @MainActor static var sampleData: PreviewTrait<Preview.ViewTraits> {
-        return .modifier(SampleData())
+        .modifier(SampleData())
     }
 }
 #endif

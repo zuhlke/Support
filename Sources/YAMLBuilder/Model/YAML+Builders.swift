@@ -61,11 +61,11 @@ open class ArrayBuilder<Element> {
     }
     
     public static func buildArray(_ elements: [[Element]]) -> [Element] {
-        elements.flatMap { $0 }
+        elements.flatMap(\.self)
     }
 
     public static func buildBlock(_ elements: [Element]...) -> [Element] {
-        elements.flatMap { $0 }
+        elements.flatMap(\.self)
     }
     
     public static func buildEither(first elements: [Element]) -> [Element] {

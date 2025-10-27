@@ -1,8 +1,8 @@
 #if os(iOS)
 #if canImport(SwiftUI)
 
-import SwiftUI
 import Support
+import SwiftUI
 
 struct LogEntryView: View {
     var entry: LogEntry
@@ -18,7 +18,7 @@ struct LogEntryView: View {
             Image(systemName: scope.image)
                 .frame(width: 24, height: 24)
             Text(text.highlighted(
-                matching: [searchText] + tokens.filter { $0.scope == scope }.map { $0.text }
+                matching: [searchText] + tokens.filter { $0.scope == scope }.map(\.text),
             ))
         }
     }
@@ -29,7 +29,7 @@ struct LogEntryView: View {
         } label: {
             VStack(alignment: .leading, spacing: 4) {
                 Text(entry.composedMessage.highlighted(
-                    matching: [searchText] + tokens.filter { $0.scope == .message }.map { $0.text }
+                    matching: [searchText] + tokens.filter { $0.scope == .message }.map(\.text),
                 ))
                 .lineLimit(isCollapsed ? 2 : nil)
                 HStack(spacing: 8) {
@@ -38,11 +38,12 @@ struct LogEntryView: View {
                     }
                     
                     if isShowingMetadata.contains(.timestamp) {
-                        Text(entry.date.formatted(.dateTime
-                            .hour(.twoDigits(amPM: .omitted))
-                            .minute(.twoDigits)
-                            .second(.twoDigits)
-                            .secondFraction(.fractional(4))
+                        Text(entry.date.formatted(
+                            .dateTime
+                                .hour(.twoDigits(amPM: .omitted))
+                                .minute(.twoDigits)
+                                .second(.twoDigits)
+                                .secondFraction(.fractional(4)),
                         ))
                     }
                     
@@ -76,7 +77,6 @@ struct LogEntryView: View {
     LogEntryView(entry: logEntry, searchText: "", tokens: [], isShowingMetadata: .init(Metadata.allCases), shouldShowExpandedMessages: false)
         .padding(16)
 }
-
 
 #endif
 #endif

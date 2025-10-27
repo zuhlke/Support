@@ -2,10 +2,10 @@ import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
+import HTTPTypes
 import Support
 import TestingSupport
 import XCTest
-import HTTPTypes
 
 class HTTPResponseTests: XCTestCase {
     
@@ -18,7 +18,7 @@ class HTTPResponseTests: XCTestCase {
             headerFields: [
                 "content-type": "text/plain",
                 "Accept": "value",
-            ]
+            ],
         )!
         let body = "body".data(using: .utf8)!
         let actual = HTTPResponse(httpUrlResponse: urlResponse, bodyContent: body)
@@ -27,7 +27,7 @@ class HTTPResponseTests: XCTestCase {
             body: HTTPResponse.Body(content: body, type: "text/plain"),
             headerFields: [
                 HTTPField.Name.accept: "value",
-            ]
+            ],
         )
         TS.assert(actual, equals: expected)
     }
@@ -41,7 +41,7 @@ class HTTPResponseTests: XCTestCase {
             headerFields: [
                 "Content-Type": "text/plain",
                 "accept": "value",
-            ]
+            ],
         )!
         let body = "body".data(using: .utf8)!
         let actual = HTTPResponse(httpUrlResponse: urlResponse, bodyContent: body)
@@ -50,7 +50,7 @@ class HTTPResponseTests: XCTestCase {
             body: HTTPResponse.Body(content: body, type: "text/plain"),
             headerFields: [
                 HTTPField.Name.accept: "value",
-            ]
+            ],
         )
         TS.assert(actual, equals: expected)
     }
@@ -63,7 +63,7 @@ class HTTPResponseTests: XCTestCase {
             httpVersion: nil,
             headerFields: [
                 "Accept": "value",
-            ]
+            ],
         )!
         let body = "body".data(using: .utf8)!
         let actual = HTTPResponse(httpUrlResponse: urlResponse, bodyContent: body)
@@ -72,7 +72,7 @@ class HTTPResponseTests: XCTestCase {
             body: HTTPResponse.Body(content: body, type: nil),
             headerFields: [
                 HTTPField.Name.accept: "value",
-            ]
+            ],
         )
         TS.assert(actual, equals: expected)
     }
