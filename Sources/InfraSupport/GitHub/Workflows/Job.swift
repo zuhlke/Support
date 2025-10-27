@@ -86,14 +86,14 @@ extension GitHub.Workflow.Job {
         name: String,
         runsOn: Runner,
         needs: [String] = [],
-        @JobStepsBuilder steps: () -> [Step],
+        @JobStepsBuilder steps: () -> [Step]
     ) {
         self.init(
             id: id,
             name: name,
             runsOn: runsOn,
             needs: needs,
-            steps: steps(),
+            steps: steps()
         )
     }
     
@@ -157,7 +157,7 @@ extension GitHub.Workflow.Job.Step.Use {
             .sorted(by: <)
         Supervisor.precondition(missingInputs.isEmpty, "Missing value for required action input: \(missingInputs)")
         self.init(
-            step: .init(name: name ?? action.name, method: .action(action.reference.value, inputs: provider.inputValues)),
+            step: .init(name: name ?? action.name, method: .action(action.reference.value, inputs: provider.inputValues))
         )
     }
     
@@ -173,7 +173,7 @@ extension GitHub.Workflow.Job.Step.Run {
     
     public init(_ name: String, script: () -> String) {
         self.init(
-            step: .init(name: name, method: .run(script())),
+            step: .init(name: name, method: .run(script()))
         )
     }
     
@@ -283,7 +283,7 @@ public class JobStepsBuilder: ArrayBuilder<GitHub.Workflow.Job.Step> {
 @resultBuilder
 class NodeMapElementBuilder: ArrayBuilder<YAML.Map.Element> {
     
-    static func buildFinalResult(_ pairs: [YAML.Map.Element]) -> [YAML.Map.Element] {
+    public static func buildFinalResult(_ pairs: [YAML.Map.Element]) -> [YAML.Map.Element] {
         pairs
     }
 }

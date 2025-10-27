@@ -18,27 +18,27 @@ extension HTTPResponse.Body {
     
     public static let empty = HTTPResponse.Body(
         content: Data(),
-        type: nil,
+        type: nil
     )
     
     public static func untyped(_ data: Data) -> HTTPResponse.Body {
         HTTPResponse.Body(
             content: data,
-            type: nil,
+            type: nil
         )
     }
     
     public static func plain(_ text: String) -> HTTPResponse.Body {
         HTTPResponse.Body(
             content: text.data(using: .utf8)!,
-            type: "text/plain",
+            type: "text/plain"
         )
     }
     
     public static func json(_ data: Data) -> HTTPResponse.Body {
         HTTPResponse.Body(
             content: data,
-            type: "application/json",
+            type: "application/json"
         )
     }
     

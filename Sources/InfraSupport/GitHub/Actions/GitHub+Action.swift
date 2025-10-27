@@ -33,7 +33,7 @@ extension GitHub.Action {
         description: () -> String,
         @ActionInputsBuilder inputs: () -> [Input] = { [] },
         @ActionOutputsBuilder outputs: () -> [Output] = { [] },
-        runs: () -> Run,
+        runs: () -> Run
     ) {
         self.init(
             id: id,
@@ -41,7 +41,7 @@ extension GitHub.Action {
             description: description(),
             inputs: inputs(),
             outputs: outputs(),
-            run: runs(),
+            run: runs()
         )
     }
     

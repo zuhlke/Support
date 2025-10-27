@@ -73,7 +73,7 @@ extension GitHub.Action {
             description: localAction.description,
             inputs: LocalAction.Inputs.allInputs,
             outputs: LocalAction.Outputs.allOutputs,
-            run: localAction.run(inputs: InputAccessor(), outputs: OutputAccessor()),
+            run: localAction.run(inputs: InputAccessor(), outputs: OutputAccessor())
         )
     }
     

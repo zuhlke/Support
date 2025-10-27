@@ -13,19 +13,19 @@ let package = Package(
     products: [
         .library(
             name: "Support",
-            targets: ["Support"],
+            targets: ["Support"]
         ),
         .library(
             name: "LoggingUI",
-            targets: ["LoggingUI"],
+            targets: ["LoggingUI"]
         ),
         .library(
             name: "ScenariosSupport",
-            targets: ["ScenariosSupport"],
+            targets: ["ScenariosSupport"]
         ),
         .library(
             name: "TestingSupport",
-            targets: ["TestingSupport"],
+            targets: ["TestingSupport"]
         ),
     ],
     dependencies: [
@@ -37,47 +37,47 @@ let package = Package(
             dependencies: [
                 .product(name: "HTTPTypes", package: "swift-http-types"),
                 .product(name: "HTTPTypesFoundation", package: "swift-http-types"),
-            ],
+            ]
         ),
         .target(
             name: "LoggingUI",
-            dependencies: ["Support"],
+            dependencies: ["Support"]
         ),
         .target(
             name: "ScenariosSupport",
-            dependencies: ["Support"],
+            dependencies: ["Support"]
         ),
         .target(
             name: "TestingSupport",
-            dependencies: ["YAMLBuilder", "Support"],
+            dependencies: ["YAMLBuilder", "Support"]
         ),
         .target(
             name: "YAMLBuilder",
-            dependencies: ["Support"],
+            dependencies: ["Support"]
         ),
         .target(
             name: "InfraSupport",
-            dependencies: ["YAMLBuilder", "Support"],
+            dependencies: ["YAMLBuilder", "Support"]
         ),
         .testTarget(
             name: "SupportTests",
-            dependencies: ["Support", "TestingSupport"],
+            dependencies: ["Support", "TestingSupport"]
         ),
         .testTarget(
             name: "ScenariosSupportTests",
-            dependencies: ["ScenariosSupport", "Support", "TestingSupport"],
+            dependencies: ["ScenariosSupport", "Support", "TestingSupport"]
         ),
         .testTarget(
             name: "TestingSupportTests",
-            dependencies: ["Support", "TestingSupport"],
+            dependencies: ["Support", "TestingSupport"]
         ),
         .testTarget(
             name: "YAMLBuilderTests",
-            dependencies: ["YAMLBuilder", "Support", "TestingSupport"],
+            dependencies: ["YAMLBuilder", "Support", "TestingSupport"]
         ),
         .testTarget(
             name: "InfraSupportTests",
-            dependencies: ["YAMLBuilder", "InfraSupport", "Support", "TestingSupport"],
+            dependencies: ["YAMLBuilder", "InfraSupport", "Support", "TestingSupport"]
         ),
-    ],
+    ]
 )

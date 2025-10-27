@@ -19,14 +19,14 @@ public struct UploadArtifactAction: GitHubAction {
         @ActionInput(
             "name",
             description: "Artifact name",
-            optionality: .optional(defaultValue: "artifact"),
+            optionality: .optional(defaultValue: "artifact")
         )
         public var name: String
         
         @ActionInput(
             "path",
             description: "A file, directory or wildcard pattern that describes what to upload",
-            optionality: .required,
+            optionality: .required
         )
         public var path: String
         
@@ -39,7 +39,7 @@ public struct UploadArtifactAction: GitHubAction {
               `error`: Fail the action with an error message
               `ignore`: Do not output any warnings or errors, the action does not fail
             """,
-            optionality: .optional(defaultValue: "warn"),
+            optionality: .optional(defaultValue: "warn")
         )
         public var noFilesFoundBehavior: String
         
@@ -50,7 +50,7 @@ public struct UploadArtifactAction: GitHubAction {
             Minimum 1 day.
             Maximum 90 days unless changed from the repository settings page.
             """,
-            optionality: .optional(defaultValue: "0"),
+            optionality: .optional(defaultValue: "0")
         )
         public var retentionDays: String
         

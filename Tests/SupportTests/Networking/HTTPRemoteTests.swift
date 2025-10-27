@@ -2,9 +2,9 @@ import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
-import HTTPTypes
 import TestingSupport
 @testable import Support
+import HTTPTypes
 
 import XCTest
 
@@ -57,7 +57,7 @@ class HTTPRemoteTests: XCTestCase {
             port: 9000,
             user: "user",
             password: "password",
-            headerFields: [HTTPField.Name("client_id")!: "1"],
+            headerFields: [HTTPField.Name("client_id")!: "1"]
         )
         
         let request = HTTPRequest(
@@ -66,7 +66,7 @@ class HTTPRemoteTests: XCTestCase {
             body: nil,
             fragment: "subpage",
             queryParameters: ["query": "value"],
-            headerFields: [HTTPField.Name("state")!: "1234"],
+            headerFields: [HTTPField.Name("state")!: "1234"]
         )
         
         do {
@@ -102,7 +102,7 @@ class HTTPRemoteTests: XCTestCase {
             user: "user",
             password: "password",
             queryParameters: ["remote-query": "remote-value"],
-            headerFields: [HTTPField.Name("client_id")!: "1"],
+            headerFields: [HTTPField.Name("client_id")!: "1"]
         )
         
         let request = HTTPRequest.post(
@@ -110,7 +110,7 @@ class HTTPRemoteTests: XCTestCase {
             body: .plain("body"),
             fragment: "subpage",
             queryParameters: ["query": "value"],
-            headerFields: [HTTPField.Name("state")!: "1234"],
+            headerFields: [HTTPField.Name("state")!: "1234"]
         )
         
         do {
@@ -145,7 +145,7 @@ class HTTPRemoteTests: XCTestCase {
     func testNoQueryItemMarkerIsSetIfThereIsNone() {
         let remote = HTTPRemote(
             host: "example.com",
-            path: "",
+            path: ""
         )
         
         let request = HTTPRequest.get("/path")
@@ -163,7 +163,7 @@ class HTTPRemoteTests: XCTestCase {
         let remote = HTTPRemote(
             host: "example.com",
             path: "",
-            queryParameters: ["Query": "true"],
+            queryParameters: ["Query": "true"]
         )
         
         let request = HTTPRequest.get("/path", queryParameters: ["query": "false"])
@@ -175,7 +175,7 @@ class HTTPRemoteTests: XCTestCase {
         var remote = HTTPRemote(
             host: "example.com",
             path: "",
-            queryParameters: ["Query": "true"],
+            queryParameters: ["Query": "true"]
         )
         
         remote.queryParametersMergePolicy = .custom { remoteParameters, _ in remoteParameters }
@@ -191,7 +191,7 @@ class HTTPRemoteTests: XCTestCase {
         let remote = HTTPRemote(
             host: "example.com",
             path: "",
-            headerFields: [headerName: "true"],
+            headerFields: [headerName: "true"]
         )
         
         let request = HTTPRequest.get("/path", headerFields: [headerName: "false"])
@@ -204,7 +204,7 @@ class HTTPRemoteTests: XCTestCase {
         var remote = HTTPRemote(
             host: "example.com",
             path: "",
-            headerFields: [headerName: "true"],
+            headerFields: [headerName: "true"]
         )
         
         remote.headersMergePolicy = .custom { remoteHeaders, _ in remoteHeaders }

@@ -36,7 +36,7 @@ public struct HTTPRequest: Equatable, Sendable {
         body: Body?,
         fragment: String? = nil,
         queryParameters: [String: String] = [:],
-        headerFields: HTTPFields = HTTPFields(),
+        headerFields: HTTPFields = HTTPFields()
     ) {
         guard path.isEmpty || path.starts(with: "/") else {
             Supervisor.fatalError("`path` must start with `/` if it’s not empty.")
@@ -81,7 +81,7 @@ extension HTTPRequest {
         _ path: String,
         fragment: String? = nil,
         queryParameters: [String: String] = [:],
-        headerFields: HTTPFields = HTTPFields(),
+        headerFields: HTTPFields = HTTPFields()
     ) -> HTTPRequest {
         HTTPRequest(
             method: .get,
@@ -89,7 +89,7 @@ extension HTTPRequest {
             body: nil,
             fragment: fragment,
             queryParameters: queryParameters,
-            headerFields: headerFields,
+            headerFields: headerFields
         )
     }
         
@@ -106,7 +106,7 @@ extension HTTPRequest {
         body: Body,
         fragment: String? = nil,
         queryParameters: [String: String] = [:],
-        headerFields: HTTPFields = HTTPFields(),
+        headerFields: HTTPFields = HTTPFields()
     ) -> HTTPRequest {
         HTTPRequest(
             method: .post,
@@ -114,7 +114,7 @@ extension HTTPRequest {
             body: body,
             fragment: fragment,
             queryParameters: queryParameters,
-            headerFields: headerFields,
+            headerFields: headerFields
         )
     }
     
@@ -131,7 +131,7 @@ extension HTTPRequest {
         body: Body,
         fragment: String? = nil,
         queryParameters: [String: String] = [:],
-        headerFields: HTTPFields = HTTPFields(),
+        headerFields: HTTPFields = HTTPFields()
     ) -> HTTPRequest {
         HTTPRequest(
             method: .put,
@@ -139,7 +139,7 @@ extension HTTPRequest {
             body: body,
             fragment: fragment,
             queryParameters: queryParameters,
-            headerFields: headerFields,
+            headerFields: headerFields
         )
     }
  
@@ -156,7 +156,7 @@ extension HTTPRequest {
         body: Body,
         fragment: String? = nil,
         queryParameters: [String: String] = [:],
-        headerFields: HTTPFields = HTTPFields(),
+        headerFields: HTTPFields = HTTPFields()
     ) -> HTTPRequest {
         HTTPRequest(
             method: .patch,
@@ -164,7 +164,7 @@ extension HTTPRequest {
             body: body,
             fragment: fragment,
             queryParameters: queryParameters,
-            headerFields: headerFields,
+            headerFields: headerFields
         )
     }
     
@@ -179,7 +179,7 @@ extension HTTPRequest {
         _ path: String,
         fragment: String? = nil,
         queryParameters: [String: String] = [:],
-        headerFields: HTTPFields = HTTPFields(),
+        headerFields: HTTPFields = HTTPFields()
     ) -> HTTPRequest {
         HTTPRequest(
             method: .delete,
@@ -187,7 +187,7 @@ extension HTTPRequest {
             body: nil,
             fragment: fragment,
             queryParameters: queryParameters,
-            headerFields: headerFields,
+            headerFields: headerFields
         )
     }
     
@@ -202,7 +202,7 @@ extension HTTPRequest {
         _ path: String,
         fragment: String? = nil,
         queryParameters: [String: String] = [:],
-        headerFields: HTTPFields = HTTPFields(),
+        headerFields: HTTPFields = HTTPFields()
     ) -> HTTPRequest {
         HTTPRequest(
             method: .options,
@@ -210,7 +210,7 @@ extension HTTPRequest {
             body: nil,
             fragment: fragment,
             queryParameters: queryParameters,
-            headerFields: headerFields,
+            headerFields: headerFields
         )
     }
     
@@ -225,7 +225,7 @@ extension HTTPRequest {
         _ path: String,
         fragment: String? = nil,
         queryParameters: [String: String] = [:],
-        headerFields: HTTPFields = HTTPFields(),
+        headerFields: HTTPFields = HTTPFields()
     ) -> HTTPRequest {
         HTTPRequest(
             method: .connect,
@@ -233,7 +233,7 @@ extension HTTPRequest {
             body: nil,
             fragment: fragment,
             queryParameters: queryParameters,
-            headerFields: headerFields,
+            headerFields: headerFields
         )
     }
     
@@ -248,7 +248,7 @@ extension HTTPRequest {
         _ path: String,
         fragment: String? = nil,
         queryParameters: [String: String] = [:],
-        headerFields: HTTPFields = HTTPFields(),
+        headerFields: HTTPFields = HTTPFields()
     ) -> HTTPRequest {
         HTTPRequest(
             method: .head,
@@ -256,7 +256,7 @@ extension HTTPRequest {
             body: nil,
             fragment: fragment,
             queryParameters: queryParameters,
-            headerFields: headerFields,
+            headerFields: headerFields
         )
     }
     
@@ -271,7 +271,7 @@ extension HTTPRequest {
         _ path: String,
         fragment: String? = nil,
         queryParameters: [String: String] = [:],
-        headerFields: HTTPFields = HTTPFields(),
+        headerFields: HTTPFields = HTTPFields()
     ) -> HTTPRequest {
         HTTPRequest(
             method: .trace,
@@ -279,7 +279,7 @@ extension HTTPRequest {
             body: nil,
             fragment: fragment,
             queryParameters: queryParameters,
-            headerFields: headerFields,
+            headerFields: headerFields
         )
     }
 

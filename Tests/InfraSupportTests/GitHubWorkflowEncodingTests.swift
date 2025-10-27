@@ -13,13 +13,13 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
             .init(
                 push: .init(tags: ["v1.*"]),
                 pullRequest: .init(branches: ["main"]),
-                schedule: .init(cron: "30 5,17 * * *"),
+                schedule: .init(cron: "30 5,17 * * *")
             )
         } jobs: {
             Job(
                 id: "build-for-testing",
                 name: "Build for Testing",
-                runsOn: .macos11,
+                runsOn: .macos11
             ) {
                 Use(.checkout())
                 Use(PrepareXcode()) {
@@ -43,7 +43,7 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
                 id: "test",
                 name: "Test",
                 runsOn: .macos11,
-                needs: ["build-for-testing"],
+                needs: ["build-for-testing"]
             ) {
                 Use(.checkout())
                 Use(PrepareXcode()) {
@@ -67,7 +67,7 @@ final class GitHubWorkflowEncodingTests: XCTestCase {
             Job(
                 id: "archive", name: "Archive",
                 runsOn: .macos11,
-                needs: ["build-for-testing"],
+                needs: ["build-for-testing"]
             ) {
                 Use(.checkout())
                 Use(PrepareXcode()) {
