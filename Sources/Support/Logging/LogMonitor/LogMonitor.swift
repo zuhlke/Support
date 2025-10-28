@@ -5,6 +5,10 @@ import OSLog
 import SwiftData
 import UniformTypeIdentifiers
 
+/// Monitors and persists log entries for an application.
+///
+/// `LogMonitor` continuously monitors the system log store for new entries and persists them
+/// to a SwiftData model container.
 public class LogMonitor {
     private static let logger = Logger(subsystem: "com.zuhlke.Support", category: "LogMonitor")
 
@@ -116,6 +120,14 @@ public class LogMonitor {
 
 #if canImport(OSLog)
 public extension LogMonitor {
+    /// Creates a new log monitor for the current process.
+    ///
+    /// - Parameters:
+    ///   - convention: The log storage convention that defines where logs are stored.
+    ///   - bundleMetadata: Metadata about the bundle being monitored. Defaults to `.main`.
+    ///
+    /// - Throws: An error if the log store cannot be created, the directory structure cannot be created,
+    ///   or the model container cannot be initialized.
     convenience init(
         convention: LogStorageConvention,
         bundleMetadata: BundleMetadata = .main,
