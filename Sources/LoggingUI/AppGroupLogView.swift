@@ -5,11 +5,18 @@ import Support
 import SwiftData
 import SwiftUI
 
+/// A view that displays logs organized by app groups.
+///
+/// `AppGroupLogView` provides a hierarchical navigation interface for browsing logs
+/// across multiple applications and their extensions (main app, widgets, etc.).
 @available(iOS 26.0, *)
 @available(macOS, unavailable)
 public struct AppGroupLogView: View {
     let logRetriever: LogRetriever
-    
+
+    /// Creates a new app group log view with the specified logging convention.
+    ///
+    /// - Parameter convention: The log storage convention used to locate and retrieve logs.
     public init(convention: LogStorageConvention) {
         // TODO: (P2) This force unwrap.
         logRetriever = try! LogRetriever(convention: convention)
