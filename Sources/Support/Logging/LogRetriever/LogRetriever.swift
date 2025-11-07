@@ -1,8 +1,14 @@
 #if canImport(OSLog)
 
+import Observation
 import Foundation
 import OSLog
 
+/// Retrieves and monitors log files for multiple applications.
+///
+/// `LogRetriever` discovers and organizes log data from applications and their extensions
+/// (main app, widgets, etc.) based on a specified storage convention. It automatically
+/// watches the manifest and log directories for changes and updates the ``apps`` property accordingly.
 @Observable
 public class LogRetriever {
     private static let logger = Logger(subsystem: "com.zuhlke.Support", category: "LogRetriever")
@@ -19,13 +25,21 @@ public class LogRetriever {
         diagnosticsDirectory.appending(component: convention.manifestDirectory)
     }
 
+    @ObservationIgnored
     private var directoryWatcher: MultiDirectoryWatcher?
 
+    /// The collection of app log containers discovered by the retriever.
     public private(set) var apps: [AppLogContainer] = []
 
+    /// Creates a new log retriever with the specified storage convention.
+    ///
+    /// - Parameter convention: The log storage convention that defines where logs are stored
+    ///   and how they are organized.
+    ///
+    /// - Throws: An error if the diagnostics directory cannot be accessed or if watching cannot be started.
     public init(convention: LogStorageConvention) throws {
         self.convention = convention
-        
+
         diagnosticsDirectory = try fileManager.url(for: convention.baseStorageLocation)
             .appending(components: convention.basePathComponents)
 
