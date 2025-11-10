@@ -1,4 +1,7 @@
+#if canImport(Darwin)
+
 import Foundation
+import OSLog
 
 protocol LogEntryProtocol {
     var composedMessage: String { get }
@@ -9,9 +12,7 @@ protocol LogStoreProtocol: Sendable {
     func entries(after date: Date) throws -> any Sequence<any LogEntryProtocol>
 }
 
-#if canImport(OSLog)
 
-import OSLog
 
 @available(macOS 10.15, *)
 extension OSLogEntry: LogEntryProtocol {}

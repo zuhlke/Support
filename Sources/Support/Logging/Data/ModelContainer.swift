@@ -1,4 +1,5 @@
-#if canImport(SwiftData)
+#if canImport(Darwin)
+
 import SwiftData
 
 public extension ModelContainer {
@@ -11,4 +12,5 @@ public extension ModelContainer {
         )
     }
 }
+
 #endif

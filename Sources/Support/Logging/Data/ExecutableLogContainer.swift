@@ -1,4 +1,5 @@
-#if canImport(SwiftData)
+#if canImport(Darwin)
+
 import Foundation
 
 /// Log container for individual executables
@@ -24,4 +25,5 @@ public struct ExecutableLogContainer: Hashable, Identifiable, Sendable {
     public var packageType: PackageType
     
 }
+
 #endif

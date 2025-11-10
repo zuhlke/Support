@@ -1,5 +1,4 @@
-#if os(iOS)
-#if canImport(SwiftUI)
+#if canImport(Darwin)
 
 import Foundation
 import Support
@@ -62,5 +61,4 @@ extension LogEntry {
     }
 }
 
-#endif
 #endif

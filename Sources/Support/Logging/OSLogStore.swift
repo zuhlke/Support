@@ -1,5 +1,5 @@
+#if canImport(Darwin)
 
-#if canImport(OSLog)
 import OSLog
 
 extension OSLogStore {

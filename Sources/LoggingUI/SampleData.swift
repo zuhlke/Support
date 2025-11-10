@@ -1,4 +1,4 @@
-#if os(iOS)
+#if canImport(Darwin)
 
 import Support
 import SwiftData
@@ -44,8 +44,10 @@ struct SampleData: PreviewModifier {
 extension PreviewTrait where T == Preview.ViewTraits {
 
     @available(iOS 26.0, *)
+    @available(macOS, unavailable)
     @MainActor static var sampleData: PreviewTrait<Preview.ViewTraits> {
         .modifier(SampleData())
     }
 }
+
 #endif

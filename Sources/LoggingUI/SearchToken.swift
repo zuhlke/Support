@@ -1,4 +1,4 @@
-#if os(iOS)
+#if canImport(Darwin)
 
 import Foundation
 import OSLog
@@ -71,4 +71,5 @@ extension OSLogEntryLog.Level {
         }
     }
 }
+
 #endif
