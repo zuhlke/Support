@@ -1,4 +1,5 @@
-#if os(iOS)
+#if canImport(Darwin)
+
 import SwiftUI
 
 extension String {
@@ -12,7 +13,7 @@ extension String {
             
             while let range = lowerSelf.range(of: lowerQuery, options: .caseInsensitive, range: searchRange) {
                 if let attrRange = Range(range, in: attributed) {
-                    attributed[attrRange].backgroundColor = UIColor(highlightColor)
+                    attributed[attrRange].backgroundColor = highlightColor
                 }
                 searchRange = range.upperBound ..< lowerSelf.endIndex
             }
@@ -21,4 +22,5 @@ extension String {
         return attributed
     }
 }
+
 #endif

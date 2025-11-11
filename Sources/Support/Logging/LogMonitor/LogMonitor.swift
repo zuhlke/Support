@@ -1,4 +1,4 @@
-#if canImport(SwiftData)
+#if canImport(Darwin)
 
 import Foundation
 import OSLog
@@ -118,7 +118,6 @@ public class LogMonitor {
     }
 }
 
-#if canImport(OSLog)
 public extension LogMonitor {
     /// Creates a new log monitor for the current process.
     ///
@@ -142,7 +141,6 @@ public extension LogMonitor {
         )
     }
 }
-#endif
 
 struct Logs: Codable {
     var runs: [AppRun.Snapshot]

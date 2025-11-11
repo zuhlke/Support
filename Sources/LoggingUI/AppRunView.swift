@@ -1,12 +1,11 @@
-#if os(iOS)
-#if canImport(SwiftUI)
+#if canImport(Darwin)
 
 import Support
 import SwiftData
 import SwiftUI
 
-@available(iOS 26.0, *)
-@available(macOS, unavailable)
+@available(iOS 26.0, macOS 26.0, *)
+@available(watchOS, unavailable)
 struct AppRunView: View {
     @Query(
         filter: #Predicate<LogEntry> { entry in
@@ -50,12 +49,14 @@ struct AppRunView: View {
     
     func contextMenu(for entry: LogEntry) -> some View {
         VStack {
-            Button {
-                UIPasteboard.general.string = entry.composedMessage
-            } label: {
-                Image(systemName: "document.on.document")
-                Text("Copy")
-            }
+            #if os(iOS)
+                Button {
+                    UIPasteboard.general.string = entry.composedMessage
+                } label: {
+                    Image(systemName: "document.on.document")
+                    Text("Copy")
+                }
+            #endif
             ExportView(logEntry: entry)
             Menu {
                 similarItem(entry: entry, scope: .message)
@@ -187,21 +188,23 @@ struct AppRunView: View {
             .onChange(of: [logEntries.description, tokens.description, searchText], initial: true) {
                 filterEntries()
             }
+            #if os(iOS)
             .toolbar {
                 DefaultToolbarItem(kind: .search, placement: .bottomBar)
                 ToolbarItem(placement: .topBarTrailing) {
                     menu
                 }
             }
+            #endif
     }
 }
 
-@available(iOS 26.0, *)
+@available(iOS 26.0, macOS 26.0, *)
+@available(watchOS, unavailable)
 #Preview(traits: .sampleData) {
     NavigationStack {
         AppRunView()
     }
 }
 
-#endif
 #endif

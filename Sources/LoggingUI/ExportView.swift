@@ -1,4 +1,5 @@
-#if canImport(SwiftUI)
+#if canImport(Darwin)
+
 import Support
 import SwiftUI
 
@@ -36,4 +37,5 @@ struct ExportView: View {
         }
     }
 }
+
 #endif

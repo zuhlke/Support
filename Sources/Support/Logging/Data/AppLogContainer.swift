@@ -1,4 +1,4 @@
-#if canImport(SwiftData)
+#if canImport(Darwin)
 
 /// Log container for an app
 public struct AppLogContainer: Identifiable, Equatable, Sendable {

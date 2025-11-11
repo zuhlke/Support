@@ -1,4 +1,4 @@
-#if canImport(OSLog)
+#if canImport(Darwin)
 
 import Observation
 import Foundation

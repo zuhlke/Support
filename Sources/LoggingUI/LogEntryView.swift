@@ -1,5 +1,4 @@
-#if os(iOS)
-#if canImport(SwiftUI)
+#if canImport(Darwin)
 
 import Support
 import SwiftUI
@@ -78,5 +77,4 @@ struct LogEntryView: View {
         .padding(16)
 }
 
-#endif
 #endif

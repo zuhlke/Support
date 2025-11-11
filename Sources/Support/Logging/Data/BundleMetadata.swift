@@ -1,5 +1,4 @@
-
-#if canImport(SwiftData)
+#if canImport(Darwin)
 
 import Foundation
 

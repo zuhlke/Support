@@ -1,4 +1,4 @@
-#if os(iOS)
+#if canImport(Darwin)
 
 import Foundation
 

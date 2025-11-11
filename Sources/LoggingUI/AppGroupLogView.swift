@@ -1,5 +1,4 @@
-#if os(iOS)
-#if canImport(SwiftUI)
+#if canImport(Darwin)
 
 import Support
 import SwiftData
@@ -9,8 +8,8 @@ import SwiftUI
 ///
 /// `AppGroupLogView` provides a hierarchical navigation interface for browsing logs
 /// across multiple applications and their extensions (main app, widgets, etc.).
-@available(iOS 26.0, *)
-@available(macOS, unavailable)
+@available(iOS 26.0, macOS 26.0, *)
+@available(watchOS, unavailable)
 public struct AppGroupLogView: View {
     let logRetriever: LogRetriever
 
@@ -52,5 +51,4 @@ public struct AppGroupLogView: View {
     }
 }
 
-#endif
 #endif

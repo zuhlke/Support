@@ -18,3 +18,6 @@ The framework is effectively a collection of “micro frameworks”, each of whi
 
 - <doc:Scoping-Mutation>
 - <doc:Asserting-API-Contracts>
+
+### Logging
+- <doc:Log-Monitoring-and-Retrieving>

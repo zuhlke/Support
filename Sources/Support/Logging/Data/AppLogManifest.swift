@@ -1,5 +1,4 @@
-
-#if canImport(SwiftData)
+#if canImport(Darwin)
 
 /// A codable type used for storing information about the app for the purpose of re-consituting logging information.
 struct AppLogManifest: Codable, Equatable {
