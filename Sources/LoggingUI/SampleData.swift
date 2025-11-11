@@ -41,7 +41,8 @@ struct SampleData: PreviewModifier {
     }
 }
 
-@available(iOS 26.0, macOS 15.0, watchOS 11.0, *)
+@available(iOS 26.0, macOS 15.0, *)
+@available(watchOS, unavailable)
 extension PreviewTrait where T == Preview.ViewTraits {
     @MainActor static var sampleData: PreviewTrait<Preview.ViewTraits> {
         .modifier(SampleData())

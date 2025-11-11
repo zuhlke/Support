@@ -1,5 +1,10 @@
 # Logging UI
 
+@Metadata {
+    @Available(iOS, introduced: "26.0")
+    @Available(macOS, introduced: "26.0")
+}
+
 Ready made user interface to retrieve and visualise logs.
 
 ## Overview

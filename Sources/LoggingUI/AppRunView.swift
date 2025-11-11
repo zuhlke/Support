@@ -5,6 +5,7 @@ import SwiftData
 import SwiftUI
 
 @available(iOS 26.0, macOS 26.0, *)
+@available(watchOS, unavailable)
 struct AppRunView: View {
     @Query(
         filter: #Predicate<LogEntry> { entry in
@@ -198,7 +199,8 @@ struct AppRunView: View {
     }
 }
 
-@available(iOS 26.0, macOS 26.0, watchOS 11.0, *)
+@available(iOS 26.0, macOS 26.0, *)
+@available(watchOS, unavailable)
 #Preview(traits: .sampleData) {
     NavigationStack {
         AppRunView()
