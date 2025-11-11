@@ -198,8 +198,7 @@ struct AppRunView: View {
     }
 }
 
-@available(iOS 26.0, *)
-@available(macOS, unavailable)
+@available(iOS 26.0, macOS 26.0, watchOS 11.0, *)
 #Preview(traits: .sampleData) {
     NavigationStack {
         AppRunView()
