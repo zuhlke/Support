@@ -1,0 +1,84 @@
+#if canImport(Darwin)
+#if swift(>=6.2)
+
+import Foundation
+import OSLog
+import Testing
+import TestingSupport
+@testable import Support
+
+struct FileWatcherTests {
+    static let logger = Logger(subsystem: "com.zuhlke.support.tests", category: "FileWatcherTests")
+
+    @Test(.timeLimit(.minutes(1)))
+    func `Sends a file changed event when existing file is modified`() async {
+        await withKnownIssueAndTimeLimit(isIntermittent: true, duration: .seconds(10)) {
+            let fileManager = FileManager()
+            try await fileManager.withTemporaryDirectory { tempDir in
+                let testFile = tempDir.appendingPathComponent("test.txt")
+                try "initial content".write(to: testFile, atomically: true, encoding: .utf8)
+                
+                let stream = FileWatcher(url: testFile)
+                let iterator = stream.makeAsyncIterator()
+                async let asyncEvent = iterator.next()
+                
+                FileWatcherTests.logger.trace("Modifying file at url: \(testFile)")
+                try? "modified content".write(to: testFile, atomically: true, encoding: .utf8)
+                
+                let event = await asyncEvent
+                #expect(event == .changed)
+            }
+        }
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func `Returns nil when cancelled immediately listening to file changes`() async throws {
+        let fileManager = FileManager()
+        try await fileManager.withTemporaryDirectory { tempDir in
+            let testFile = tempDir.appendingPathComponent("test.txt")
+            try "initial content".write(to: testFile, atomically: true, encoding: .utf8)
+
+            let stream = FileWatcher(url: testFile)
+            let iterator = stream.makeAsyncIterator()
+            let asyncEvent = Task {
+                #expect(Task.isCancelled)
+                return await iterator.next()
+            }
+            asyncEvent.cancel()
+
+            let event = await asyncEvent.value
+            #expect(event == nil)
+        }
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func `Returns nil when cancelled listening to file changes`() async throws {
+        let fileManager = FileManager()
+        try await fileManager.withTemporaryDirectory { tempDir in
+            let testFile = tempDir.appendingPathComponent("test.txt")
+            try "initial content".write(to: testFile, atomically: true, encoding: .utf8)
+
+            let (waiter, signaller) = AsyncStream.makeStream(of: Void.self)
+            
+            let asyncEvent = Task {
+                let stream = FileWatcher(url: testFile)
+                let iterator = stream.makeAsyncIterator()
+                async let asyncEvent = iterator.next()
+                #expect(!Task.isCancelled)
+                signaller.yield()
+                return await asyncEvent
+            }
+
+            var signals = waiter.makeAsyncIterator()
+            _ = await signals.next()
+            
+            asyncEvent.cancel()
+
+            let event = await asyncEvent.value
+            #expect(event == nil)
+        }
+    }
+}
+
+#endif
+#endif

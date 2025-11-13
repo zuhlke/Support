@@ -1,0 +1,601 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 90;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		133F5F5C2E6AE4A900CCBFBB /* Support in Frameworks */ = {isa = PBXBuildFile; productRef = 133F5F5B2E6AE4A900CCBFBB /* Support */; };
+		133F5FAC2E6F1EEF00CCBFBB /* Support in Frameworks */ = {isa = PBXBuildFile; productRef = 133F5FAB2E6F1EEF00CCBFBB /* Support */; };
+		358B39172EAB919200FDCFEC /* LoggingUI in Frameworks */ = {isa = PBXBuildFile; productRef = 358B39162EAB919200FDCFEC /* LoggingUI */; };
+		35F3E20C2E7309830041E30D /* Support in Frameworks */ = {isa = PBXBuildFile; productRef = 35F3E20B2E7309830041E30D /* Support */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		135E237D2E69C791001C5CA5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 135E23652E69C787001C5CA5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 135E236C2E69C787001C5CA5;
+			remoteInfo = LogViewer;
+		};
+		135E23872E69C791001C5CA5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 135E23652E69C787001C5CA5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 135E236C2E69C787001C5CA5;
+			remoteInfo = LogViewer;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		135E236D2E69C787001C5CA5 /* LogViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LogViewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		135E237C2E69C791001C5CA5 /* LogViewerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LogViewerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		135E23862E69C791001C5CA5 /* LogViewerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LogViewerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		135E236F2E69C787001C5CA5 /* LogViewer */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = LogViewer;
+			sourceTree = "<group>";
+		};
+		135E237F2E69C791001C5CA5 /* LogViewerTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = LogViewerTests;
+			sourceTree = "<group>";
+		};
+		135E23892E69C791001C5CA5 /* LogViewerUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = LogViewerUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		135E236A2E69C787001C5CA5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				35F3E20C2E7309830041E30D /* Support in Frameworks */,
+				133F5FAC2E6F1EEF00CCBFBB /* Support in Frameworks */,
+				358B39172EAB919200FDCFEC /* LoggingUI in Frameworks */,
+				133F5F5C2E6AE4A900CCBFBB /* Support in Frameworks */,
+			);
+		};
+		135E23792E69C791001C5CA5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		135E23832E69C791001C5CA5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		135E23642E69C787001C5CA5 = {
+			isa = PBXGroup;
+			children = (
+				135E236F2E69C787001C5CA5 /* LogViewer */,
+				135E237F2E69C791001C5CA5 /* LogViewerTests */,
+				135E23892E69C791001C5CA5 /* LogViewerUITests */,
+				135E236E2E69C787001C5CA5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		135E236E2E69C787001C5CA5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				135E236D2E69C787001C5CA5 /* LogViewer.app */,
+				135E237C2E69C791001C5CA5 /* LogViewerTests.xctest */,
+				135E23862E69C791001C5CA5 /* LogViewerUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		135E236C2E69C787001C5CA5 /* LogViewer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 135E23902E69C791001C5CA5 /* Build configuration list for PBXNativeTarget "LogViewer" */;
+			buildPhases = (
+				135E23692E69C787001C5CA5 /* Sources */,
+				135E236A2E69C787001C5CA5 /* Frameworks */,
+				135E236B2E69C787001C5CA5 /* Resources */,
+			);
+			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				135E236F2E69C787001C5CA5 /* LogViewer */,
+			);
+			name = LogViewer;
+			packageProductDependencies = (
+				133F5F5B2E6AE4A900CCBFBB /* Support */,
+				133F5FAB2E6F1EEF00CCBFBB /* Support */,
+				35F3E20B2E7309830041E30D /* Support */,
+				358B39162EAB919200FDCFEC /* LoggingUI */,
+			);
+			productName = LogViewer;
+			productReference = 135E236D2E69C787001C5CA5 /* LogViewer.app */;
+			productType = "com.apple.product-type.application";
+		};
+		135E237B2E69C791001C5CA5 /* LogViewerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 135E23932E69C791001C5CA5 /* Build configuration list for PBXNativeTarget "LogViewerTests" */;
+			buildPhases = (
+				135E23782E69C791001C5CA5 /* Sources */,
+				135E23792E69C791001C5CA5 /* Frameworks */,
+				135E237A2E69C791001C5CA5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				135E237E2E69C791001C5CA5 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				135E237F2E69C791001C5CA5 /* LogViewerTests */,
+			);
+			name = LogViewerTests;
+			productName = LogViewerTests;
+			productReference = 135E237C2E69C791001C5CA5 /* LogViewerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		135E23852E69C791001C5CA5 /* LogViewerUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 135E23962E69C791001C5CA5 /* Build configuration list for PBXNativeTarget "LogViewerUITests" */;
+			buildPhases = (
+				135E23822E69C791001C5CA5 /* Sources */,
+				135E23832E69C791001C5CA5 /* Frameworks */,
+				135E23842E69C791001C5CA5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				135E23882E69C791001C5CA5 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				135E23892E69C791001C5CA5 /* LogViewerUITests */,
+			);
+			name = LogViewerUITests;
+			productName = LogViewerUITests;
+			productReference = 135E23862E69C791001C5CA5 /* LogViewerUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		135E23652E69C787001C5CA5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					135E236C2E69C787001C5CA5 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					135E237B2E69C791001C5CA5 = {
+						CreatedOnToolsVersion = 26.0;
+						TestTargetID = 135E236C2E69C787001C5CA5;
+					};
+					135E23852E69C791001C5CA5 = {
+						CreatedOnToolsVersion = 26.0;
+						TestTargetID = 135E236C2E69C787001C5CA5;
+					};
+				};
+			};
+			buildConfigurationList = 135E23682E69C787001C5CA5 /* Build configuration list for PBXProject "LogViewer" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 135E23642E69C787001C5CA5;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				358B39152EAB919200FDCFEC /* XCLocalSwiftPackageReference "../." */,
+			);
+			preferredProjectObjectVersion = 90;
+			productRefGroup = 135E236E2E69C787001C5CA5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				135E236C2E69C787001C5CA5 /* LogViewer */,
+				135E237B2E69C791001C5CA5 /* LogViewerTests */,
+				135E23852E69C791001C5CA5 /* LogViewerUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		135E236B2E69C787001C5CA5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		135E237A2E69C791001C5CA5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		135E23842E69C791001C5CA5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		135E23692E69C787001C5CA5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		135E23782E69C791001C5CA5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		135E23822E69C791001C5CA5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		135E237E2E69C791001C5CA5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 135E236C2E69C787001C5CA5 /* LogViewer */;
+			targetProxy = 135E237D2E69C791001C5CA5 /* PBXContainerItemProxy */;
+		};
+		135E23882E69C791001C5CA5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 135E236C2E69C787001C5CA5 /* LogViewer */;
+			targetProxy = 135E23872E69C791001C5CA5 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		135E238E2E69C791001C5CA5 /* Debug configuration for PBXProject "LogViewer" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = W46A5HMB5C;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		135E238F2E69C791001C5CA5 /* Release configuration for PBXProject "LogViewer" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = W46A5HMB5C;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		135E23912E69C791001C5CA5 /* Debug configuration for PBXNativeTarget "LogViewer" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = LogViewer/LogViewer.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = W46A5HMB5C;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zuhlke.LogViewer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		135E23922E69C791001C5CA5 /* Release configuration for PBXNativeTarget "LogViewer" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = LogViewer/LogViewer.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = W46A5HMB5C;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zuhlke.LogViewer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		135E23942E69C791001C5CA5 /* Debug configuration for PBXNativeTarget "LogViewerTests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = W46A5HMB5C;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zuhlke.LogViewerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LogViewer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/LogViewer";
+			};
+			name = Debug;
+		};
+		135E23952E69C791001C5CA5 /* Release configuration for PBXNativeTarget "LogViewerTests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = W46A5HMB5C;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zuhlke.LogViewerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LogViewer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/LogViewer";
+			};
+			name = Release;
+		};
+		135E23972E69C791001C5CA5 /* Debug configuration for PBXNativeTarget "LogViewerUITests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = W46A5HMB5C;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zuhlke.LogViewerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = LogViewer;
+			};
+			name = Debug;
+		};
+		135E23982E69C791001C5CA5 /* Release configuration for PBXNativeTarget "LogViewerUITests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = W46A5HMB5C;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zuhlke.LogViewerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = LogViewer;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		135E23682E69C787001C5CA5 /* Build configuration list for PBXProject "LogViewer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				135E238E2E69C791001C5CA5 /* Debug configuration for PBXProject "LogViewer" */,
+				135E238F2E69C791001C5CA5 /* Release configuration for PBXProject "LogViewer" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		135E23902E69C791001C5CA5 /* Build configuration list for PBXNativeTarget "LogViewer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				135E23912E69C791001C5CA5 /* Debug configuration for PBXNativeTarget "LogViewer" */,
+				135E23922E69C791001C5CA5 /* Release configuration for PBXNativeTarget "LogViewer" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		135E23932E69C791001C5CA5 /* Build configuration list for PBXNativeTarget "LogViewerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				135E23942E69C791001C5CA5 /* Debug configuration for PBXNativeTarget "LogViewerTests" */,
+				135E23952E69C791001C5CA5 /* Release configuration for PBXNativeTarget "LogViewerTests" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		135E23962E69C791001C5CA5 /* Build configuration list for PBXNativeTarget "LogViewerUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				135E23972E69C791001C5CA5 /* Debug configuration for PBXNativeTarget "LogViewerUITests" */,
+				135E23982E69C791001C5CA5 /* Release configuration for PBXNativeTarget "LogViewerUITests" */,
+			);
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		358B39152EAB919200FDCFEC /* XCLocalSwiftPackageReference "../." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../.;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		133F5F5B2E6AE4A900CCBFBB /* Support */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Support;
+		};
+		133F5FAB2E6F1EEF00CCBFBB /* Support */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Support;
+		};
+		358B39162EAB919200FDCFEC /* LoggingUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LoggingUI;
+		};
+		35F3E20B2E7309830041E30D /* Support */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Support;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 135E23652E69C787001C5CA5 /* Project object */;
+}

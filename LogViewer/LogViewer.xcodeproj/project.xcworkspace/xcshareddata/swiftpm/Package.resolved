@@ -1,0 +1,15 @@
+{
+  "originHash" : "963dec0c036dfb74b8bf95b92793b0d18c6a30437ebc89e1a371c1d4790d647c",
+  "pins" : [
+    {
+      "identity" : "swift-http-types",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-http-types.git",
+      "state" : {
+        "revision" : "a0a57e949a8903563aba4615869310c0ebf14c03",
+        "version" : "1.4.0"
+      }
+    }
+  ],
+  "version" : 3
+}

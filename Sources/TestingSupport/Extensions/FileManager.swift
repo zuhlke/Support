@@ -23,7 +23,7 @@ extension FileManager {
     /// - Parameter operation: The operation to perform in the directory.
     /// - Returns: The result of `operation`.
     /// - Throws: If `operation` throws, or if fails to create a temporary folder.
-    public func withTemporaryDirectory<Output>(perform operation: (URL) async throws -> Output) async throws -> Output {
+    public func withTemporaryDirectory<Output>(perform operation: @Sendable (URL) async throws -> Output) async throws -> Output {
         let directory = try url(for: .itemReplacementDirectory, in: .userDomainMask, appropriateFor: temporaryDirectory, create: true)
         defer { try? removeItem(at: directory) }
         
