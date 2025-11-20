@@ -4,6 +4,12 @@ import Support
 import SwiftUI
 
 struct ExportView: View {
+    static let dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
+        return dateFormatter
+    }()
+
     private let shareData: Data
     private let fileName: String
 
@@ -22,9 +28,7 @@ struct ExportView: View {
         let jsonData = try? encoder.encode(appRunSnapshots)
         shareData = jsonData ?? .init()
 
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
-        let timestamp = dateFormatter.string(from: Date())
+        let timestamp = Self.dateFormatter.string(from: Date())
         fileName = "app_runs_\(timestamp).json"
     }
 
