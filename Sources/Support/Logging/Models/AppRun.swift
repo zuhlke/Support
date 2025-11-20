@@ -28,16 +28,6 @@ public class AppRun {
         public let info: Info
         /// Snapshots of all log entries captured during this run.
         public let logEntries: [LogEntry.Snapshot]
-
-        /// Creates a new app run snapshot with the specified metadata.
-        ///
-        /// - Parameters:
-        ///   - info: The Info of the app run.
-        ///   - logEntries: The log entries for that app run.
-        public init(info: Info, logEntries: [LogEntry.Snapshot]) {
-            self.info = info
-            self.logEntries = logEntries
-        }
     }
 
     /// The version of the application.
