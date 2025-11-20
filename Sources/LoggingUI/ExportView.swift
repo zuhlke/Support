@@ -8,8 +8,8 @@ struct ExportView: View {
 
     init(groupedEntries: [AppRun: [LogEntry]]) {
         let appRunSnapshots = groupedEntries.map { key, value in
-            ExportData(
-                appRun: key.snapshot.info,
+            AppRunExportSnapshot(
+                info: key.snapshot.info,
                 logEntries: value.map(\.snapshot)
             )
         }
@@ -55,8 +55,8 @@ private struct JSONFile: Transferable {
     }
 }
 
-private struct ExportData: Codable {
-    let appRun: AppRun.Snapshot.Info
+private struct AppRunExportSnapshot: Codable {
+    let info: AppRun.Snapshot.Info
     let logEntries: [LogEntry.Snapshot]
 }
 
