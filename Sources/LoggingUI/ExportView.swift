@@ -16,7 +16,11 @@ struct ExportView: View {
 
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        encoder.dateEncodingStrategy = .iso8601
+        encoder.dateEncodingStrategy = .custom({ date, encoder in
+            let dateString = date.ISO8601Format(Date.ISO8601FormatStyle(includingFractionalSeconds: true))
+            var container = encoder.singleValueContainer()
+            try container.encode(dateString)
+        })
 
         let jsonData = try? encoder.encode(appRunSnapshots)
         shareData = jsonData ?? .init()
