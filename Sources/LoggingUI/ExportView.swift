@@ -4,14 +4,7 @@ import Support
 import SwiftUI
 
 struct ExportView: View {
-    static let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
-        return dateFormatter
-    }()
-
     private let shareData: Data
-    private let fileName: String
 
     init(groupedEntries: [AppRun: [LogEntry]]) {
         let appRunSnapshots = groupedEntries.map { key, value in
@@ -27,14 +20,11 @@ struct ExportView: View {
 
         let jsonData = try? encoder.encode(appRunSnapshots)
         shareData = jsonData ?? .init()
-
-        let timestamp = Self.dateFormatter.string(from: Date())
-        fileName = "app_runs_\(timestamp).json"
     }
 
     var body: some View {
         ShareLink(
-            item: JSONFile(data: shareData, filename: fileName),
+            item: JSONFile(data: shareData),
             preview: SharePreview("App Runs", image: Image(systemName: "doc.text"))
         ) {
             HStack {
@@ -46,15 +36,21 @@ struct ExportView: View {
 }
 
 private struct JSONFile: Transferable {
+    static let dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
+        return dateFormatter
+    }()
+
     let data: Data
-    let filename: String
 
     static var transferRepresentation: some TransferRepresentation {
         DataRepresentation(exportedContentType: .json) { file in
             file.data
         }
         .suggestedFileName { file in
-            file.filename
+            let timestamp = Self.dateFormatter.string(from: Date())
+            return "app_runs_\(timestamp).json"
         }
     }
 }
