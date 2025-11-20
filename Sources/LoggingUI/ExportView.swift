@@ -4,36 +4,53 @@ import Support
 import SwiftUI
 
 struct ExportView: View {
-    var file: URL
-    
-    var encoder = mutating(JSONEncoder()) {
-        $0.outputFormatting = [.prettyPrinted, .sortedKeys]
-        $0.dateEncodingStrategy = .iso8601
-    }
-    
-    init(logEntry: LogEntry) {
-        let jsonData = try? encoder.encode(logEntry.snapshot)
-        file = FileManager.default.temporaryDirectory.appendingPathComponent("logEntry.json")
-        if let data = jsonData {
-            try? data.write(to: file, options: .atomic)
+    private let shareData: Data
+    private let fileName: String
+
+    init(groupedEntries: [AppRun: [LogEntry]]) {
+        let appRunSnapshots = groupedEntries.map { key, value in
+            AppRun.Snapshot(
+                info: key.snapshot.info,
+                logEntries: value.map(\.snapshot)
+            )
         }
+
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        encoder.dateEncodingStrategy = .iso8601
+
+        let jsonData = try? encoder.encode(appRunSnapshots)
+        shareData = jsonData ?? .init()
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
+        let timestamp = dateFormatter.string(from: Date())
+        fileName = "app_runs_\(timestamp).json"
     }
-    
-    init(logEntries: [LogEntry]) {
-        let jsonData = try? encoder.encode(logEntries.map(\.snapshot))
-        file = FileManager.default.temporaryDirectory.appendingPathComponent("logEntries.json")
-        if let data = jsonData {
-            try? data.write(to: file, options: .atomic)
-        }
-    }
-    
+
     var body: some View {
-        ShareLink(item: file, preview: SharePreview("Log Entries", image: Image(systemName: "text.document"))) {
-            Image(systemName: "square.and.arrow.up")
+        ShareLink(
+            item: JSONFile(data: shareData, filename: fileName),
+            preview: SharePreview("App Runs", image: Image(systemName: "doc.text"))
+        ) {
             HStack {
                 Image(systemName: "square.and.arrow.up")
                 Text("Export")
             }
+        }
+    }
+}
+
+private struct JSONFile: Transferable {
+    let data: Data
+    let filename: String
+
+    static var transferRepresentation: some TransferRepresentation {
+        DataRepresentation(exportedContentType: .json) { file in
+            file.data
+        }
+        .suggestedFileName { file in
+            file.filename
         }
     }
 }
