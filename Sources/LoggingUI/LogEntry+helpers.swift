@@ -43,7 +43,7 @@ extension LogEntry {
         case .fault:
             Color.red.opacity(0.2)
         default:
-            Color.white
+            Color.clear
         }
     }
     
