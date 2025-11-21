@@ -1,5 +1,4 @@
 #if os(macOS)
-import AppKit
 import LoggingUI
 import OSLog
 import Support
@@ -7,9 +6,9 @@ import SwiftData
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// macOS view for importing and displaying JSON logs exported from iOS
 struct LogImportView: View {
-    @State private var modelContainer: ModelContainer?
+    private let modelContainer: ModelContainer
+
     @State private var hasImportedLogs = false
     @State private var errorMessage: String?
 
@@ -17,11 +16,9 @@ struct LogImportView: View {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .custom({
             let string = try $0.singleValueContainer().decode(String.self)
-            do {
-                return try .init(string, strategy: Date.ISO8601FormatStyle(includingFractionalSeconds: true))
-            } catch {
-                return try .init(string, strategy: .iso8601)
-            }
+            return try .init(string, strategy: Date.ISO8601FormatStyle(
+                includingFractionalSeconds: true
+            ))
         })
         return decoder
     }()
@@ -30,25 +27,22 @@ struct LogImportView: View {
         // Create an in-memory SwiftData container for imported logs
         let schema = Schema([AppRun.self, LogEntry.self])
         let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
-        do {
-            let container = try ModelContainer(for: schema, configurations: configuration)
-            _modelContainer = State(initialValue: container)
-        } catch {
-            print("Failed to create ModelContainer: \(error)")
-        }
+        self.modelContainer = try! ModelContainer(for: schema, configurations: configuration)
     }
 
     var body: some View {
         Group {
-            if hasImportedLogs, let container = modelContainer {
-                // Use AppRunView directly - it has all the features we need
+            if hasImportedLogs {
                 AppRunView()
-                    .modelContainer(container)
+                    .modelContainer(modelContainer)
             } else {
                 emptyStateView
             }
         }
         .navigationTitle("Log Viewer")
+        .onDrop(of: [.fileURL], isTargeted: nil) { providers in
+            handleFileDrop(providers: providers)
+        }
         .alert("Import Error", isPresented: .constant(errorMessage != nil)) {
             Button("OK") {
                 errorMessage = nil
@@ -65,48 +59,52 @@ struct LogImportView: View {
     /// Empty state view shown when no logs are imported
     private var emptyStateView: some View {
         VStack(spacing: 20) {
-            Image(systemName: "doc.text.magnifyingglass")
+            Image(systemName: "arrow.down.doc")
                 .font(.system(size: 60))
                 .foregroundStyle(.secondary)
 
-            Text("No Logs Imported")
+            Text("Drop JSON Log File")
                 .font(.title2)
                 .fontWeight(.semibold)
 
-            Text("Import a JSON log file to view entries")
+            Text("Drag and drop a JSON log file anywhere to view entries")
                 .font(.body)
                 .foregroundStyle(.secondary)
-
-            Button {
-                // Show file picker
-                let panel = NSOpenPanel()
-                panel.allowedContentTypes = [.json]
-                panel.allowsMultipleSelection = false
-                panel.canChooseDirectories = false
-                panel.canChooseFiles = true
-
-                if panel.runModal() == .OK, let url = panel.url {
-                    importLogs(from: url)
-                }
-            } label: {
-                Label("Import Logs", systemImage: "square.and.arrow.down")
-            }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
+                .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     // MARK: - Helper Functions
 
-    /// Imports logs from the specified JSON file and converts them to SwiftData models
-    /// - Parameter url: URL of the JSON file to import
-    private func importLogs(from url: URL) {
-        guard let container = modelContainer else {
-            errorMessage = "Model container not initialized"
-            return
+    private func handleFileDrop(providers: [NSItemProvider]) -> Bool {
+        guard let provider = providers.first else { return false }
+
+        provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { item, error in
+            // Get the URL from the dropped item
+            guard let data = item as? Data,
+                  let url = URL(dataRepresentation: data, relativeTo: nil) else {
+                return
+            }
+
+            // Check if it's a JSON file
+            guard url.pathExtension.lowercased() == "json" else {
+                DispatchQueue.main.async {
+                    errorMessage = "Please drop a JSON file"
+                }
+                return
+            }
+
+            // Import the logs on the main thread, replacing any existing logs
+            DispatchQueue.main.async {
+                importLogs(from: url)
+            }
         }
 
+        return true
+    }
+
+    private func importLogs(from url: URL) {
         do {
             // Read the file data
             let data = try Data(contentsOf: url)
@@ -115,7 +113,11 @@ struct LogImportView: View {
             let appRunSnapshots = try LogImportView.decoder.decode([AppRun.Snapshot].self, from: data)
 
             // Create a new context
-            let context = ModelContext(container)
+            let context = ModelContext(modelContainer)
+
+            // Clear existing data by deleting all AppRuns and LogEntries
+            try context.delete(model: AppRun.self)
+            try context.delete(model: LogEntry.self)
 
             // Import each app run with its log entries
             for snapshot in appRunSnapshots {
@@ -168,12 +170,6 @@ struct LogImportView: View {
         case "fault": return .fault
         default: return nil
         }
-    }
-}
-
-#Preview {
-    NavigationStack {
-        LogImportView()
     }
 }
 #endif
