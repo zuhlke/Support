@@ -4,9 +4,9 @@ import Support
 import SwiftData
 import SwiftUI
 
-@available(iOS 26.0, macOS 26.0, *)
+@available(iOS 26.0, macOS 15.0, *)
 @available(watchOS, unavailable)
-struct AppRunView: View {
+public struct AppRunView: View {
     @Query(
         filter: #Predicate<LogEntry> { entry in
             entry.subsystem != nil && entry.subsystem != "" && !(entry.subsystem?.contains("com.apple.") ?? false)
@@ -22,6 +22,8 @@ struct AppRunView: View {
     @State private var filteredEntries: [LogEntry] = []
     @State private var groupedEntries: [AppRun: [LogEntry]] = [:]
     
+    public init() {}
+
     func filterEntries() {
         filteredEntries = logEntries.filter(searchText: searchText, tokens: tokens)
         groupedEntries = Dictionary(grouping: filteredEntries) { $0.appRun }
@@ -57,7 +59,9 @@ struct AppRunView: View {
                 Text("Copy")
             }
 #endif
+#if os(iOS)
             ExportView(groupedEntries: [entry.appRun: [entry]])
+#endif
             Menu {
                 similarItem(entry: entry, scope: .message)
                 similarItem(entry: entry, scope: .level)
@@ -76,7 +80,9 @@ struct AppRunView: View {
                 .font(.headline)
             Spacer()
             Menu {
+#if os(iOS)
                 ExportView(groupedEntries: [appRun: entries])
+#endif
                 Section {
                     Text("App version: \(appRun.appVersion)")
                     Text("Operating System Version: \(appRun.operatingSystemVersion)")
@@ -86,11 +92,11 @@ struct AppRunView: View {
             } label: {
                 Image(systemName: "info.circle")
             }
+            .fixedSize() 
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .glassEffect()
     }
     
     var appRuns: some View {
@@ -156,9 +162,11 @@ struct AppRunView: View {
     
     var menu: some View {
         Menu {
+#if os(iOS)
             Section {
                 ExportView(groupedEntries: groupedEntries)
             }
+#endif
             ForEach(Metadata.allCases, id: \.self) { metadata in
                 Toggle(isOn: .init(get: { isShowingMetadata.contains(metadata) }, set: {
                     if $0 {
@@ -185,8 +193,8 @@ struct AppRunView: View {
             Image(systemName: "ellipsis")
         }
     }
-    
-    var body: some View {
+
+    public var body: some View {
         searchableAppRuns
             .onChange(of: [logEntries.description, tokens.description, searchText], initial: true) {
                 filterEntries()
