@@ -3,7 +3,7 @@
 import Support
 import SwiftUI
 
-public struct LogEntryView: View {
+struct LogEntryView: View {
     var entry: LogEntry
     var searchText: String
     var tokens: [SearchToken]
@@ -22,7 +22,7 @@ public struct LogEntryView: View {
         }
     }
     
-    public var body: some View {
+    var body: some View {
         Button {
             isCollapsed.toggle()
         } label: {
