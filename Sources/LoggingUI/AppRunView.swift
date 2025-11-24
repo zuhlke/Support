@@ -102,6 +102,9 @@ public struct AppRunView: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
         .frame(maxWidth: .infinity, alignment: .leading)
+#if os(iOS)
+        .glassEffect()
+#endif
     }
     
     var appRuns: some View {
