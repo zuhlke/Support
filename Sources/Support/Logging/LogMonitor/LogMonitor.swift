@@ -62,7 +62,7 @@ public class LogMonitor {
 
         monitoringTask = Task.detached(name: "LogMonitorTask") {
             do {
-                try await LogMonitor.startMonitoring(
+                try await LogMonitor.monitorLogs(
                     context: ModelContext(modelContainer),
                     bundleMetadata: bundleMetadata,
                     deviceMetadata: deviceMetadata,
@@ -75,7 +75,7 @@ public class LogMonitor {
         }
     }
 
-    private static func startMonitoring(
+    private static func monitorLogs(
         context: ModelContext,
         bundleMetadata: BundleMetadata,
         deviceMetadata: DeviceMetadata,
