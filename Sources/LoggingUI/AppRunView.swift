@@ -49,15 +49,15 @@ struct AppRunView: View {
     
     func contextMenu(for entry: LogEntry) -> some View {
         VStack {
-            #if os(iOS)
-                Button {
-                    UIPasteboard.general.string = entry.composedMessage
-                } label: {
-                    Image(systemName: "document.on.document")
-                    Text("Copy")
-                }
-            #endif
-            ExportView(logEntry: entry)
+#if os(iOS)
+            Button {
+                UIPasteboard.general.string = entry.composedMessage
+            } label: {
+                Image(systemName: "document.on.document")
+                Text("Copy")
+            }
+#endif
+            ExportView(groupedEntries: [entry.appRun: [entry]])
             Menu {
                 similarItem(entry: entry, scope: .message)
                 similarItem(entry: entry, scope: .level)
@@ -70,13 +70,13 @@ struct AppRunView: View {
         }
     }
     
-    func appRunHeader(appRun: AppRun) -> some View {
+    func appRunHeader(appRun: AppRun, entries: [LogEntry]) -> some View {
         HStack(alignment: .center) {
             Text(appRun.launchDate.formatted())
                 .font(.headline)
             Spacer()
             Menu {
-                ExportView(logEntries: groupedEntries[appRun]!)
+                ExportView(groupedEntries: [appRun: entries])
                 Section {
                     Text("App version: \(appRun.appVersion)")
                     Text("Operating System Version: \(appRun.operatingSystemVersion)")
@@ -107,7 +107,10 @@ struct AppRunView: View {
                                 .contextMenu { contextMenu(for: entry) }
                         }
                     } header: {
-                        appRunHeader(appRun: appRun)
+                        appRunHeader(
+                            appRun: appRun,
+                            entries: groupedEntries[appRun]!
+                        )
                     }
                 }
             }
@@ -154,7 +157,7 @@ struct AppRunView: View {
     var menu: some View {
         Menu {
             Section {
-                ExportView(logEntries: filteredEntries)
+                ExportView(groupedEntries: groupedEntries)
             }
             ForEach(Metadata.allCases, id: \.self) { metadata in
                 Toggle(isOn: .init(get: { isShowingMetadata.contains(metadata) }, set: {
