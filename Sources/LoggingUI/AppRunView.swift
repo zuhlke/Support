@@ -4,6 +4,10 @@ import Support
 import SwiftData
 import SwiftUI
 
+/// A view that displays log entries organized by app run sessions.
+///
+/// `AppRunView` provides a searchable interface for browsing log entries grouped by
+/// individual app launch sessions, with support for filtering, metadata display, and exporting.
 @available(iOS 26.0, macOS 15.0, *)
 @available(watchOS, unavailable)
 public struct AppRunView: View {
@@ -21,7 +25,8 @@ public struct AppRunView: View {
     @State private var tokens: [SearchToken] = []
     @State private var filteredEntries: [LogEntry] = []
     @State private var groupedEntries: [AppRun: [LogEntry]] = [:]
-    
+
+    /// Creates a new app run view.
     public init() {}
 
     func filterEntries() {
