@@ -9,6 +9,9 @@ import UniformTypeIdentifiers
 ///
 /// `LogMonitor` continuously monitors the system log store for new entries and persists them
 /// to a SwiftData model container.
+///
+/// - Warning: Only one instance of `LogMonitor` should be created per application.
+///   Creating multiple instances may result in unpredictable behavior.
 public class LogMonitor {
     private static let logger = Logger(subsystem: "com.zuhlke.Support", category: "LogMonitor")
 
@@ -62,7 +65,7 @@ public class LogMonitor {
 
         monitoringTask = Task.detached(name: "LogMonitorTask") {
             do {
-                try await LogMonitor.startMonitoring(
+                try await LogMonitor.monitorLogs(
                     context: ModelContext(modelContainer),
                     bundleMetadata: bundleMetadata,
                     deviceMetadata: deviceMetadata,
@@ -75,7 +78,7 @@ public class LogMonitor {
         }
     }
 
-    private static func startMonitoring(
+    private static func monitorLogs(
         context: ModelContext,
         bundleMetadata: BundleMetadata,
         deviceMetadata: DeviceMetadata,

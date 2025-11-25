@@ -10,7 +10,7 @@ import OSLog
 /// (main app, widgets, etc.) based on a specified storage convention. It automatically
 /// watches the manifest and log directories for changes and updates the ``apps`` property accordingly.
 @Observable
-public class LogRetriever {
+package class LogRetriever {
     private static let logger = Logger(subsystem: "com.zuhlke.Support", category: "LogRetriever")
 
     private let fileManager = FileManager()
@@ -29,7 +29,7 @@ public class LogRetriever {
     private var directoryWatcher: MultiDirectoryWatcher?
 
     /// The collection of app log containers discovered by the retriever.
-    public private(set) var apps: [AppLogContainer] = []
+    package private(set) var apps: [AppLogContainer] = []
 
     /// Creates a new log retriever with the specified storage convention.
     ///
@@ -37,7 +37,7 @@ public class LogRetriever {
     ///   and how they are organized.
     ///
     /// - Throws: An error if the diagnostics directory cannot be accessed or if watching cannot be started.
-    public init(convention: LogStorageConvention) throws {
+    package init(convention: LogStorageConvention) throws {
         self.convention = convention
 
         diagnosticsDirectory = try fileManager.url(for: convention.baseStorageLocation)

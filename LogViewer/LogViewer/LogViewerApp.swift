@@ -12,7 +12,7 @@ struct LogViewerApp: App {
                 LogImportView()
             }
 #else
-            AppGroupLogView(
+            LogBrowserStack(
                 convention: .commonAppGroup(
                     identifier: "group.com.zuhlke.diagnostics"
                 )

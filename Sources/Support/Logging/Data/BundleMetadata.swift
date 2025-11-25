@@ -7,7 +7,7 @@ import Foundation
 /// This type captures a subset of metadata about a bundle that is relevant for our use.
 /// ``BundleMetadata`` notably differs from `Bundle` in that it captures the information we need at initialisation time, and will fail if certain mandatory properties (such as bundle identifier) are not available.
 ///
-/// ``BundleMetadata`` contains common metadata (such as identifier and name) for all bundles. In addition, for known package type it will load additional information that helps with identifying the role of the package and related bundles. See ``BundleMetadata/packageType``.
+/// ``BundleMetadata`` contains common metadata (such as identifier and name) for all bundles. In addition, for known package type it will load additional information that helps with identifying the role of the package and related bundles.
 public struct BundleMetadata: Identifiable, Equatable, Sendable {
     struct AppMetadata: Equatable, Sendable {
         var plugins: [BundleMetadata]
