@@ -5,6 +5,9 @@ import SwiftData
 import SwiftUI
 import UniformTypeIdentifiers
 
+/// A view that enables importing and viewing log files on macOS.
+///
+/// `LogImportView` provides a drag-and-drop interface for importing log files.
 @available(macOS 15.0, *)
 public struct LogImportView: View {
     private let modelContainer: ModelContainer
@@ -23,6 +26,7 @@ public struct LogImportView: View {
         return decoder
     }()
 
+    /// Creates a new log import view.
     public init() {
         // Create an in-memory SwiftData container for imported logs
         let schema = Schema([AppRun.self, LogEntry.self])
