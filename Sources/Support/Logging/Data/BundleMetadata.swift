@@ -104,10 +104,6 @@ extension BundleMetadata {
             packageType: packageType,
         )
     }
-    
-    /// BundleMetadata associated with the main bundle.
-    public static let main = BundleMetadata(from: .main)!
-    
 }
 
 #endif

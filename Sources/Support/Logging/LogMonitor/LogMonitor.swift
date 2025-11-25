@@ -72,8 +72,10 @@ public class LogMonitor {
                     logStore: logStore,
                     appLaunchDate: appLaunchDate,
                 )
+            } catch is CancellationError {
+                LogMonitor.logger.info("Log monitoring cancelled")
             } catch {
-                LogMonitor.logger.error("\(error.localizedDescription)")
+                LogMonitor.logger.error("Log monitoring failed: \(error.localizedDescription)")
             }
         }
     }
@@ -85,9 +87,18 @@ public class LogMonitor {
         logStore: LogStoreProtocol,
         appLaunchDate: Date,
     ) async throws {
-        var descriptor = FetchDescriptor<LogEntry>(predicate: nil, sortBy: [SortDescriptor(\.date, order: .reverse)])
+        var descriptor = FetchDescriptor<LogEntry>(
+            predicate: nil,
+            sortBy: [SortDescriptor(\.date, order: .reverse)]
+        )
         descriptor.fetchLimit = 1
-        var lastDate = try context.fetch(descriptor).first?.date ?? Date.distantPast
+
+        var lastDate: Date
+        do {
+            lastDate = try context.fetch(descriptor).first?.date ?? Date.distantPast
+        } catch {
+            throw LogMonitorError.databaseOperationFailed(operation: "fetch last entry", underlyingError: error)
+        }
 
         let appRun = AppRun(
             appVersion: bundleMetadata.version,
@@ -96,22 +107,37 @@ public class LogMonitor {
             device: deviceMetadata.deviceModel,
         )
         context.insert(appRun)
-        try context.save()
+
+        do {
+            try context.save()
+        } catch {
+            throw LogMonitorError.databaseOperationFailed(operation: "save app run", underlyingError: error)
+        }
 
         while true {
-            let fetchedEntries = try logStore.entries(after: lastDate)
-            
+            let fetchedEntries: any Sequence<any LogEntryProtocol>
+            do {
+                fetchedEntries = try logStore.entries(after: lastDate)
+            } catch {
+                throw LogMonitorError.logFetchFailed(underlyingError: error)
+            }
+
             let modelEntries = fetchedEntries.map {
                 LogEntry(appRun: appRun, entry: $0)
             }
-            
+
             context.insert(contentsOf: modelEntries)
 
             if context.hasChanges {
-                try context.save()
+                do {
+                    try context.save()
+                } catch {
+                    throw LogMonitorError.databaseOperationFailed(operation: "save log entries", underlyingError: error)
+                }
             }
-            
+
             lastDate = modelEntries.last?.date ?? lastDate
+
             try await Task.sleep(for: .seconds(1))
         }
     }
@@ -126,22 +152,32 @@ public extension LogMonitor {
     ///
     /// - Parameters:
     ///   - convention: The log storage convention that defines where logs are stored.
-    ///   - bundleMetadata: Metadata about the bundle being monitored. Defaults to `.main`.
+    ///   - bundleMetadata: Metadata about the bundle being monitored.
     ///
-    /// - Throws: An error if the log store cannot be created, the directory structure cannot be created,
-    ///   or the model container cannot be initialized.
-    convenience init(
+    /// - Returns: nil if there is an error while initializing. Errors are logged.
+    convenience init?(
         convention: LogStorageConvention,
-        bundleMetadata: BundleMetadata = .main,
-    ) throws {
-        let logStore = try OSLogStore(scope: .currentProcessIdentifier)
-        try self.init(
-            convention: convention,
-            bundleMetadata: bundleMetadata,
-            deviceMetadata: DeviceMetadata.main,
-            logStore: logStore,
-            appLaunchDate: .now,
-        )
+        bundleMetadata: BundleMetadata
+    ) {
+        do {
+            let logStore: OSLogStore
+            do {
+                logStore = try OSLogStore(scope: .currentProcessIdentifier)
+            } catch {
+                throw LogMonitorError.logStoreCreationFailed(underlyingError: error)
+            }
+
+            try self.init(
+                convention: convention,
+                bundleMetadata: bundleMetadata,
+                deviceMetadata: DeviceMetadata.main,
+                logStore: logStore,
+                appLaunchDate: .now
+            )
+        } catch {
+            LogMonitor.logger.error("Failed to initialize LogMonitor: \(error.localizedDescription)")
+            return nil
+        }
     }
 }
 
