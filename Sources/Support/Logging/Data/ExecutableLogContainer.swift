@@ -3,8 +3,8 @@
 import Foundation
 
 /// Log container for individual executables
-public struct ExecutableLogContainer: Hashable, Identifiable, Sendable {
-    public enum PackageType: Hashable, Sendable {
+package struct ExecutableLogContainer: Hashable, Identifiable, Sendable {
+    package enum PackageType: Hashable, Sendable {
         case mainApp
         case `extension`(extensionPointIdentifier: String)
     }
@@ -16,13 +16,13 @@ public struct ExecutableLogContainer: Hashable, Identifiable, Sendable {
     ///
     /// The bundle identifier for the main executable of an app is the same as the app bundle identifier.
     /// For extensions (e.g. widgets) this will match the bundle identifier of the extension bundle.
-    public var id: String
+    package var id: String
     
     /// Name of the executable
-    public var displayName: String
+    package var displayName: String
 
     /// The type of package
-    public var packageType: PackageType
+    package var packageType: PackageType
     
 }
 

@@ -2,7 +2,7 @@
 
 import SwiftData
 
-public extension ModelContainer {
+package extension ModelContainer {
     convenience init(from executable: ExecutableLogContainer) throws {
         try self.init(
             for: AppRun.self,

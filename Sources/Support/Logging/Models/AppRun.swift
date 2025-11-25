@@ -9,39 +9,39 @@ import SwiftData
 /// including the app version, OS version, launch date, and device information. Each
 /// app run contains a collection of log entries captured during that session.
 @Model
-public class AppRun {
+package class AppRun {
     /// Represents a snapshot of an app run and its log entries.
-    public struct Snapshot: Codable, Equatable {
+    package struct Snapshot: Codable, Equatable {
         /// Information about an app run.
-        public struct Info: Codable, Equatable {
+        package struct Info: Codable, Equatable {
             /// The version of the application.
-            public let appVersion: String
+            package let appVersion: String
             /// The operating system version.
-            public let operatingSystemVersion: String
+            package let operatingSystemVersion: String
             /// The date and time when the application was launched.
-            public let launchDate: Date
+            package let launchDate: Date
             /// The device model on which the app ran.
-            public let device: String
+            package let device: String
         }
 
         /// Information about the app run.
-        public let info: Info
+        package let info: Info
         /// Snapshots of all log entries captured during this run.
-        public let logEntries: [LogEntry.Snapshot]
+        package let logEntries: [LogEntry.Snapshot]
     }
 
     /// The version of the application.
-    public private(set) var appVersion: String
+    package private(set) var appVersion: String
     /// The operating system version.
-    public private(set) var operatingSystemVersion: String
+    package private(set) var operatingSystemVersion: String
     /// The date and time when the application was launched.
-    public private(set) var launchDate: Date
+    package private(set) var launchDate: Date
     /// The device model on which the app ran.
-    public private(set) var device: String
+    package private(set) var device: String
 
     /// The collection of log entries captured during this app run.
     @Relationship(deleteRule: .cascade, inverse: \LogEntry.appRun)
-    public private(set) var logEntries = [LogEntry]()
+    package private(set) var logEntries = [LogEntry]()
 
     /// Creates a new app run with the specified metadata.
     ///
@@ -50,7 +50,7 @@ public class AppRun {
     ///   - operatingSystemVersion: The operating system version.
     ///   - launchDate: The date and time when the application was launched.
     ///   - device: The device model on which the app is running.
-    public init(
+    package init(
         appVersion: String,
         operatingSystemVersion: String,
         launchDate: Date,
@@ -63,7 +63,7 @@ public class AppRun {
     }
 
     /// A snapshot of this app run and all its log entries.
-    public var snapshot: Snapshot {
+    package var snapshot: Snapshot {
         .init(
             info: Snapshot.Info(
                 appVersion: appVersion,

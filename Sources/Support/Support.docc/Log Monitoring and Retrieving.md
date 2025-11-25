@@ -25,35 +25,13 @@ struct YourApp: App {
             }
 
             let convention = ...// see LogStorageConvention for usuage
-            let logMonitor = try! LogMonitor(
+            let logMonitor = try LogMonitor(
                 convention: convention,
                 bundleMetadata: bundleMetadata
             )
         } catch {
             // Handle error from instantiating LogMonitor
         }
-    }
-}
-```
-
-Use ``LogRetriever`` to retrieve logs published to SwiftData.
-
-```swift
-@main
-struct YourLogView: View {
-    var logRetriever: LogRetriever?
-
-    init { 
-        do {
-            let convention = ...// this should be the same convention used with LogMonitor
-            logRetriever = try LogRetriever(convention: convention)
-        } catch {
-            // Handle error from instantiating LogMonitor
-        }
-    }
-
-    public var body: some View {
-        // You can use logRetriever.apps to generate your chosen UI
     }
 }
 ```
@@ -68,9 +46,3 @@ struct YourLogView: View {
 
 - ``LogMonitor``
 - ``BundleMetadata``
-
-### Retrieving logs
-
-- ``LogRetriever``
-- ``AppLogContainer``
-- ``ExecutableLogContainer``
