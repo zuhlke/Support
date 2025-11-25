@@ -26,9 +26,6 @@ struct AppRunView: View {
     @State private var filteredEntries: [LogEntry] = []
     @State private var groupedEntries: [AppRun: [LogEntry]] = [:]
 
-    /// Creates a new app run view.
-    init() {}
-
     func filterEntries() {
         filteredEntries = logEntries.filter(searchText: searchText, tokens: tokens)
         groupedEntries = Dictionary(grouping: filteredEntries) { $0.appRun }
