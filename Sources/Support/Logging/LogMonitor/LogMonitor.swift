@@ -9,6 +9,9 @@ import UniformTypeIdentifiers
 ///
 /// `LogMonitor` continuously monitors the system log store for new entries and persists them
 /// to a SwiftData model container.
+///
+/// - Warning: Only one instance of `LogMonitor` should be created per application.
+///   Creating multiple instances may result in unpredictable behavior.
 public class LogMonitor {
     private static let logger = Logger(subsystem: "com.zuhlke.Support", category: "LogMonitor")
 
