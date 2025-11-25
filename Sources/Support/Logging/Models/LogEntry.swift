@@ -10,36 +10,36 @@ import SwiftData
 /// timestamp, log level, category, subsystem, and signpost information. Each entry is associated
 /// with an ``AppRun`` that identifies which launch session generated the log.
 @Model
-public class LogEntry {
+package class LogEntry {
     /// Represents a snapshot of a log entry.
-    public struct Snapshot: Codable, Equatable {
+    package struct Snapshot: Codable, Equatable {
         /// The timestamp when the log entry was created.
-        public let date: Date
+        package let date: Date
         /// The complete log message.
-        public let composedMessage: String
+        package let composedMessage: String
         /// The log level as a string (e.g., "debug", "info", "error").
-        public let level: String?
+        package let level: String?
         /// The log category.
-        public let category: String?
+        package let category: String?
         /// The log subsystem.
-        public let subsystem: String?
+        package let subsystem: String?
         /// The signpost name, if this is a signpost entry.
-        public let signpostName: String?
+        package let signpostName: String?
         /// The signpost type as a string (e.g., "event", "intervalBegin").
-        public let signpostType: String?
+        package let signpostType: String?
     }
 
     /// The app run that generated this log entry.
-    public private(set) var appRun: AppRun
+    package private(set) var appRun: AppRun
 
     /// The timestamp when the log entry was created.
-    public private(set) var date: Date
+    package private(set) var date: Date
     /// The complete log message.
-    public private(set) var composedMessage: String
+    package private(set) var composedMessage: String
 
     private var _level: Int?
     /// The log level (debug, info, notice, error, fault).
-    public private(set) var level: OSLogEntryLog.Level? {
+    package private(set) var level: OSLogEntryLog.Level? {
         get {
             guard let _level else { return nil }
             return .init(rawValue: _level)
@@ -50,16 +50,16 @@ public class LogEntry {
     }
 
     /// The log category.
-    public private(set) var category: String?
+    package private(set) var category: String?
     /// The log subsystem.
-    public private(set) var subsystem: String?
+    package private(set) var subsystem: String?
 
     /// The name of the signpost, if this log entry represents a signpost.
-    public private(set) var signpostName: String?
+    package private(set) var signpostName: String?
 
     private var _signpostType: Int?
     /// The signpost type (event, intervalBegin, intervalEnd).
-    public private(set) var signpostType: OSLogEntrySignpost.SignpostType? {
+    package private(set) var signpostType: OSLogEntrySignpost.SignpostType? {
         get {
             guard let _signpostType else { return nil }
             return .init(rawValue: _signpostType)
@@ -78,7 +78,7 @@ public class LogEntry {
     ///   - level: The log level. Defaults to `nil`.
     ///   - category: The log category. Defaults to `nil`.
     ///   - subsystem: The log subsystem. Defaults to `nil`.
-    public init(
+    package init(
         appRun: AppRun,
         date: Date,
         composedMessage: String,
@@ -95,7 +95,7 @@ public class LogEntry {
     }
 
     /// A snapshot of this log entry.
-    public var snapshot: Snapshot {
+    package var snapshot: Snapshot {
         .init(
             date: date,
             composedMessage: composedMessage,
