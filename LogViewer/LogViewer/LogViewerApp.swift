@@ -7,7 +7,17 @@ import SwiftUI
 struct LogViewerApp: App {
     var body: some Scene {
         WindowGroup {
-            LogBrowserStack(storageConvention: .commonAppGroup(identifier: "group.com.zuhlke.diagnostics"))
+#if os(macOS)
+            NavigationStack {
+                LogImportView()
+            }
+#else
+            LogBrowserStack(
+                convention: .commonAppGroup(
+                    identifier: "group.com.zuhlke.diagnostics"
+                )
+            )
+#endif
         }
     }
 }
