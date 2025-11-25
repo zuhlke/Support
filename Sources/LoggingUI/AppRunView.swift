@@ -10,7 +10,7 @@ import SwiftUI
 /// individual app launch sessions, with support for filtering, metadata display, and exporting.
 @available(iOS 26.0, macOS 15.0, *)
 @available(watchOS, unavailable)
-public struct AppRunView: View {
+struct AppRunView: View {
     @Query(
         filter: #Predicate<LogEntry> { entry in
             entry.subsystem != nil && entry.subsystem != "" && !(entry.subsystem?.contains("com.apple.") ?? false)
@@ -27,7 +27,7 @@ public struct AppRunView: View {
     @State private var groupedEntries: [AppRun: [LogEntry]] = [:]
 
     /// Creates a new app run view.
-    public init() {}
+    init() {}
 
     func filterEntries() {
         filteredEntries = logEntries.filter(searchText: searchText, tokens: tokens)
@@ -202,7 +202,7 @@ public struct AppRunView: View {
         }
     }
 
-    public var body: some View {
+    var body: some View {
         searchableAppRuns
             .onChange(of: [logEntries.description, tokens.description, searchText], initial: true) {
                 filterEntries()

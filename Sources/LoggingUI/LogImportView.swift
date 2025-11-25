@@ -1,12 +1,12 @@
 #if os(macOS)
-import LoggingUI
 import OSLog
 import Support
 import SwiftData
 import SwiftUI
 import UniformTypeIdentifiers
 
-struct LogImportView: View {
+@available(macOS 15.0, *)
+public struct LogImportView: View {
     private let modelContainer: ModelContainer
 
     @State private var hasImportedLogs = false
@@ -23,14 +23,14 @@ struct LogImportView: View {
         return decoder
     }()
 
-    init() {
+    public init() {
         // Create an in-memory SwiftData container for imported logs
         let schema = Schema([AppRun.self, LogEntry.self])
         let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
         self.modelContainer = try! ModelContainer(for: schema, configurations: configuration)
     }
 
-    var body: some View {
+    public var body: some View {
         Group {
             if hasImportedLogs {
                 AppRunView()
