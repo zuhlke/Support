@@ -179,6 +179,41 @@ public extension LogMonitor {
             return nil
         }
     }
+    
+    /// Creates a new log monitor for the current process with `BundleMetadata` from the main bundle.
+    ///
+    /// - Parameters:
+    ///   - convention: The log storage convention that defines where logs are stored.
+    ///
+    /// - Returns: nil if there is an error while initializing. Errors are logged.
+    convenience init?(
+        convention: LogStorageConvention
+    ) {
+        do {
+            let logStore: OSLogStore
+
+            do {
+                logStore = try OSLogStore(scope: .currentProcessIdentifier)
+            } catch {
+                throw LogMonitorError.logStoreCreationFailed(underlyingError: error)
+            }
+
+            guard let bundleMetadata = BundleMetadata(from: .main) else {
+                throw LogMonitorError.bundleMetadataLoadFailed
+            }
+
+            try self.init(
+                convention: convention,
+                bundleMetadata: bundleMetadata,
+                deviceMetadata: DeviceMetadata.main,
+                logStore: logStore,
+                appLaunchDate: .now
+            )
+        } catch {
+            LogMonitor.logger.error("Failed to initialize LogMonitor: \(error.localizedDescription)")
+            return nil
+        }
+    }
 }
 
 struct Logs: Codable {
