@@ -13,6 +13,7 @@ public struct LogImportView: View {
     private let modelContainer: ModelContainer
 
     @State private var hasImportedLogs = false
+    @State private var isLoading = false
     @State private var errorMessage: String?
 
     private static let decoder: JSONDecoder = {
@@ -36,7 +37,9 @@ public struct LogImportView: View {
 
     public var body: some View {
         Group {
-            if hasImportedLogs {
+            if isLoading {
+                loadingView
+            } else if hasImportedLogs {
                 AppRunView()
                     .modelContainer(modelContainer)
             } else {
@@ -79,6 +82,24 @@ public struct LogImportView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
+    /// Loading view shown while importing logs
+    private var loadingView: some View {
+        VStack(spacing: 20) {
+            ProgressView()
+                .scaleEffect(1.5)
+
+            Text("Importing Logs...")
+                .font(.title2)
+                .fontWeight(.semibold)
+
+            Text("Please wait while we process your log file")
+                .font(.body)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
     // MARK: - Helper Functions
 
     private func handleFileDrop(providers: [NSItemProvider]) -> Bool {
@@ -99,8 +120,9 @@ public struct LogImportView: View {
                 return
             }
 
-            // Import the logs on the main thread, replacing any existing logs
+            // Show loading state and import logs in background
             DispatchQueue.main.async {
+                isLoading = true
                 importLogs(from: url)
             }
         }
@@ -109,54 +131,64 @@ public struct LogImportView: View {
     }
 
     private func importLogs(from url: URL) {
-        do {
-            // Read the file data
-            let data = try Data(contentsOf: url)
+        // Perform heavy work on background queue
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                // Read the file data
+                let data = try Data(contentsOf: url)
 
-            // Decode the JSON array of AppRun snapshots
-            let appRunSnapshots = try LogImportView.decoder.decode([AppRun.Snapshot].self, from: data)
+                // Decode the JSON array of AppRun snapshots
+                let appRunSnapshots = try LogImportView.decoder.decode([AppRun.Snapshot].self, from: data)
 
-            // Create a new context
-            let context = ModelContext(modelContainer)
+                // Create a new context
+                let context = ModelContext(modelContainer)
 
-            // Clear existing data by deleting all AppRuns and LogEntries
-            try context.delete(model: AppRun.self)
-            try context.delete(model: LogEntry.self)
+                // Clear existing data by deleting all AppRuns and LogEntries
+                try context.delete(model: AppRun.self)
+                try context.delete(model: LogEntry.self)
 
-            // Import each app run with its log entries
-            for snapshot in appRunSnapshots {
-                // Create an AppRun from the snapshot info
-                let appRun = AppRun(
-                    appVersion: snapshot.info.appVersion,
-                    operatingSystemVersion: snapshot.info.operatingSystemVersion,
-                    launchDate: snapshot.info.launchDate,
-                    device: snapshot.info.device
-                )
-                context.insert(appRun)
-
-                // Convert each log entry snapshot to LogEntry and insert into context
-                for logEntrySnapshot in snapshot.logEntries {
-                    let level = convertLevel(from: logEntrySnapshot.level)
-                    let entry = LogEntry(
-                        appRun: appRun,
-                        date: logEntrySnapshot.date,
-                        composedMessage: logEntrySnapshot.composedMessage,
-                        level: level,
-                        category: logEntrySnapshot.category,
-                        subsystem: logEntrySnapshot.subsystem
+                // Import each app run with its log entries
+                for snapshot in appRunSnapshots {
+                    // Create an AppRun from the snapshot info
+                    let appRun = AppRun(
+                        appVersion: snapshot.info.appVersion,
+                        operatingSystemVersion: snapshot.info.operatingSystemVersion,
+                        launchDate: snapshot.info.launchDate,
+                        device: snapshot.info.device
                     )
-                    context.insert(entry)
+                    context.insert(appRun)
+
+                    // Convert each log entry snapshot to LogEntry and insert into context
+                    for logEntrySnapshot in snapshot.logEntries {
+                        let level = convertLevel(from: logEntrySnapshot.level)
+                        let entry = LogEntry(
+                            appRun: appRun,
+                            date: logEntrySnapshot.date,
+                            composedMessage: logEntrySnapshot.composedMessage,
+                            level: level,
+                            category: logEntrySnapshot.category,
+                            subsystem: logEntrySnapshot.subsystem
+                        )
+                        context.insert(entry)
+                    }
+                }
+
+                // Save the context
+                try context.save()
+
+                // Update UI on main thread
+                DispatchQueue.main.async {
+                    isLoading = false
+                    hasImportedLogs = true
+                }
+
+            } catch {
+                // Update UI on main thread with error
+                DispatchQueue.main.async {
+                    isLoading = false
+                    errorMessage = "Failed to import logs: \(error.localizedDescription)"
                 }
             }
-
-            // Save the context
-            try context.save()
-
-            // Show the AppRunView with imported logs
-            hasImportedLogs = true
-
-        } catch {
-            errorMessage = "Failed to import logs: \(error.localizedDescription)"
         }
     }
 
