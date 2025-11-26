@@ -9,7 +9,6 @@ import UniformTypeIdentifiers
 ///
 /// `LogImportView` provides a drag-and-drop interface for importing log files.
 @available(macOS 15.0, *)
-@MainActor
 public struct LogImportView: View {
     private let modelContainer: ModelContainer
 
