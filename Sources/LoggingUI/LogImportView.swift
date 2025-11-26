@@ -9,6 +9,7 @@ import UniformTypeIdentifiers
 ///
 /// `LogImportView` provides a drag-and-drop interface for importing log files.
 @available(macOS 15.0, *)
+@MainActor
 public struct LogImportView: View {
     private let modelContainer: ModelContainer
 
@@ -16,7 +17,7 @@ public struct LogImportView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
 
-    private static let decoder: JSONDecoder = {
+    private nonisolated static let decoder: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .custom({
             let string = try $0.singleValueContainer().decode(String.self)
@@ -48,7 +49,9 @@ public struct LogImportView: View {
         }
         .navigationTitle("Log Viewer")
         .onDrop(of: [.fileURL], isTargeted: nil) { providers in
-            handleFileDrop(providers: providers)
+            guard let provider = providers.first else { return false }
+            Task { await handleFileDrop(provider: provider) }
+            return true
         }
         .alert("Import Error", isPresented: .constant(errorMessage != nil)) {
             Button("OK") {
@@ -102,92 +105,82 @@ public struct LogImportView: View {
 
     // MARK: - Helper Functions
 
-    private func handleFileDrop(providers: [NSItemProvider]) -> Bool {
-        guard let provider = providers.first else { return false }
-
-        provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { item, error in
-            // Get the URL from the dropped item
+    private func handleFileDrop(provider: NSItemProvider) async  {
+        do {
+            let item = try await provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier)
             guard let data = item as? Data,
                   let url = URL(dataRepresentation: data, relativeTo: nil) else {
                 return
             }
-
-            // Check if it's a JSON file
+            
             guard url.pathExtension.lowercased() == "json" else {
-                DispatchQueue.main.async {
-                    errorMessage = "Please drop a JSON file"
-                }
+                errorMessage = "Please drop a valid log file"
                 return
             }
-
-            // Show loading state and import logs in background
-            DispatchQueue.main.async {
-                isLoading = true
-                importLogs(from: url)
-            }
+            
+            isLoading = true
+            await importLogs(from: url)
+        } catch {
+            errorMessage = "Something went wrong - \(error.localizedDescription)"
         }
-
-        return true
     }
 
-    private func importLogs(from url: URL) {
+    @concurrent
+    private func importLogs(from url: URL) async {
         // Perform heavy work on background queue
-        DispatchQueue.global(qos: .userInitiated).async {
-            do {
-                // Read the file data
-                let data = try Data(contentsOf: url)
+        do {
+            // Read the file data
+            let data = try Data(contentsOf: url)
 
-                // Decode the JSON array of AppRun snapshots
-                let appRunSnapshots = try LogImportView.decoder.decode([AppRun.Snapshot].self, from: data)
+            // Decode the JSON array of AppRun snapshots
+            let appRunSnapshots = try LogImportView.decoder.decode([AppRun.Snapshot].self, from: data)
 
-                // Create a new context
-                let context = ModelContext(modelContainer)
+            // Create a new context
+            let context = ModelContext(modelContainer)
 
-                // Clear existing data by deleting all AppRuns and LogEntries
-                try context.delete(model: AppRun.self)
-                try context.delete(model: LogEntry.self)
+            // Clear existing data by deleting all AppRuns and LogEntries
+            try context.delete(model: AppRun.self)
+            try context.delete(model: LogEntry.self)
 
-                // Import each app run with its log entries
-                for snapshot in appRunSnapshots {
-                    // Create an AppRun from the snapshot info
-                    let appRun = AppRun(
-                        appVersion: snapshot.info.appVersion,
-                        operatingSystemVersion: snapshot.info.operatingSystemVersion,
-                        launchDate: snapshot.info.launchDate,
-                        device: snapshot.info.device
+            // Import each app run with its log entries
+            for snapshot in appRunSnapshots {
+                // Create an AppRun from the snapshot info
+                let appRun = AppRun(
+                    appVersion: snapshot.info.appVersion,
+                    operatingSystemVersion: snapshot.info.operatingSystemVersion,
+                    launchDate: snapshot.info.launchDate,
+                    device: snapshot.info.device
+                )
+                context.insert(appRun)
+
+                // Convert each log entry snapshot to LogEntry and insert into context
+                for logEntrySnapshot in snapshot.logEntries {
+                    let level = convertLevel(from: logEntrySnapshot.level)
+                    let entry = LogEntry(
+                        appRun: appRun,
+                        date: logEntrySnapshot.date,
+                        composedMessage: logEntrySnapshot.composedMessage,
+                        level: level,
+                        category: logEntrySnapshot.category,
+                        subsystem: logEntrySnapshot.subsystem
                     )
-                    context.insert(appRun)
-
-                    // Convert each log entry snapshot to LogEntry and insert into context
-                    for logEntrySnapshot in snapshot.logEntries {
-                        let level = convertLevel(from: logEntrySnapshot.level)
-                        let entry = LogEntry(
-                            appRun: appRun,
-                            date: logEntrySnapshot.date,
-                            composedMessage: logEntrySnapshot.composedMessage,
-                            level: level,
-                            category: logEntrySnapshot.category,
-                            subsystem: logEntrySnapshot.subsystem
-                        )
-                        context.insert(entry)
-                    }
+                    context.insert(entry)
                 }
+            }
 
-                // Save the context
-                try context.save()
+            // Save the context
+            try context.save()
 
-                // Update UI on main thread
-                DispatchQueue.main.async {
-                    isLoading = false
-                    hasImportedLogs = true
-                }
-
-            } catch {
-                // Update UI on main thread with error
-                DispatchQueue.main.async {
-                    isLoading = false
-                    errorMessage = "Failed to import logs: \(error.localizedDescription)"
-                }
+            // Update UI
+            await MainActor.run {
+                isLoading = false
+                hasImportedLogs = true
+            }
+        } catch {
+            // Update UI with error
+            await MainActor.run {
+                isLoading = false
+                errorMessage = "Failed to import logs: \(error.localizedDescription)"
             }
         }
     }
@@ -195,7 +188,7 @@ public struct LogImportView: View {
     /// Converts a string log level to OSLogEntryLog.Level
     /// - Parameter levelString: The log level as a string
     /// - Returns: The corresponding OSLogEntryLog.Level or nil
-    private func convertLevel(from levelString: String?) -> OSLogEntryLog.Level? {
+    private nonisolated func convertLevel(from levelString: String?) -> OSLogEntryLog.Level? {
         guard let levelString = levelString?.lowercased() else { return nil }
 
         switch levelString {
