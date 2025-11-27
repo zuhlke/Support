@@ -13,9 +13,10 @@ public struct LogImportView: View {
     private let modelContainer: ModelContainer
 
     @State private var hasImportedLogs = false
+    @State private var isLoading = false
     @State private var errorMessage: String?
 
-    private static let decoder: JSONDecoder = {
+    private nonisolated static let decoder: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .custom({
             let string = try $0.singleValueContainer().decode(String.self)
@@ -36,7 +37,9 @@ public struct LogImportView: View {
 
     public var body: some View {
         Group {
-            if hasImportedLogs {
+            if isLoading {
+                loadingView
+            } else if hasImportedLogs {
                 AppRunView()
                     .modelContainer(modelContainer)
             } else {
@@ -45,7 +48,9 @@ public struct LogImportView: View {
         }
         .navigationTitle("Log Viewer")
         .onDrop(of: [.fileURL], isTargeted: nil) { providers in
-            handleFileDrop(providers: providers)
+            guard let provider = providers.first else { return false }
+            Task { await handleFileDrop(provider: provider) }
+            return true
         }
         .alert("Import Error", isPresented: .constant(errorMessage != nil)) {
             Button("OK") {
@@ -79,36 +84,49 @@ public struct LogImportView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
+    /// Loading view shown while importing logs
+    private var loadingView: some View {
+        VStack(spacing: 20) {
+            ProgressView()
+                .scaleEffect(1.5)
+
+            Text("Importing Logs...")
+                .font(.title2)
+                .fontWeight(.semibold)
+
+            Text("Please wait while we process your log file")
+                .font(.body)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
     // MARK: - Helper Functions
 
-    private func handleFileDrop(providers: [NSItemProvider]) -> Bool {
-        guard let provider = providers.first else { return false }
-
-        provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { item, error in
-            // Get the URL from the dropped item
+    private func handleFileDrop(provider: NSItemProvider) async  {
+        do {
+            let item = try await provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier)
             guard let data = item as? Data,
                   let url = URL(dataRepresentation: data, relativeTo: nil) else {
                 return
             }
-
-            // Check if it's a JSON file
+            
             guard url.pathExtension.lowercased() == "json" else {
-                DispatchQueue.main.async {
-                    errorMessage = "Please drop a JSON file"
-                }
+                errorMessage = "Please drop a valid log file"
                 return
             }
-
-            // Import the logs on the main thread, replacing any existing logs
-            DispatchQueue.main.async {
-                importLogs(from: url)
-            }
+            
+            isLoading = true
+            await importLogs(from: url)
+        } catch {
+            errorMessage = "Something went wrong - \(error.localizedDescription)"
         }
-
-        return true
     }
 
-    private func importLogs(from url: URL) {
+    @concurrent
+    private func importLogs(from url: URL) async {
+        // Perform heavy work on background queue
         do {
             // Read the file data
             let data = try Data(contentsOf: url)
@@ -152,18 +170,24 @@ public struct LogImportView: View {
             // Save the context
             try context.save()
 
-            // Show the AppRunView with imported logs
-            hasImportedLogs = true
-
+            // Update UI
+            await MainActor.run {
+                isLoading = false
+                hasImportedLogs = true
+            }
         } catch {
-            errorMessage = "Failed to import logs: \(error.localizedDescription)"
+            // Update UI with error
+            await MainActor.run {
+                isLoading = false
+                errorMessage = "Failed to import logs: \(error.localizedDescription)"
+            }
         }
     }
 
     /// Converts a string log level to OSLogEntryLog.Level
     /// - Parameter levelString: The log level as a string
     /// - Returns: The corresponding OSLogEntryLog.Level or nil
-    private func convertLevel(from levelString: String?) -> OSLogEntryLog.Level? {
+    private nonisolated func convertLevel(from levelString: String?) -> OSLogEntryLog.Level? {
         guard let levelString = levelString?.lowercased() else { return nil }
 
         switch levelString {
