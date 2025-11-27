@@ -19,18 +19,11 @@ struct YourApp: App {
     var logMonitor: LogMonitor?
 
     init {
-        do {
-            guard let bundleMetadata = BundleMetadata(from: Bundle.main) else {
-                // Handle nil bundle metadata
-            }
-
-            let convention = ...// see LogStorageConvention for usuage
-            let logMonitor = try LogMonitor(
-                convention: convention,
-                bundleMetadata: bundleMetadata
-            )
-        } catch {
-            // Handle error from instantiating LogMonitor
+        let convention = ...// see LogStorageConvention for usuage
+        guard let logMonitor = LogMonitor(
+            convention: convention
+        ) else {
+            // Handle nil logMonitor
         }
     }
 }
