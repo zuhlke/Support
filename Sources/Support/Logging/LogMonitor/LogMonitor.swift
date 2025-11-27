@@ -190,25 +190,11 @@ public extension LogMonitor {
         convention: LogStorageConvention
     ) {
         do {
-            let logStore: OSLogStore
-
-            do {
-                logStore = try OSLogStore(scope: .currentProcessIdentifier)
-            } catch {
-                throw LogMonitorError.logStoreCreationFailed(underlyingError: error)
-            }
-
             guard let bundleMetadata = BundleMetadata(from: .main) else {
                 throw LogMonitorError.bundleMetadataLoadFailed
             }
 
-            try self.init(
-                convention: convention,
-                bundleMetadata: bundleMetadata,
-                deviceMetadata: DeviceMetadata.main,
-                logStore: logStore,
-                appLaunchDate: .now
-            )
+            self.init(convention: convention, bundleMetadata: bundleMetadata)
         } catch {
             LogMonitor.logger.error("Failed to initialize LogMonitor: \(error.localizedDescription)")
             return nil
