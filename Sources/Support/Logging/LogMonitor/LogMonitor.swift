@@ -4,6 +4,7 @@ import Foundation
 import OSLog
 import SwiftData
 import UniformTypeIdentifiers
+import Algorithms
 
 /// Monitors and persists log entries for an application.
 ///
@@ -207,9 +208,22 @@ struct Logs: Codable {
 }
 
 extension ModelContext {
-    fileprivate func insert<S>(contentsOf sequence: S) where S: Sequence, S.Element: PersistentModel {
-        for model in sequence {
-            insert(model)
+    fileprivate func insert<S>(contentsOf collection: S) where S: Collection, S.Element: PersistentModel {
+        // Inserting a large number of models¹ can lead to creation of many autoreleased objects².
+        // This can lead to a sever spike in memory (Multiple GBs) and process termination.
+        //
+        // To avoid this, we chunk the data and free autoreleased objects before they accumulate too much.
+        //
+        // ¹ Say, a few thousand. In “normal” operation it doesn’t happen a lot, but commonly witnessed when
+        //   the app is running on the phone and connected to Xcode.
+        //
+        // ² Seems to be due to under the hood type conversions? (e.g. String -> CFString)
+        for chunk in collection.chunks(ofCount: 100) {
+            autoreleasepool {
+                for model in chunk {
+                    insert(model)
+                }
+            }
         }
     }
 }
